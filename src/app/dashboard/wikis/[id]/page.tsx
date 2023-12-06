@@ -1,0 +1,71 @@
+'use client'
+import { Typography } from "antd";
+import {EditOutlined, SettingOutlined} from "@ant-design/icons";
+
+import Loading from "@/components/Loading";
+
+import { useRouter } from "next/navigation";
+import useKnowledgeBase from "@/hooks/useKnowledgeBase";
+import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
+import CardButton from "../../../../components/CardButton";
+import WikiTabs from "@/components/wiki/WikiTabs";
+import {createNote} from "@/requests/client/note/note";
+import {NOTE} from "@/constants/route";
+
+const { Title } = Typography
+
+function Wiki({params}: {
+    params: {
+        id: number
+    }
+}) {
+    const {id} = params;
+    const router = useRouter()
+
+    const {data} = useKnowledgeBase(id);
+
+    const fetchCreateNote = () => {
+        createNote({
+            title: "无标题笔记",
+            knowledgeBaseId: id
+        }).then(
+            res => {
+                router.push(`${NOTE}/${res.data.data.toString()}`)
+            }
+        ).catch(
+            e => console.log(e)
+        )
+    }
+
+    if (!data) {
+        return (
+            <div className="flex justify-center items-center w-full h-full">
+                <Loading/>
+            </div>
+        )
+    }
+
+    return (
+        <div className="flex flex-col box-border p-8">
+            <Title level={3}>{data.knowledgeBaseName}</Title>
+            <div className="flex flex-row mb-8">
+                <CardButton
+                    icon={<SettingOutlined style={{fontSize: 20}}/>}
+                    title="管理知识库"
+                    content="信息、成员、任务"
+                />
+                <CardButton
+                    icon={<EditOutlined/>}
+                    title="创建新笔记"
+                    content="文档"
+                    clickEvent={fetchCreateNote}
+                />
+            </div>
+            <WikiTabs
+                knowledgeBaseId={id}
+            />
+        </div>
+    )
+}
+
+export default withThemeConfigProvider(Wiki)
