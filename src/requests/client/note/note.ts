@@ -1,5 +1,5 @@
 import request, {Method} from "@/utils/client-request"
-import {NoteInfo, Note, MarkdownImage} from "@/types/noteTypes";
+import {NoteInfo, Note, MarkdownImage, NoteHistoryListItemVO, NoteHistory} from "@/types/noteTypes";
 import {PageBean, ResData} from "@/types/requestTypes";
 import {Simulate} from "react-dom/test-utils";
 
@@ -73,5 +73,29 @@ export function createNote(params: {
         data: params,
         method: Method.POST,
         needToken: true
+    })
+}
+
+export function getNoteHistoryList(params: {
+    noteId: number,
+    page: number,
+    pageSize: number
+}) {
+    return request<ResData<PageBean<NoteHistoryListItemVO>>>({
+        url: "/api/note/notes/historyList",
+        method: Method.GET,
+        params: params,
+        needToken: true
+    })
+}
+
+export function getNoteHistory(params: {
+    operationId: number
+}) {
+    return request<ResData<NoteHistory>>({
+        url: '/api/note/notes/history',
+        method: Method.GET,
+        needToken: true,
+        params: params
     })
 }

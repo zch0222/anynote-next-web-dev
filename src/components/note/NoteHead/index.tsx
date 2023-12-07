@@ -1,5 +1,6 @@
 'use client'
-import { Card } from "@nextui-org/react";
+// import { Card } from "@nextui-org/react";
+import { Button } from "antd";
 import Back from "@/components/svg/Back";
 import { PicLeftOutlined } from "@ant-design/icons";
 import DrawerIcon from "@/components/svg/DrawerIcon";
@@ -36,14 +37,20 @@ function NoteHead({ title, updateTime, onShowDrawer }: {
                 </div>
             </div>
             <div className="mr-2">
-                <Card
-                    className="flex justify-center items-center w-[45px] h-[30px]"
-                    radius="sm"
-                    isPressable
+                {/*<Card*/}
+                {/*    className="flex justify-center items-center w-[45px] h-[30px]"*/}
+                {/*    radius="sm"*/}
+                {/*    isPressable*/}
+                {/*    onClick={onShowDrawer}*/}
+                {/*>*/}
+                {/*    <PicLeftOutlined style={{fontSize: 20}}/>*/}
+                {/*</Card>*/}
+                <Button
+                    size="middle"
                     onClick={onShowDrawer}
+                    icon={<PicLeftOutlined/>}
                 >
-                    <PicLeftOutlined style={{fontSize: 20}}/>
-                </Card>
+                </Button>
             </div>
         </div>
     )

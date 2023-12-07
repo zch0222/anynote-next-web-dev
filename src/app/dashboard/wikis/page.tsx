@@ -29,9 +29,10 @@ const KnowledgeBaseCard = withThemeConfigProvider(function ({ data }: {
             hoverable
             className="border-none p-0 w-[200px]"
             style={{
-                marginRight: 24
+                marginRight: 24,
+                marginTop: 16
             }}
-            cover={<Image className="object-cover" src={data.cover} width={200} height={250} />}
+            cover={<Image className="object-cover w-[200px] h-[250px]" src={data.cover} />}
             // isPressable
             onClick={() => router.push(`${WIKI}/${data.id}`)}
         >

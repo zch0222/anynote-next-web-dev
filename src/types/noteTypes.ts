@@ -116,6 +116,38 @@ export interface CreateDTO {
     id: number
 }
 
+export interface NoteHistoryListItemVO {
+    operationLogId: number;
+    operationTime: string;
+    updaterId: number;
+    updaterNickname: string;
+    updaterUsername: string;
+}
+
+export interface NoteEdit {
+    editLogId: number;
+    originalText: string;
+    revisedText: string;
+    changeType: number;
+    originalPosition: number;
+    revisedPosition: number;
+    editTime: string;
+    editorId: number;
+    editorUsername: string;
+    editorNickname: string;
+}
+
+export interface NoteHistory {
+    noteHistoryId: number;
+    noteId: number;
+    title: string;
+    content: string;
+    historyTime: string;
+    createBy: number;
+    noteEditList: NoteEdit[]
+}
+
+
 
 
 

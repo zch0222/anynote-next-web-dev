@@ -29,7 +29,7 @@ export default class DateTimeFormatter {
 
 export function getDateString(date: Date | undefined) {
     if (date) {
-        return `${date.getFullYear()} ${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}`
+        return `${date.getFullYear()} ${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     }
     return ""
 }
