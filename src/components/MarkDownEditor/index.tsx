@@ -5,7 +5,6 @@ import {MutableRefObject, useEffect, useState} from "react";
 
 import "vditor/dist/index.css"
 
-
 export default function MarkDownEditor({onInput, onBlur, onUpload, content, vditorRef}: {
     onInput: (value: string) => void,
     onBlur: (value: string) => void,
@@ -87,7 +86,9 @@ export default function MarkDownEditor({onInput, onBlur, onUpload, content, vdit
 
 
     return (
-        <div id="vditor">
+        <div
+            id="vditor"
+        >
 
         </div>
     )

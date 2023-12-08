@@ -53,3 +53,6 @@ body {
   /*  rgb(var(--background-start-rgb));*/
 }
 
+ol {
+  list-style-type: decimal;
+}
