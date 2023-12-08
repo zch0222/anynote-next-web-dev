@@ -79,9 +79,9 @@ function Pagination(props: {
 
     return (
         <div
-            className={`flex h-full flex-col w-full overflow-hidden`}
+            className={`flex h-full flex-col w-full overflow-y-auto overflow-x-hidden`}
         >
-            <div className={`flex ${"row" === direction ? "flex-row" : "flex-col"} flex-wrap mb-3`}>
+            <div className={`flex ${"row" === direction ? "flex-row flex-wrap" : "flex-col"} pt-3 pb-3`}>
                 <Page
                     pageSize={pageParam.pageSize}
                     page={pageParam.page}

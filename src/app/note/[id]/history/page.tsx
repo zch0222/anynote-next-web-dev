@@ -64,7 +64,7 @@ function NoteHistory({params}: {
     })
 
     useEffect(() => {
-        if (data) {
+        if (data && data.rows.length > 0) {
             setSelectHistoryId(data.rows[0].operationLogId)
         }
     }, [data])

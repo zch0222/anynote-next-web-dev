@@ -30,7 +30,8 @@ const KnowledgeBaseCard = withThemeConfigProvider(function ({ data }: {
             className="border-none p-0 w-[200px]"
             style={{
                 marginRight: 24,
-                marginTop: 16
+                marginTop: 16,
+                height: 315
             }}
             cover={<Image className="object-cover w-[200px] h-[250px]" src={data.cover} />}
             // isPressable
@@ -43,10 +44,10 @@ const KnowledgeBaseCard = withThemeConfigProvider(function ({ data }: {
 
 function Wikis() {
     return (
-        <div className="flex w-full h-full flex-col p-8 box-border">
+        <div className="flex flex-col w-full h-full flex-col p-8 box-border">
             <Title level={2}>知识库</Title>
 
-            <div className="flex flex-row">
+            <div className="flex-grow flex overflow-hidden flex-row p-2">
                 <Pagination
                     direction="row"
                     Page={createPage(KnowledgeBaseCard)}

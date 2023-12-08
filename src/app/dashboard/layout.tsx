@@ -12,8 +12,7 @@ export default function DashboardLayout({children}: {
             <div className="w-[250px]">
                 <DashboardSider/>
             </div>
-            <div className="flex-grow">
-
+            <div className="flex-grow h-full">
                 {children}
             </div>
         </div>

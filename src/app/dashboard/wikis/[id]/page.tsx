@@ -46,7 +46,7 @@ function Wiki({params}: {
     }
 
     return (
-        <div className="flex flex-col box-border p-8">
+        <div className="flex flex-col h-full box-border overflow-hidden p-8">
             <Title level={3}>{data.knowledgeBaseName}</Title>
             <div className="flex flex-row mb-8">
                 <CardButton

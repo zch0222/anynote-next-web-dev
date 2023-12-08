@@ -41,7 +41,7 @@ function NoteItem({ data }: {
 
     return (
         <div
-            className={`flex flex-row items-center w-full justify-between p-2 cursor-pointer border-b ${isHovered ? hoveredBg : ''}`}
+            className={`flex h-[60px] flex-row items-center w-full justify-between p-2 cursor-pointer border-b ${isHovered ? hoveredBg : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`${NOTE}/${data.id}`)}
@@ -71,7 +71,7 @@ function NoteTab({ knowledgeBaseId }: {
 
 
     return (
-        <div className="mt-2">
+        <div className="flex-grow pt-2 overflow-hidden">
             <Pagination
                 direction="col"
                 Page={createPage(NoteItem)}

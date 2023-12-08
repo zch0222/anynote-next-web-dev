@@ -14,7 +14,7 @@ function WikiTabs({ knowledgeBaseId }: {
 
 
     return (
-        <div className="flex flex-col">
+        <div className="flex-grow flex overflow-hidden flex-col">
             <Radio.Group
                 value={selectTab}
                 onChange={(e) => {
