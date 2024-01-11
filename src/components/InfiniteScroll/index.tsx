@@ -138,6 +138,7 @@ function InfiniteScroll(props: {
                 next={next}
                 hasMore={hasMore}
                 loader={"loading..."}
+
                 dataLength={pages.length}
                 scrollableTarget="scrollableDiv"
             >

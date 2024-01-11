@@ -1,6 +1,6 @@
 'use client'
 import { Chip } from "@nextui-org/chip";
-import { useState } from "react";
+import {useCallback, useState} from "react";
 import { useTheme } from "next-themes";
 import {useRouter} from "next/navigation";
 
@@ -11,13 +11,16 @@ import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 
 import NoteIcon from "@/components/svg/NoteIcon";
 import { NoteInfo } from "@/types/noteTypes";
-import Pagination from "@/components/Pagination";
-import { NOTE } from "@/constants/route";
-import { stringToDateString } from "@/utils/date";
-import dayjs from "dayjs";
+import InfiniteScroll from "@/components/InfiniteScroll";
+import {NOTE, WIKIS} from "@/constants/route";
+import {id} from "postcss-selector-parser";
 
-function NoteItem({ data }: {
-    data: NoteInfo
+
+function NoteItem({ data, itemProps }: {
+    data: NoteInfo,
+    itemProps?: {
+        knowledgeBaseId: number
+    }
 }) {
     const router = useRouter()
 
@@ -43,47 +46,37 @@ function NoteItem({ data }: {
 
     return (
         <div
-            className={`flex h-[60px] flex-row items-center w-full justify-between p-2 cursor-pointer border-b ${isHovered ? hoveredBg : ''}`}
+            className={`flex min-h-[8vh] flex-col w-full justify-between p-2 cursor-pointer border-b ${isHovered ? hoveredBg : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => router.push(`${NOTE}/${data.id}`)}
+            onClick={() => {
+                router.push(`/wikis/${itemProps?.knowledgeBaseId}/note/${data.id}`)
+            }}
         >
-            <div className="flex flex-row items-center">
-                <div className="mr-2">
-                    <NoteIcon
-                        width={24}
-                        height={45}
-                    />
-                </div>
-                <div className="flex flex-col select-none">
-                    <div>
-                        {data.title}
-                    </div>
-                    <div className="text-sm text-default-500">
-                        {`最近更新时间: ${stringToDateString(data.updateTime)}`}
-                    </div>
-                </div>
+            <div className={`select-none`}>
+                {data.title}
             </div>
-            <div className="text-white">
-                {getPermissions(data.notePermissions)}
-            </div>
+
         </div>
     )
-
 }
-
 function NoteTab({ knowledgeBaseId }: {
     knowledgeBaseId: number
 }) {
 
+    const [selectedNoteId, setSelectedNoteId] = useState<number>(-1)
+
+
 
     return (
         <div className="flex-grow pt-2 overflow-hidden">
-            <Pagination
-                direction="col"
-                Page={createPage(NoteItem)}
+            <InfiniteScroll
                 swr={useNoteList}
                 params={{
+                    knowledgeBaseId: knowledgeBaseId
+                }}
+                Item={NoteItem}
+                itemProps={{
                     knowledgeBaseId: knowledgeBaseId
                 }}
             />

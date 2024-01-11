@@ -1,4 +1,4 @@
-
+import dayjs from "dayjs";
 
 export default class DateTimeFormatter {
     static formatDate(inputTimeStr:any) {
@@ -27,9 +27,13 @@ export default class DateTimeFormatter {
     }
 }
 
+export function stringToDateString(date: string) {
+    return dayjs(date).format("YYYY/MM/DD HH:mm:ss")
+}
+
 export function getDateString(date: Date | undefined) {
     if (date) {
-        return `${date.getFullYear()} ${date.getMonth()}-${date.getDay()} ${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
+        return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     }
     return ""
 }

@@ -11,6 +11,7 @@ import CardButton from "../../../../components/CardButton";
 import WikiTabs from "@/components/wiki/WikiTabs";
 import {createNote} from "@/requests/client/note/note";
 import {NOTE} from "@/constants/route";
+import { WIKI } from "@/constants/route";
 
 const { Title } = Typography
 
@@ -52,6 +53,7 @@ function Wiki({params}: {
                 <CardButton
                     icon={<SettingOutlined style={{fontSize: 20}}/>}
                     title="管理知识库"
+                    clickEvent={() => router.push(`${WIKI}/${id}/manage`)}
                     content="信息、成员、任务"
                 />
                 <CardButton

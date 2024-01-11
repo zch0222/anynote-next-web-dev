@@ -29,6 +29,16 @@ export function getNoteById(params: {
     })
 }
 
+export function deleteNote(params: {
+    id: number
+}) {
+    return request<ResData<string>>({
+        url: `/api/note/notes/${params.id}`,
+        method: Method.DELETE,
+        needToken: true
+    })
+}
+
 export function updateNote(params: {
     id: number,
     title?: string,
