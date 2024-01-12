@@ -59,7 +59,7 @@ function NoteItem({ data }: {
                     <div>
                         {data.title}
                     </div>
-                    <div className="text-sm text-default-500">
+                    <div className="text-[12px] text-default-500">
                         {`最近更新时间: ${stringToDateString(data.updateTime)}`}
                     </div>
                 </div>

@@ -46,10 +46,10 @@ function Note({params}: {
             e => console.log(e)
         )
         return () => {
-            const value = vditorRef.current?.getValue()
-            if (value) {
-                fetchUpdateNote(value)
-            }
+            // const value = vditorRef.current?.getValue()
+            // if (value) {
+            //     fetchUpdateNote(value)
+            // }
         }
     }, [])
 
@@ -128,7 +128,7 @@ function Note({params}: {
             <div className="relative flex-grow w-full overflow-x-hidden overflow-y-auto">
                 <MarkDownEditor
                     onInput={fetchUpdateNote}
-                    onBlur={fetchUpdateNote}
+                    onBlur={() => {}}
                     onUpload={onUpload}
                     content={data.content}
                     vditorRef={vditorRef}
@@ -143,7 +143,6 @@ function Note({params}: {
                     <DrawerContent
                         id={id}
                     />
-
                 </Drawer>
             </div>
         </div>
