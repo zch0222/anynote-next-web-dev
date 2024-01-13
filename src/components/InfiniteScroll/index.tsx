@@ -1,4 +1,4 @@
-import React, {ComponentType, ReactElement, useState, useRef, useEffect} from "react";
+import React, {ComponentType, ReactElement, useState, useRef, useEffect, ReactNode} from "react";
 import Loading from "../Loading";
 import {SWRResponse} from "swr";
 import { PageBean } from "@/types/requestTypes";
@@ -144,7 +144,7 @@ function InfiniteScroll(props: {
             >
                 {pages}
             </ReactInfiniteScroll>
-
+            {data.pages === 0 ? <div className="m-auto p-3">无数据</div> : <></>}
         </div>
     )
 }

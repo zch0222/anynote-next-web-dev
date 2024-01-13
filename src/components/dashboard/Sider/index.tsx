@@ -5,6 +5,7 @@ import { useRouter, usePathname } from "next/navigation";
 import React from "react";
 import withThemeConfigProvider from "../../hoc/withThemeConfigProvider"
 import DashboardSiderMenu from "../DashboardSiderMenu";
+import SearchNoteInput from "@/components/dashboard/SearchNoteInput";
 import { useSelector } from "react-redux";
 import {RootState} from "@/store";
 
@@ -33,6 +34,7 @@ function DashboardSider() {
             bodyStyle={bodyStyle}
         >
             <SiderHeader/>
+            <SearchNoteInput/>
             <DashboardSiderMenu/>
         </Card>
     )

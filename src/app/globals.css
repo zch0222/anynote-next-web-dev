@@ -22,6 +22,10 @@
   overflow: hidden;
 }
 
+em {
+  color: #01B96B;
+}
+
 /*body {*/
 /*  color: rgb(var(--foreground-rgb));*/
 /*  !*background: linear-gradient(*!*/

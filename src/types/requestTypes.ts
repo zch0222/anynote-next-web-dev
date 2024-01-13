@@ -10,3 +10,8 @@ export interface PageBean<T> {
     pages: number
     current: number
 }
+
+export interface SearchVO<T, K> {
+    highlight: T
+    source: K
+}

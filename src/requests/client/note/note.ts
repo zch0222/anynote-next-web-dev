@@ -1,6 +1,13 @@
 import request, {Method} from "@/utils/client-request"
-import {NoteInfo, Note, MarkdownImage, NoteHistoryListItemVO, NoteHistory} from "@/types/noteTypes";
-import {PageBean, ResData} from "@/types/requestTypes";
+import {
+    NoteInfo,
+    Note,
+    MarkdownImage,
+    NoteHistoryListItemVO,
+    NoteHistory,
+    NoteSearchHighlight, NoteSearchSource
+} from "@/types/noteTypes";
+import {PageBean, ResData, SearchVO} from "@/types/requestTypes";
 import {Simulate} from "react-dom/test-utils";
 
 
@@ -104,6 +111,19 @@ export function getNoteHistory(params: {
 }) {
     return request<ResData<NoteHistory>>({
         url: '/api/note/notes/history',
+        method: Method.GET,
+        needToken: true,
+        params: params
+    })
+}
+
+export function searchNote(params: {
+    keyword: string,
+    page: number,
+    pageSize: number
+}) {
+    return request<ResData<PageBean<SearchVO<NoteSearchHighlight, NoteSearchSource>>>>({
+        url: "/api/note/notes/search",
         method: Method.GET,
         needToken: true,
         params: params

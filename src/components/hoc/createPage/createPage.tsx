@@ -34,6 +34,7 @@ export default function createPage(Item: ComponentType<{data: any}>) {
             )
         }
 
+
         return (
             <>
                 {data.rows.map(item => (

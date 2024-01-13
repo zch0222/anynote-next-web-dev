@@ -147,8 +147,27 @@ export interface NoteHistory {
     noteEditList: NoteEdit[]
 }
 
+export interface NoteSearchHighlight {
+    title?: string[];
+    content?: string[];
+}
 
-
+export interface NoteSearchSource {
+    id: number;
+    title: string;
+    noteTextId: number;
+    knowledgeBaseId: number;
+    status: number;
+    dataScope: number;
+    permissions: number;
+    deleted: number;
+    createBy: number;
+    createTime: string;
+    updateBy: number;
+    updateTime: string;
+    knowledgeBaseName: string;
+    submitTaskName: string | null;
+}
 
 
 
