@@ -1,7 +1,11 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import {ArgsProps} from "antd/es/message";
 
-const initialState: ArgsProps = {
+interface MessageProps extends ArgsProps{
+    isDestroy?: boolean
+}
+
+const initialState: MessageProps = {
     content: null
 }
 
@@ -10,7 +14,7 @@ export const messageSlice = createSlice({
     name: "messageSlice",
     initialState,
     reducers: {
-        showMessage: (state, action: PayloadAction<ArgsProps>) => {
+        showMessage: (state, action: PayloadAction<MessageProps>) => {
             return action.payload
         }
     }
