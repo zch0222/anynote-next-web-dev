@@ -57,7 +57,7 @@ body {
   /*  rgb(var(--background-start-rgb));*/
 }
 
-ol {
+.markdown-body ol {
   list-style-type: decimal;
 }
 

@@ -1,6 +1,6 @@
 'use client'
 import {useState, useRef, useEffect} from "react";
-import { Drawer } from "antd";
+import { Drawer, message } from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
 
@@ -26,7 +26,6 @@ function Note({params}: {
     const {id} = params
 
     const dispatch = useDispatch()
-
     const [openDrawer, setOpenDrawer] = useState<boolean>(false)
     const [data, setData] = useState<Note | undefined>(undefined)
     const [isUpdatingNote, setIsUpdatingNote] = useState(false)
@@ -35,6 +34,7 @@ function Note({params}: {
     const vditorRef = useRef<Vditor>()
 
     useEffect(() => {
+        setTimeout(() => {dispatch(showMessage({isDestroy: true, content: null}))}, 1000)
         getNoteById({
             id: id
         }).then(res => {
@@ -86,7 +86,12 @@ function Note({params}: {
 
         const file = files[0]
         if (file.type.startsWith('image/')) {
-            console.log(files)
+            dispatch(showMessage({
+                key: `note_${id}_uploading`,
+                type: "loading",
+                content: "上传中",
+                duration: 0,
+            }))
             uploadNoteImage({
                 noteId: id,
                 uploadId: nanoid(),
@@ -100,7 +105,13 @@ function Note({params}: {
                 }
             ).catch(
                 e => console.log(e)
-            )
+            ).finally(() => {
+                dispatch(showMessage({
+                    isDestroy: true,
+                    key: `note_${id}_uploading`,
+                    content: null
+                }))
+            })
         }
         return null
     }

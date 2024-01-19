@@ -14,13 +14,16 @@ function Message() {
     const dispatch = useDispatch()
 
     useEffect(() => {
-        if (messageArgs.content) {
-            messageApi.open(messageArgs).then(r => {})
-            showMessage({
-                content: null
-            })
+        if (messageArgs.isDestroy === true) {
+            messageApi.destroy(messageArgs.key)
         }
-    }, [messageArgs])
+        else if (messageArgs.content) {
+            messageApi.open(messageArgs).then(r => {})
+            dispatch(showMessage({
+                content: null
+            }))
+        }
+    }, [dispatch, messageApi, messageArgs])
 
     return (
         <>
