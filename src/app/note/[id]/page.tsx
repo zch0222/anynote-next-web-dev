@@ -1,6 +1,6 @@
 'use client'
 import {useState, useRef, useEffect} from "react";
-import { Drawer, message } from "antd";
+import { Drawer } from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
 
@@ -34,7 +34,6 @@ function Note({params}: {
     const vditorRef = useRef<Vditor>()
 
     useEffect(() => {
-        setTimeout(() => {dispatch(showMessage({isDestroy: true, content: null}))}, 1000)
         getNoteById({
             id: id
         }).then(res => {
