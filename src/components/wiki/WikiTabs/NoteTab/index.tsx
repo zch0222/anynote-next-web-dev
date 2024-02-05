@@ -46,7 +46,7 @@ function NoteItem({ data }: {
             className={`flex h-[60px] flex-row items-center w-full justify-between p-2 cursor-pointer border-b ${isHovered ? hoveredBg : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
-            onClick={() => router.push(`${NOTE}/${data.id}`)}
+            onClick={() => window.open(`${NOTE}/${data.id}`)}
         >
             <div className="flex flex-row items-center">
                 <div className="mr-2">
