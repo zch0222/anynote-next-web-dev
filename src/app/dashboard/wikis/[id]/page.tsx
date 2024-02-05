@@ -12,6 +12,7 @@ import WikiTabs from "@/components/wiki/WikiTabs";
 import {createNote} from "@/requests/client/note/note";
 import {NOTE} from "@/constants/route";
 import { WIKI } from "@/constants/route";
+import {CARD_BUTTON_ICON_FONT_SIZE} from "@/constants/size";
 
 const { Title } = Typography
 
@@ -57,7 +58,7 @@ function Wiki({params}: {
                     content="信息、成员、任务"
                 />
                 <CardButton
-                    icon={<EditOutlined/>}
+                    icon={<EditOutlined style={{fontSize: CARD_BUTTON_ICON_FONT_SIZE}}/>}
                     title="创建新笔记"
                     content="文档"
                     clickEvent={fetchCreateNote}

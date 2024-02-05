@@ -23,12 +23,14 @@ const config: Config = {
     themes: {
       light: {
         colors: {
-          primary: '#01B96B'
+          primary: '#01B96B',
+          danger: "#ff2424"
         }
       },
       dark: {
         colors: {
-          primary: '#01B96B'
+          primary: '#01B96B',
+          danger: "#ff2424"
         }
       }
     }

@@ -22,9 +22,11 @@ const CardButton: React.FC<FunctionButtonProps> = ({
     return (
         <div>
             <Space>
-                <Card className="w-60" style={{border: '1px #01B96B solid', marginRight: 25}} bodyStyle={{display: 'flex', padding: '5px 10px'}}
+                <Card className="flex flex-row items-center w-60" style={{border: '1px #01B96B solid', marginRight: 25}} bodyStyle={{display: 'flex', padding: '5px 10px'}}
                       hoverable onClick={clickEvent}>
-                    {icon}
+                    <div className="flex justify-center items-center">
+                        {icon}
+                    </div>
                     <div className="pl-4">
                         <div className="text-base">{title}</div>
                         <div className="text-gray-400">{content}</div>

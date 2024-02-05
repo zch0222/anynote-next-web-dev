@@ -33,7 +33,7 @@ const KnowledgeBaseCard = withThemeConfigProvider(function ({ data }: {
                 marginTop: 16,
                 height: 315
             }}
-            cover={<Image className="object-cover w-[200px] h-[250px]" src={data.cover} />}
+            cover={<Image className="object-cover w-[200px] h-[250px]" src={data.cover} alt='cover'/>}
             // isPressable
             onClick={() => router.push(`${WIKI}/${data.id}`)}
         >

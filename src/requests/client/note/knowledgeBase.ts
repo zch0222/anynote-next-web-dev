@@ -38,3 +38,9 @@ export function createKnowledgeBase(params: {
         needToken: true
     })
 }
+
+export function uploadKnowledgeBaseCover(params: {
+
+}) {
+
+}

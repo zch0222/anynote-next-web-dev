@@ -1,3 +1,5 @@
+import WikiManageTabs from "@/components/wiki/manage/WikiManageTabs";
+
 
 export default function MangeWiki({params}: {
     params: {
@@ -5,6 +7,16 @@ export default function MangeWiki({params}: {
     }
 }) {
     return (
-        <div className="overflow-y-auto">{params.id}</div>
+        <div className="flex flex-col overflow-hidden w-full h-full pt-10 pl-7">
+            <div className="text-3xl font-bold mb-5">
+                知识库管理
+            </div>
+            <div className="flex-grow overflow-hidden">
+                <WikiManageTabs
+                    id={params.id}
+                />
+            </div>
+
+        </div>
     )
 }
