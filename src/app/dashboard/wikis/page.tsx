@@ -52,7 +52,9 @@ function Wikis() {
                     direction="row"
                     Page={createPage(KnowledgeBaseCard)}
                     swr={useNoteKnowledgeBaseList}
-                    params={{}}
+                    params={{
+                        permissions: 5
+                    }}
                 />
             </div>
 

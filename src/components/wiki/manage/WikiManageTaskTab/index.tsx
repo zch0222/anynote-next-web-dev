@@ -8,10 +8,13 @@ import useAdminNoteTaskList from "@/hooks/useAdminNoteTaskList";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import TaskIcon from "@/components/svg/TaskIcon";
 import { CARD_BUTTON_ICON_SIZE } from "@/constants/size";
+import useRouter from "@/hooks/useRouter";
 
 function WikiManageTaskTab({ id }: {
     id: number
 }) {
+
+    const { router } = useRouter()
 
     return (
         <div
@@ -22,7 +25,7 @@ function WikiManageTaskTab({ id }: {
                     icon={<TaskIcon width={CARD_BUTTON_ICON_SIZE} height={CARD_BUTTON_ICON_SIZE}/>}
                     title="创建任务"
                     content="创建知识库任务"
-                    clickEvent={() => console.log("create")}
+                    clickEvent={() => router.push(`/dashboard/task/new`)}
                 />
             </div>
             <div className="flex-grow overflow-y-auto mt-2 pb-10">

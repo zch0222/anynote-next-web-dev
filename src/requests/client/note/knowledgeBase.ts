@@ -5,7 +5,8 @@ import {PageBean, ResData} from "@/types/requestTypes";
 export const getKnowledgeBasesUrl = "/api/note/bases"
 export function getKnowledgeBases(params: {
     page: number,
-    pageSize: number
+    pageSize: number,
+    permissions: number
 }) {
     return request<ResData<PageBean<NoteKnowledgeBaseDTO>>>({
         url: getKnowledgeBasesUrl,
