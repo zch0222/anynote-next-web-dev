@@ -1,4 +1,5 @@
 import dayjs from "dayjs";
+import {isNotNull} from "@/utils/objectUtil";
 
 export default class DateTimeFormatter {
     static formatDate(inputTimeStr:any) {
@@ -36,4 +37,13 @@ export function getDateString(date: Date | undefined) {
         return `${date.toLocaleDateString()} ${date.toLocaleTimeString()}`
     }
     return ""
+}
+
+export function createDayjs(dateString: string | null | undefined): dayjs.Dayjs {
+    if (isNotNull(dateString)) {
+        return dayjs(dateString)
+    }
+    else {
+        return dayjs()
+    }
 }

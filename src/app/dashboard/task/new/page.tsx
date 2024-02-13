@@ -18,7 +18,9 @@ function CreateTask() {
                 <BackButton size={30} onClick={() => router.back()}/>
                 <div className="ml-1 font-bold">创建任务</div>
             </div>
-            <TaskForm/>
+            <TaskForm
+                onFinish={(value: any) => console.log(value)}
+            />
         </div>
     )
 }
