@@ -6,7 +6,7 @@ export default function Loading({ size }: {
     size?: "large" | "default" | "small"
 }) {
     return (
-        <div className="flex mt-50 w-full justify-center items-center">
+        <div className="flex mt-50 w-full h-full justify-center items-center">
             <Spin
               size={size || "large"}
             />

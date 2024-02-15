@@ -14,7 +14,7 @@ function WikiManageTaskTab({ id }: {
     id: number
 }) {
 
-    const { router } = useRouter()
+    const { router, push } = useRouter()
 
     return (
         <div
@@ -25,7 +25,13 @@ function WikiManageTaskTab({ id }: {
                     icon={<TaskIcon width={CARD_BUTTON_ICON_SIZE} height={CARD_BUTTON_ICON_SIZE}/>}
                     title="创建任务"
                     content="创建知识库任务"
-                    clickEvent={() => router.push(`/dashboard/task/new`)}
+                    clickEvent={() => push({
+                        pathname: '/dashboard/task/new',
+                        params: [{
+                            key: "knowledgeBaseId",
+                            value: id.toString()
+                        }]
+                    })}
                 />
             </div>
             <div className="flex-grow overflow-y-auto mt-2 pb-10">

@@ -169,6 +169,14 @@ export interface NoteSearchSource {
     submitTaskName: string | null;
 }
 
+export interface NoteOperationCount {
+    userId: number;
+    nickname: string;
+    noteId: number;
+    count: number;
+}
+
+
 
 
 
