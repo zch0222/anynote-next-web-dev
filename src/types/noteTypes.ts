@@ -176,6 +176,29 @@ export interface NoteOperationCount {
     count: number;
 }
 
+export interface KnowledgeBaseMember {
+    userId: number;
+    username: string;
+    nickname: string;
+    permissions: number;
+}
+
+export interface KnowledgeBaseImportUserVO {
+    /**
+     * 名单链接
+     */
+    excelUrl: string;
+
+    failUserNameList: string[];
+
+    /**
+     * 失败条数
+     */
+    failCount: number;
+}
+
+
+
 
 
 

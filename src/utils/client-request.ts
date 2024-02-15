@@ -1,4 +1,4 @@
-import {all, AxiosResponse} from "axios";
+import {all, AxiosProgressEvent, AxiosResponse} from "axios";
 import store from "@/store";
 import {message} from "antd";
 import { showMessage } from "@/store/message/messageSlice";
@@ -99,7 +99,8 @@ export default function clientRequest<T>(options: {
     method: string,
     needToken: boolean,
     data?: any,
-    params?: any
+    params?: any,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
 }): Promise<AxiosResponse<T>> {
     return service(options);
 }

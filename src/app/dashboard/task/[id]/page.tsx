@@ -49,7 +49,7 @@ function SubmissionItem({ data }: {
 
     return (
         <div
-            className={`flex flex-row justify-between items-center w-full p-2 cursor-pointer  ${isHovered ? hoveredBg : ''}`}
+            className={`flex flex-row justify-between items-center w-full p-2 cursor-pointer ${isHovered ? hoveredBg : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => window.open(`${NOTE}/${data.noteId}`)}
