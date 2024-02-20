@@ -2,7 +2,7 @@
 import {Form, Input, DatePicker, Button, Select} from "antd"
 import type { SelectProps } from 'antd'
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-import React, {useMemo, useState, useRef, useEffect} from "react";
+import React, {useMemo, useState, useRef, useEffect, useCallback} from "react";
 import { BaseSelectRef } from "rc-select";
 import dayjs, {Dayjs} from 'dayjs';
 import useRouter from "@/hooks/useRouter";
@@ -13,6 +13,8 @@ import { useDispatch } from "react-redux";
 import {showMessage} from "@/store/message/messageSlice";
 import useNoteKnowledgeBaseList from "@/hooks/useNoteKnowledgeBaseList";
 import { isNotNull } from "@/utils/objectUtil";
+import MarkDownEditor from "@/components/MarkDownEditor";
+import Vditor from "vditor";
 
 const {RangePicker} = DatePicker;
 
@@ -20,11 +22,14 @@ export interface TaskFormType {
     taskName: string,
     startTime: Dayjs,
     endTime: Dayjs,
-    knowledgeBaseId: number
+    knowledgeBaseId: number,
+    taskDescribe: string
 }
 
-function TaskForm({ onFinish }: {
-    onFinish: (value: TaskFormType) => Promise<void>
+function TaskForm({ onFinish, isShowKnowledgeBase, taskDescribe }: {
+    onFinish: (value: TaskFormType) => Promise<void>,
+    isShowKnowledgeBase: boolean,
+    taskDescribe?: string
 }) {
     const dispatch = useDispatch()
 
@@ -34,13 +39,15 @@ function TaskForm({ onFinish }: {
         taskName: string,
         startTime: Dayjs,
         endTime: Dayjs,
-        knowledgeBaseId: number
+        knowledgeBaseId: number,
+        taskDescribe: string
     }>({
         id: parseInt(searchParams.get("id") || "0"),
         taskName: searchParams.get("taskName") || "",
         startTime: createDayjs(searchParams.get("startTime")),
         endTime: createDayjs(searchParams.get("endTime")),
-        knowledgeBaseId: parseInt(searchParams.get("knowledgeBaseId") || "0")
+        knowledgeBaseId: parseInt(searchParams.get("knowledgeBaseId") || "0"),
+        taskDescribe: taskDescribe || ""
     });
     const [baseOptions, setBaseOptions] = useState<{label: string, value: number}[]>([])
     const [isLoading, setIsLoading] = useState<boolean>(false)
@@ -55,6 +62,7 @@ function TaskForm({ onFinish }: {
     })
 
     const selectBasesRef = useRef<any>()
+    const vditorRef = useRef<Vditor>()
 
     const getBaseList = async ({page, pageSize}: {
         page: number,
@@ -114,8 +122,25 @@ function TaskForm({ onFinish }: {
             return
         }
         setIsLoading(true)
-        onFinish(value).finally(() => setIsLoading(false))
+        onFinish({
+            ...value,
+            taskDescribe: taskForm.taskDescribe
+        }).finally(() => setIsLoading(false))
     }
+
+    const onDescribeInput = useCallback((value: string) => {
+        console.log(value)
+        setTaskForm({
+            ...taskForm,
+            taskDescribe: value
+        })
+    }, [taskForm])
+
+    const onDescribeUpload = useCallback((files: File[]) => {
+        return null
+    }, [])
+
+
 
 
     return (
@@ -173,6 +198,9 @@ function TaskForm({ onFinish }: {
                 />
             </Form.Item>
             <Form.Item
+                style={{
+                    display: isShowKnowledgeBase ? "block" : "none"
+                }}
                 label="知识库"
                 name="knowledgeBaseId"
                 rules={[
@@ -188,6 +216,20 @@ function TaskForm({ onFinish }: {
                     options={baseOptions}
                     onPopupScroll={onPopupScroll}
                 />
+            </Form.Item>
+            <Form.Item>
+                <div className="flex flex-col">
+                    <div className="text-base font-bold">任务描述：</div>
+                    <div className="w-full h-[500px] mt-2">
+                        <MarkDownEditor
+                            onInput={onDescribeInput}
+                            onBlur={() => {}}
+                            onUpload={onDescribeUpload}
+                            content={taskForm.taskDescribe}
+                            vditorRef={vditorRef}
+                        />
+                    </div>
+                </div>
             </Form.Item>
 
             <Form.Item>

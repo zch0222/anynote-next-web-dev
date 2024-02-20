@@ -10,10 +10,17 @@ import {showMessage} from "@/store/message/messageSlice";
 import { useDispatch, useSelector } from "react-redux";
 import {RootState} from "@/store";
 import{ UploadRequestOption } from 'rc-upload/lib/interface'
+import { createCoverUploadTempLink, completeCoverUpload } from "@/requests/client/note/knowledgeBase";
+import { uploadFile } from "@/requests/client/file/huaweiObs";
+import {HuaweiOBSTemporarySignature} from "@/types/fileTypes";
+import * as urlLib from 'url';
+import {removeAllUrlParameter} from "@/utils/urlUtil";
+import { calculateFileHash } from "@/utils/fileUtil";
 
 function WikiInfoForm({ onFinish, buttonText, initialValues }: {
     onFinish: (value: {
         name: string,
+        cover: string,
         detail: string
     }) => void,
     buttonText: string,
@@ -29,7 +36,8 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
     const dispatch = useDispatch()
     const user = useSelector((state: RootState) => state.user)
 
-    const coverUrlRef = useRef(initialValues.cover)
+    const coverUploadIdRef = useRef("")
+    const coverHash = useRef("")
 
     const beforeUpload = (file: RcFile) => {
         const isJpgOrPng = file.type === 'image/jpeg' || file.type === 'image/png' || file.type === "image/jpg";
@@ -49,8 +57,71 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
         return isJpgOrPng && isLt2M;
     };
 
-    const uploadCover = (value: UploadRequestOption) => {
+    const finishUploadCover = (signature: HuaweiOBSTemporarySignature) => {
+        setCover(removeAllUrlParameter(signature.signedUrl))
+
+        completeCoverUpload({
+            uploadId: coverUploadIdRef.current,
+            hash: coverHash.current
+        }).then(
+            res => dispatch(showMessage({
+                type: "success",
+                content: "上传成功"
+            }))
+        ).finally(
+            () => {
+                setIsUploadingCover(false)
+                coverUploadIdRef.current = ""
+                coverHash.current = ""
+            }
+        )
+    }
+
+    const startUploadCover = (signature: HuaweiOBSTemporarySignature, file: File) => {
+        const reader = new FileReader()
+        reader.onload = () => {
+            uploadFile({
+                signature: signature,
+                fileArrayBuffer: reader.result,
+                contentType: file.type
+            }).then(res => {
+                console.log("SUCCESS")
+                finishUploadCover(signature)
+            }).catch(e => {
+                dispatch(showMessage({
+                    type: "error",
+                    content: "上传封面失败"
+                }))
+                console.log(e)
+            })
+            coverHash.current = calculateFileHash(reader)
+        }
+        reader.readAsArrayBuffer(file)
+    }
+
+    const uploadCover = (value: {
+        file: File
+    }) => {
         console.log(value)
+        coverUploadIdRef.current = nanoid()
+        createCoverUploadTempLink({
+            fileName: value.file.name,
+            contentType: value.file.type,
+            uploadId: coverUploadIdRef.current
+        }).then(
+            res => {
+                const data = res.data.data
+                startUploadCover(data, value.file)
+            }
+        ).catch(
+            e => {
+                console.log(e)
+                dispatch(showMessage({
+                    type: "error",
+                    content: "上传封面失败"
+                }))
+            }
+        )
     }
 
     const getBase64 = (img: RcFile, callback: (url: string) => void) => {
@@ -73,12 +144,22 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
         }
     };
 
+    const finish = (value: {
+        name: string,
+        detail: string
+    }) => {
+        onFinish({
+            cover: cover,
+            ...value
+        })
+    }
+
     return (
         <div>
             <Form
                 layout="vertical"
                 initialValues={initialValues}
-                onFinish={onFinish}
+                onFinish={finish}
             >
                 <Form.Item>
                     <div className="flex flex-row items-center">
@@ -89,6 +170,7 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
                                 src={cover}
                                 width={120}
                                 height={150}
+                                alt="cover"
                             />
                         </div>
                         <div>
@@ -98,6 +180,7 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
                                 // data={{
                                 //     uploadId: nanoid()
                                 // }}
+                                // @ts-ignore
                                 customRequest={uploadCover}
                                 onChange={handleChange}
                                 showUploadList={false}

@@ -19,6 +19,7 @@ export interface AdminNoteTask {
     updateTime: string;
     id: number;
     taskName: string;
+    taskDescribe?: string
     startTime: string;
     endTime: string;
     knowledgeBaseId: number;
@@ -29,6 +30,7 @@ export interface AdminNoteTask {
 }
 
 export interface NoteTaskSubmissionInfo {
+    id: number
     createBy: number;
     createTime: string;
     updateBy: number;
@@ -47,6 +49,7 @@ export interface NoteTask {
     updateTime: string;
     id: number;
     taskName: string;
+    taskDescribe?: string;
     startTime: string;
     endTime: string;
     knowledgeBaseId: number;
@@ -197,6 +200,11 @@ export interface KnowledgeBaseImportUserVO {
     failCount: number;
 }
 
+export interface ImportKnowledgeBaseUserVO {
+    excelUrl: string;
+    failUserNameList: string[];
+    failCount: number;
+}
 
 
 

@@ -2,6 +2,7 @@ import request, {Method} from "@/utils/client-request"
 import {CreateDTO, KnowledgeBaseDTO, NoteKnowledgeBaseDTO, KnowledgeBaseMember, KnowledgeBaseImportUserVO} from "@/types/noteTypes";
 import {PageBean, ResData} from "@/types/requestTypes";
 import {AxiosProgressEvent} from "axios";
+import {HuaweiOBSTemporarySignature, ImageUploadTempLinkDTO} from "@/types/fileTypes";
 
 export const getKnowledgeBasesUrl = "/api/note/bases"
 export function getKnowledgeBases(params: {
@@ -74,5 +75,39 @@ export function importUsers(params: {
         data: formData,
         onUploadProgress: params.onUploadProgress
     })
-    
+}
+
+export function createCoverUploadTempLink(params: ImageUploadTempLinkDTO) {
+    return request<ResData<HuaweiOBSTemporarySignature>>({
+        url: "/api/note/bases/covers/img",
+        method: Method.POST,
+        needToken: true,
+        data: params
+    })
+}
+
+export function completeCoverUpload(params: {
+    uploadId: string,
+    hash: string
+}) {
+    return request<ResData<string>>({
+        url: "/api/note/bases/covers/img",
+        method: Method.PUT,
+        needToken: true,
+        data: params
+    })
+}
+
+export function updateKnowledgeBase(params: {
+    name: string,
+    cover: string,
+    detail: string,
+    knowledgeBaseId: number
+}) {
+    return request<ResData<string>>({
+        url: `/api/note/bases/${params.knowledgeBaseId}`,
+        method: Method.PUT,
+        needToken: true,
+        data: params
+    })
 }

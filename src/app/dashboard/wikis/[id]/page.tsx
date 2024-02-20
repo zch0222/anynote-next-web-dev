@@ -13,8 +13,9 @@ import {createNote} from "@/requests/client/note/note";
 import {NOTE} from "@/constants/route";
 import { WIKI } from "@/constants/route";
 import {CARD_BUTTON_ICON_FONT_SIZE} from "@/constants/size";
+import Title from "@/components/Title";
 
-const { Title } = Typography
+// const { Title } = Typography
 
 function Wiki({params}: {
     params: {
@@ -49,14 +50,17 @@ function Wiki({params}: {
 
     return (
         <div className="flex flex-col h-full box-border overflow-hidden p-8">
-            <Title level={3}>{data.knowledgeBaseName}</Title>
+            <Title text={data.knowledgeBaseName}/>
+            {/*<Title level={3}>{data.knowledgeBaseName}</Title>*/}
             <div className="flex flex-row mb-8">
-                <CardButton
-                    icon={<SettingOutlined style={{fontSize: 20}}/>}
-                    title="管理知识库"
-                    clickEvent={() => router.push(`${WIKI}/${id}/manage`)}
-                    content="信息、成员、任务"
-                />
+                {data.permissions === 1 ?
+                    <CardButton
+                        icon={<SettingOutlined style={{fontSize: 20}}/>}
+                        title="管理知识库"
+                        clickEvent={() => router.push(`${WIKI}/${id}/manage`)}
+                        content="信息、成员、任务"
+                    /> : <></>
+                }
                 <CardButton
                     icon={<EditOutlined style={{fontSize: CARD_BUTTON_ICON_FONT_SIZE}}/>}
                     title="创建新笔记"

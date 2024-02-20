@@ -8,6 +8,7 @@ import DateTimeFormatter from "@/utils/date";
 import {useRouter} from "next/navigation";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import { NoteTask } from "@/types/noteTypes";
+import MarkDownViewer from "@/components/MarkDownViewer";
 
 interface TaskItemCardProps {
     data: NoteTask
@@ -50,6 +51,15 @@ const TaskItemCard: React.FC<TaskItemCardProps> = ({data}) => {
                                       <Tag bordered={false}
                                            color="error">被退回</Tag>}</div>
                               </FormItem>
+                              {data?.taskDescribe ?
+                                  <FormItem>
+                                      <div className="flex flex-col">
+                                          <div className="text-base mb-1">任务描述：</div>
+                                          <MarkDownViewer content={data.taskDescribe}/>
+                                      </div>
+                                  </FormItem>
+                                  : <></>
+                              }
                           </Form>}
                 />
             </Card>

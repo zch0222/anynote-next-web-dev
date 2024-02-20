@@ -17,11 +17,13 @@ function CreateTask() {
     const router = useRouter()
 
     const onFinish = useCallback(async (value: TaskFormType) => {
+        console.log(value)
         await createTask({
             startTime: value.startTime.toString(),
             endTime: value.startTime.toString(),
             taskName: value.taskName,
-            knowledgeBaseId: value.knowledgeBaseId
+            knowledgeBaseId: value.knowledgeBaseId,
+            taskDescribe: value.taskDescribe
         }).then(res => dispatch(showMessage({type: "success", content: "创建成功"}))).catch(e => console.log(e))
     }, [dispatch])
 
@@ -30,6 +32,7 @@ function CreateTask() {
             <Title text={"创建任务"}/>
             <TaskForm
                 onFinish={onFinish}
+                isShowKnowledgeBase={true}
             />
         </div>
     )

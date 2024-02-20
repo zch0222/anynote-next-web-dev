@@ -1,6 +1,9 @@
 'use client'
 import { useCallback } from "react";
 
+import { useDispatch } from "react-redux";
+import { showMessage } from "@/store/message/messageSlice";
+import { updateKnowledgeBase } from "@/requests/client/note/knowledgeBase";
 import useKnowledgeBase from "@/hooks/useKnowledgeBase";
 import WikiInfoForm from "@/components/wiki/WikiInfoForm";
 import Loading from "@/components/Loading";
@@ -9,12 +12,26 @@ function WikiManageInfoTab({ id }: {
     id: number
 }) {
 
+    const dispatch = useDispatch()
+
     const changeWikiInfo = useCallback((value: {
         name: string,
-        detail: string
+        detail: string,
+        cover: string
     }) => {
-        console.log(value)
-    }, [])
+        updateKnowledgeBase({
+            knowledgeBaseId: id,
+            ...value
+        }).then(res => {
+            dispatch(showMessage({
+                type: "success",
+                content: "修改成功"
+            }))
+
+        }).catch(e => {
+            console.log(e)
+        })
+    }, [id, dispatch])
 
     const {data} = useKnowledgeBase(id);
 

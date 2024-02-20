@@ -1,9 +1,10 @@
-import {all, AxiosProgressEvent, AxiosResponse} from "axios";
+import {all, AxiosHeaders, AxiosProgressEvent, AxiosResponse} from "axios";
 import store from "@/store";
 import {message} from "antd";
 import { showMessage } from "@/store/message/messageSlice";
 
 import {service, MyAxiosRequestConfig, Method, getTokenDebounce} from "./request";
+import {AxiosHeaderValue, HeadersDefaults} from "axios/index";
 
 service.interceptors.request.use(
     async (config: MyAxiosRequestConfig) => {
@@ -100,7 +101,11 @@ export default function clientRequest<T>(options: {
     needToken: boolean,
     data?: any,
     params?: any,
-    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+    headers?: HeadersDefaults & {
+        [key: string]: AxiosHeaderValue
+    },
+    withCredentials?: boolean
 }): Promise<AxiosResponse<T>> {
     return service(options);
 }

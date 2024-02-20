@@ -7,6 +7,7 @@ import { getNoteById } from "@/requests/client/note/note";
 import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
 import MarkDownEditor from "@/components/MarkDownEditor";
+import MarkDownViewer from "@/components/MarkDownViewer";
 import DrawerContent from "@/components/note/DrawerContent";
 
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
@@ -135,14 +136,21 @@ function Note({params}: {
                     }}
                 />
             </div>
-            <div className="relative flex-grow w-full overflow-x-hidden overflow-y-auto">
-                <MarkDownEditor
-                    onInput={fetchUpdateNote}
-                    onBlur={() => {}}
-                    onUpload={onUpload}
-                    content={data.content}
-                    vditorRef={vditorRef}
-                />
+            <div className="flex flex-col items-center relative flex-grow w-full overflow-x-hidden overflow-y-auto">
+                { data.notePermissions < 6 ?
+                    <MarkDownViewer
+                        content={data.content}
+                    /> :
+                    <div className="w-full h-full">
+                        <MarkDownEditor
+                            onInput={fetchUpdateNote}
+                            onBlur={() => {}}
+                            onUpload={onUpload}
+                            content={data.content}
+                            vditorRef={vditorRef}
+                        />
+                    </div>
+                }
                 <Drawer
                     closeIcon={null}
                     mask={false}
@@ -152,6 +160,8 @@ function Note({params}: {
                 >
                     <DrawerContent
                         id={id}
+                        knowledgeBaseId={data.knowledgeBaseId}
+                        permissions={data.notePermissions}
                     />
                 </Drawer>
             </div>

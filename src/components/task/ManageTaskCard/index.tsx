@@ -1,14 +1,16 @@
 'use client'
 
+// import { Progress } from "antd";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import {AdminNoteTask} from "@/types/noteTypes";
 import Loading from "@/components/Loading";
-import {Card, Progress, Chip} from "@nextui-org/react";
+import {Card, Chip, Progress} from "@nextui-org/react";
 import { getDateString } from "@/utils/date";
 import {useMemo} from "react";
 import { useRouter } from "next/navigation";
 import { RED } from "@/constants/color"
 import {id} from "postcss-selector-parser";
+import MarkDownViewer from "@/components/MarkDownViewer";
 
 function ManageTaskCard({ data }: {
     data: AdminNoteTask
@@ -25,10 +27,10 @@ function ManageTaskCard({ data }: {
             return <Chip aria-label="未开始" className="text-white" color="warning">未开始</Chip>
         }
         else if (endTime > now) {
-            return <Chip aria-label="未开始" className="text-white" color="primary">进行中</Chip>
+            return <Chip aria-label="进行中" className="text-white" color="primary">进行中</Chip>
         }
         else {
-            return <Chip aria-label="未开始" className="text-white" color="danger">已结束</Chip>
+            return <Chip aria-label="已结束" className="text-white" color="danger">已结束</Chip>
         }
     }, [data])
 
@@ -58,10 +60,16 @@ function ManageTaskCard({ data }: {
             <div className="text-base mt-1">
                 {`结束时间: ${getDateString(new Date(data.endTime))}`}
             </div>
-            <div className="flex flex-row mt-2 items-center">
-                <Progress aria-label="progress" size="lg" value={data.submissionProgress}/>
+            <div className="flex w-full flex-row mt-2 items-center">
+                <Progress aria-label="progress" size="lg" value={data.submissionProgress * 100}/>
                 <div className="ml-2">{`${data.submittedCount}/${data.needSubmitCount}`}</div>
             </div>
+            {/*{data?.taskDescribe ?*/}
+            {/*    <div className="flex flex-col items-start mt-1">*/}
+            {/*        <div className="text-base">任务描述：</div>*/}
+            {/*        <MarkDownViewer content={data.taskDescribe}/>*/}
+            {/*    </div>*/}
+            {/*    : <></>}*/}
         </Card>
     )
 }

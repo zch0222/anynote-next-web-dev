@@ -55,26 +55,12 @@ export function getTaskSubmissionsInfoList(params: {
 }
 
 
-export function updateNoteTask(params: {
-    id: number,
-    taskName: string,
-    startTime: Date,
-    endTime: Date
-}) {
-    return request<ResData<String>>({
-        url: `/api/note/admin/noteTasks/${params.id}`,
-        method: Method.PATCH,
-        needToken: true,
-        data: params
-    })
-}
-
-
 export function createTask(params: {
     taskName: string,
     startTime: string,
     endTime: string,
-    knowledgeBaseId: number
+    knowledgeBaseId: number,
+    taskDescribe: string
 }) {
     return request<ResData<String>>({
         url: `/api/note/admin/noteTasks`,
@@ -99,6 +85,33 @@ export function returnTaskSubmission(id: number) {
         url: `/api/note/admin/noteTasks/submissions/return/${id}`,
         method: Method.POST,
         needToken: true
+    })
+}
+
+export function editTask(params: {
+    id: number,
+    taskName: string,
+    startTime: string,
+    endTime: string,
+    taskDescribe: string
+}) {
+    return request<ResData<string>>({
+        url: `/api/note/admin/noteTasks/${params.id}`,
+        method: Method.PATCH,
+        needToken: true,
+        data: params
+    })
+}
+
+export function submitTask(params: {
+    noteTaskId: number,
+    noteId: number
+}) {
+    return  request<ResData<string>>({
+        url: `/api/note/noteTasks/submit`,
+        method: Method.POST,
+        needToken: true,
+        data: params
     })
 }
 
