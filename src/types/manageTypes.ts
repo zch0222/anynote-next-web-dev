@@ -43,7 +43,6 @@ export interface SysUserInfo {
     phoneNumber: string;
     sex: number;
     avatar: string;
-    password: string;
     status: number;
     deleted: number;
     loginIp: string;

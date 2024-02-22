@@ -5,7 +5,7 @@ import UserCard from "@/components/UserCard";
 function DashboardFoot() {
     return (
         <div className="w-full flex flex-col">
-            <UserCard/>
+            <UserCard isShowSetting={true}/>
         </div>
     )
 }
