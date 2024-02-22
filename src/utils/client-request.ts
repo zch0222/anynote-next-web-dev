@@ -4,7 +4,7 @@ import {message} from "antd";
 import { showMessage } from "@/store/message/messageSlice";
 
 import {service, MyAxiosRequestConfig, Method, getTokenDebounce} from "./request";
-import {AxiosHeaderValue, HeadersDefaults} from "axios/index";
+import {AxiosHeaderValue, HeadersDefaults} from "axios";
 
 service.interceptors.request.use(
     async (config: MyAxiosRequestConfig) => {

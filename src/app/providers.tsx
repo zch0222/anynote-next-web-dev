@@ -2,13 +2,17 @@
 'use client'
 import {useRouter} from 'next/navigation'
 import { Provider } from "react-redux";
-import store from "@/store";
 import { ThemeProvider } from 'next-themes';
 import AntdRegistry from "@/lib/AntdRegistry";
 import { ThemeProviderProps } from "next-themes/dist/types";
+import {useRef} from "react";
 import React from "react";
 import {ConfigProvider} from "antd";
+import store from "@/store";
+import {AppStore} from "@/store";
 import {NextUIProvider} from "@nextui-org/react";
+import { setUserInfo } from "@/store/user/userSlice";
+import { getUserInfo } from "@/store/user/userSlice";
 
 
 export interface ProvidersProps {
@@ -18,9 +22,15 @@ export interface ProvidersProps {
 
 export function Providers({ children, themeProps }: ProvidersProps) {
     const router = useRouter()
+    const storeRef = useRef<AppStore | null>(null)
+    if (!storeRef.current) {
+        storeRef.current = store
+        // storeRef.current?.dispatch(setUserInfo(getUserInfo()))
+    }
+
 
     return (
-        <Provider store={store}>
+        <Provider store={storeRef.current}>
             <AntdRegistry>
                 <ConfigProvider
                     theme={{
