@@ -44,7 +44,7 @@ export default function MarkDownEditor({onInput, onBlur, onUpload, content, vdit
                 enable: true,
                 type: "text"
             },
-            // cdn: process.env.NEXT_PUBLIC_VDITOR_CDN,
+            cdn: process.env.NEXT_PUBLIC_VDITOR_CDN,
             toolbar: [
                 "emoji",
                 "headings",
