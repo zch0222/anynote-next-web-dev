@@ -58,11 +58,13 @@ function EditTask({params}: {
     return (
         <div className="flex flex-col w-full h-full p-5">
             <Title text="修改任务"/>
-            <TaskForm
-                onFinish={onFinish}
-                isShowKnowledgeBase={false}
-                taskDescribe={data.taskDescribe}
-            />
+            <div className="flex-grow overflow-y-auto">
+                <TaskForm
+                    onFinish={onFinish}
+                    isShowKnowledgeBase={false}
+                    taskDescribe={data.taskDescribe}
+                />
+            </div>
         </div>
     )
 }

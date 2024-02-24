@@ -30,10 +30,12 @@ function CreateTask() {
     return (
         <div className="flex flex-col w-full h-full p-5">
             <Title text={"创建任务"}/>
-            <TaskForm
-                onFinish={onFinish}
-                isShowKnowledgeBase={true}
-            />
+            <div className="flex-grow overflow-y-auto">
+                <TaskForm
+                    onFinish={onFinish}
+                    isShowKnowledgeBase={true}
+                />
+            </div>
         </div>
     )
 }
