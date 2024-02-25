@@ -39,6 +39,11 @@ async function saveUserInfo(userInfo: UserInfo) {
     // localStorage.setItem("userInfo", JSON.stringify(userInfo))
 }
 
+async function removeUserInfo() {
+    const { default: jsCookie } = await import("js-cookie");
+    jsCookie.remove("userInfo")
+}
+
 export const userSlice = createSlice({
     name: "userSlice",
     initialState,
@@ -49,11 +54,12 @@ export const userSlice = createSlice({
             return action.payload;
         },
         clearUserInfo: (state) => {
+            removeUserInfo().then();
             return initialState
         }
     }
 })
 
-export const { setUserInfo } = userSlice.actions
+export const { setUserInfo, clearUserInfo } = userSlice.actions
 
 export default userSlice.reducer

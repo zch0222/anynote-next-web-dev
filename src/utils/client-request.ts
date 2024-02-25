@@ -44,7 +44,8 @@ service.interceptors.response.use(
         const errorData = errorResponse.data || {};
         console.log(errorResponse.status);
         if (errorResponse.status === 401) {
-            message.info("请先登录")
+            message.info("请先登录").then(res => window.location.replace("/login"))
+
             isRefreshToken++;
 
             console.log("isRRRRrrrrrrrrr", isRefreshToken);

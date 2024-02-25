@@ -6,9 +6,10 @@ import Loading from "@/components/Loading";
 import {ReactElement} from "react";
 import { useState } from "react";
 import { showMessage } from "@/store/message/messageSlice";
-import { setUserInfo } from "@/store/user/userSlice";
+import { setUserInfo, clearUserInfo } from "@/store/user/userSlice";
 import { useDispatch } from "react-redux";
 import { resetPassword } from "@/requests/client/auth/auth";
+import { useRouter } from "next/navigation";
 
 function User() {
 
@@ -18,6 +19,7 @@ function User() {
     const [repeatPassword, setRepeatPassword] = useState<string>("")
     const dispatch = useDispatch()
     const [isUpdatingPassword, setIsUpdatePassword] = useState<boolean>(false)
+    const router = useRouter()
 
     const changePassword = () => {
         if (newPassword !== repeatPassword) {
@@ -58,6 +60,15 @@ function User() {
         ).finally(
             () => setIsUpdatePassword(false)
         )
+    }
+
+    const logout = () => {
+        dispatch(clearUserInfo())
+        router.push("/login")
+        dispatch(showMessage({
+            type: "success",
+            content: "退出登录成功"
+        }))
     }
 
 
@@ -128,7 +139,7 @@ function User() {
     ]
 
     return (
-        <div className="flex flex-col w-full h-full p-5 box-border">
+        <div className="flex flex-col w-full h-full p-5 box-border overflow-y-auto">
             <div className="ml-10 text-2xl">
                 用户信息
             </div>
@@ -181,7 +192,12 @@ function User() {
                 />
             </div>
             <div className="ml-10 mt-1">
-                <Button isLoading={isUpdatingPassword} onClick={changePassword} className="mt-2 text-white" color="primary">修改</Button>
+                <Button isLoading={isUpdatingPassword} onClick={changePassword} className="mt-2 text-white" color="primary">修改密码</Button>
+            </div>
+            <div className="ml-10 mt-3">
+                <Button onPress={logout} className="text-white" color="danger">
+                    退出登录
+                </Button>
             </div>
         </div>
     )
