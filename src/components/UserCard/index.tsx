@@ -34,8 +34,8 @@ function UserCard({isShowSetting} :{
             <div className="flex flex-row items-center">
                 <Avatar src={user.avatar}/>
                 <div className="flex flex-col ml-3">
-                    <div className="text-base font-bold">{userInfo.username}</div>
-                    <div className="text-sm text-gray-500">{userInfo.nickname}</div>
+                    <div className="text-base font-bold">{userInfo.nickname}</div>
+                    <div className="text-sm text-gray-500">{userInfo.username}</div>
                 </div>
             </div>
             <div>
