@@ -44,7 +44,8 @@ export function getAdminNoteById(params: {
 export function getTaskSubmissionsInfoList(params: {
     noteTaskId: number,
     page: number,
-    pageSize: number
+    pageSize: number,
+    userTaskStatus: number
 }) {
     return request<ResData<PageBean<NoteTaskSubmissionInfo>>>({
         url: '/api/note/admin/noteTasks/submissions',

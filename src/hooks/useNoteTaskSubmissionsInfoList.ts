@@ -3,12 +3,14 @@ import { getTaskSubmissionsInfoList } from "@/requests/client/note/noteTask";
 import {SWRParams} from "@/types/paginationTypes";
 
 export default function useNoteTaskSubmissionsInfoList({ params, page, pageSize }: SWRParams<{
-    noteTaskId: number
+    noteTaskId: number,
+    userTaskStatus: number
 }>) {
     return useSWR(`/api/note/admin/noteTasks/submissions?pageSize=${pageSize}&page=${page}&noteTaskId=${params.noteTaskId}`,
         () => getTaskSubmissionsInfoList({
             page: page,
             pageSize: pageSize,
-            noteTaskId: params.noteTaskId
+            noteTaskId: params.noteTaskId,
+            userTaskStatus: params.userTaskStatus
         }).then(res => res.data.data))
 }
