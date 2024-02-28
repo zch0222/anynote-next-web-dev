@@ -22,12 +22,13 @@ function Pagination(props: {
         pageSize: number
     }) => SWRResponse<PageBean<any>>,
     params: any | undefined,
-    direction: "col" | "row"
+    direction: "col" | "row",
+    isShowTotal?: boolean
 }) {
 
     const pages: ReactElement[] = []
 
-    const {Page, swr, params, direction} = props;
+    const {Page, swr, params, direction, isShowTotal = false} = props;
 
     const [hasMore, setHasMore] = useState<boolean>(true)
 
@@ -89,7 +90,7 @@ function Pagination(props: {
                     swr={swr}
                 />
             </div>
-            <div className="h-[60px] box-border p-1">
+            <div className="flex flex-row items-center h-[60px] box-border p-1">
                 <NextUIPagination
                     className="text-white"
                     showControls
@@ -97,6 +98,7 @@ function Pagination(props: {
                     initialPage={1}
                     onChange={onPageChange}
                 />
+                {isShowTotal ? <div className="ml-2 text-base font-bold">{`Total: ${data.total}`}</div> : <></>}
             </div>
         </div>
     )

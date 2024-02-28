@@ -6,7 +6,7 @@ export default function useNoteTaskSubmissionsInfoList({ params, page, pageSize 
     noteTaskId: number,
     userTaskStatus: number
 }>) {
-    return useSWR(`/api/note/admin/noteTasks/submissions?pageSize=${pageSize}&page=${page}&noteTaskId=${params.noteTaskId}`,
+    return useSWR(`/api/note/admin/noteTasks/submissions?pageSize=${pageSize}&page=${page}&noteTaskId=${params.noteTaskId}&userTaskStatus=${params.userTaskStatus}`,
         () => getTaskSubmissionsInfoList({
             page: page,
             pageSize: pageSize,

@@ -1,7 +1,7 @@
 'use client'
 
 import { Popover } from "antd";
-import { Card, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button } from "@nextui-org/react";
+import { Card, Modal, ModalContent, ModalHeader, ModalBody, ModalFooter, Button, Tabs, Tab } from "@nextui-org/react";
 import Pagination from "@/components/Pagination";
 import createPage from "@/components/hoc/createPage/createPage";
 import useNoteTaskSubmissionsInfoList from "@/hooks/useNoteTaskSubmissionsInfoList";
@@ -35,6 +35,24 @@ function Task({params}: {
     const { push } = useRouter()
     const {id} = params
     const { data } = useAdminNoteTask(id)
+    const [userTaskStatus, setUserTaskStatus] = useState(1)
+
+
+
+    const tabs = [
+        {
+            id: 1,
+            title: "已提交"
+        },
+        {
+            id: 0,
+            title: "未提交"
+        },
+        {
+            id: 3,
+            title: "已退回"
+        }
+    ]
 
     return (
         <div className="w-full h-full flex flex-col p-5">
@@ -73,11 +91,23 @@ function Task({params}: {
                     <MarkDownViewer content={data.taskDescribe} />
                 </Card>
                 : <></>}
+
             <div className="flex-grow overflow-hidden">
-                <TaskSubmissionList
-                    noteTaskId={id}
-                    userTaskStatus={3}
-                />
+                <Tabs
+                    items={tabs}
+                >
+                    {(item) => (
+                        <Tab className="h-full" key={item.id} title={item.title}>
+                            <div className="overflow-hidden h-full pb-5">
+                                <TaskSubmissionList
+                                    noteTaskId={id}
+                                    userTaskStatus={item.id}
+                                />
+                            </div>
+                        </Tab>
+                    )}
+
+                </Tabs>
             </div>
         </div>
     )
