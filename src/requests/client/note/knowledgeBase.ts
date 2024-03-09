@@ -51,12 +51,26 @@ export function uploadKnowledgeBaseCover(params: {
 export function getKnowledgeBaseMemberList(params: {
     knowledgeBaseId: number,
     pageSize: number,
-    page: number
+    page: number,
+    username: string
 }) {
     return request<ResData<PageBean<KnowledgeBaseMember>>>({
-        url: `/api/note/bases/users?knowledgeBaseId=${params.knowledgeBaseId}&pageSize=${params.pageSize}&page=${params.page}`,
+        url: `/api/note/bases/users`,
         method: Method.GET,
+        params: params,
         needToken: true,
+    })
+}
+
+export function removeKnowledgeBaseUser(params: {
+    userId: number,
+    knowledgeBaseId: number
+}) {
+    return request<ResData<string>>({
+        url: `/api/note/bases/users`,
+        method: Method.DELETE,
+        params: params,
+        needToken: true
     })
 }
 
@@ -111,3 +125,4 @@ export function updateKnowledgeBase(params: {
         data: params
     })
 }
+

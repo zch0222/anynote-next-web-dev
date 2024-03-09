@@ -186,13 +186,19 @@ export interface KnowledgeBaseMember {
     permissions: number;
 }
 
+interface ImportFailUser {
+    username: string;
+
+    reason: string;
+}
+
 export interface KnowledgeBaseImportUserVO {
     /**
      * 名单链接
      */
     excelUrl: string;
 
-    failUserNameList: string[];
+    failUserList: ImportFailUser[];
 
     /**
      * 失败条数
@@ -202,7 +208,7 @@ export interface KnowledgeBaseImportUserVO {
 
 export interface ImportKnowledgeBaseUserVO {
     excelUrl: string;
-    failUserNameList: string[];
+    failUserList: ImportFailUser[];
     failCount: number;
 }
 

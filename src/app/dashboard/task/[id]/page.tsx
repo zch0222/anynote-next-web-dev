@@ -106,7 +106,6 @@ function Task({params}: {
                             </div>
                         </Tab>
                     )}
-
                 </Tabs>
             </div>
         </div>
