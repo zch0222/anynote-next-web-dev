@@ -20,7 +20,7 @@ function CreateTask() {
         console.log(value)
         await createTask({
             startTime: value.startTime.toString(),
-            endTime: value.startTime.toString(),
+            endTime: value.endTime.toString(),
             taskName: value.taskName,
             knowledgeBaseId: value.knowledgeBaseId,
             taskDescribe: value.taskDescribe
