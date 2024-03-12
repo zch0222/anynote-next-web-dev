@@ -147,9 +147,9 @@ function TaskManageNoteEditChart(props: {
         <div>
 
             <ReactEcharts
-                onEvents={{
-                    click: onChartClick
-                }}
+                // onEvents={{
+                //     click: onChartClick
+                // }}
                 option={option}
             />
 
