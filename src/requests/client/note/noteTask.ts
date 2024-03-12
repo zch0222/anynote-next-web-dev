@@ -81,6 +81,16 @@ export function getTaskManageNoteOperationCounts(params: {
     })
 }
 
+export function getTaskCharts(params: {
+    noteTaskId: number
+}) {
+    return request<ResData<NoteOperationCount[]>>({
+        url: `/api/note/noteTasks/${params.noteTaskId}/charts`,
+        method: Method.GET,
+        needToken: true
+    })
+}
+
 export function returnTaskSubmission(id: number) {
     return request<ResData<string>>({
         url: `/api/note/admin/noteTasks/submissions/return/${id}`,
