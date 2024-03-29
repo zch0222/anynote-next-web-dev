@@ -1,6 +1,7 @@
 export interface HuaweiOBSTemporarySignature {
     signedUrl: string;
     actualSignedRequestHeaders: { [key: string]: string };
+    uploadId: string
 }
 
 export interface ImageUploadTempLinkDTO {

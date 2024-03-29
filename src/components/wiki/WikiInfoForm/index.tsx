@@ -61,7 +61,7 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
         setCover(removeAllUrlParameter(signature.signedUrl))
 
         completeCoverUpload({
-            uploadId: coverUploadIdRef.current,
+            uploadId: signature.uploadId,
             hash: coverHash.current
         }).then(
             res => dispatch(showMessage({
@@ -111,6 +111,7 @@ function WikiInfoForm({ onFinish, buttonText, initialValues }: {
         }).then(
             res => {
                 const data = res.data.data
+                console.log(data)
                 startUploadCover(data, value.file)
             }
         ).catch(
