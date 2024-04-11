@@ -4,46 +4,50 @@ import {HuaweiOBSTemporarySignature} from "@/types/fileTypes";
 import * as urlLib from 'url';
 import * as http from "http";
 import axios from "axios";
+import { AxiosProgressEvent, AxiosRequestConfig } from "axios";
 
-export function uploadFile(params: {
+export async function uploadFile(params: {
     signature: HuaweiOBSTemporarySignature,
     fileArrayBuffer: string | ArrayBuffer | null,
-    contentType: string
+    contentType: string,
+    onUploadProgress?: (progressEvent: AxiosProgressEvent) => void
 }) {
 
-    const { fileArrayBuffer, signature, contentType } = params
+    const {fileArrayBuffer, signature, contentType} = params
 
-    const reopt = {
-        method : "PUT",
-        url : params.signature.signedUrl,
+    const reopt: AxiosRequestConfig = {
+        method: "PUT",
+        url: params.signature.signedUrl,
         withCredentials: false,
-        headers : {
+        headers: {
             "Content-Type": contentType
         },
-        validateStatus: function(status: number){
+        validateStatus: function (status: number) {
             return status >= 200;
         },
-        maxRedirects : 0,
-        responseType : 'text',
-        data : fileArrayBuffer,
+        maxRedirects: 0,
+        responseType: 'text',
+        data: fileArrayBuffer,
+        onUploadProgress: params.onUploadProgress
     };
 
     // @ts-ignore
-    return axios.request(reopt).then(function (response) {
-        if(response.status < 300){
+    try {
+        const response = await axios.request(reopt);
+        if (response.status < 300) {
             console.log('Creating object using temporary signature succeed.');
-        }else{
+        } else {
             console.log('Creating object using temporary signature failed!');
             console.log('status:' + response.status);
             console.log('\n');
         }
         console.log(response.data);
         console.log('\n');
-    }).catch(function (err) {
+    } catch (err) {
         console.log('Creating object using temporary signature failed!');
         console.log(err);
         console.log('\n');
-    })
+    }
 }
 
     // return new Promise((resolve, reject) => {

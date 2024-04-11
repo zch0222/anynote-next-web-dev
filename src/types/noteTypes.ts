@@ -212,6 +212,61 @@ export interface ImportKnowledgeBaseUserVO {
     failCount: number;
 }
 
+export interface DocListVO {
+    /** 知识库ID */
+    id: number;
+
+    /** 知识库名称 */
+    docName: string;
+
+    /** 创建者ID */
+    createBy: number;
+
+    creatorNickname: string;
+
+    creatorUsername: string;
+
+    knowledgeBaseId: number;
+
+    /** 创建时间，根据实际使用情况选择类型 */
+    createTime: string | Date;
+
+    /** 更新时间，根据实际使用情况选择类型 */
+    updateTime: string | Date;
+}
+
+export interface DocVO {
+    /**
+     * 知识库ID
+     */
+    id: number;
+
+    /**
+     * 知识库名称
+     */
+    docName: string;
+
+    /**
+     * 创建者ID
+     */
+    createBy: number;
+
+    creatorNickname: string;
+
+    creatorUsername: string;
+
+    knowledgeBaseId: number;
+
+    createTime: Date;
+
+    updateTime: Date;
+
+    url: string;
+
+    hash: string;
+
+    permission: number;
+}
 
 
 

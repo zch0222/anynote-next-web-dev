@@ -78,7 +78,7 @@ function NoteTab({ knowledgeBaseId }: {
 
 
     return (
-        <div className="flex-grow pt-2 overflow-hidden">
+        <div className="h-full pt-2 overflow-hidden">
             <Pagination
                 direction="col"
                 Page={createPage(NoteItem)}

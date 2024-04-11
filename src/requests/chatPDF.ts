@@ -9,7 +9,7 @@ export function chat(params: {
         user_id: number,
         file_key: string,
         model: string
-    }
+    },
     onDownloadProcess: any,
     signal: GenericAbortSignal
 }) {

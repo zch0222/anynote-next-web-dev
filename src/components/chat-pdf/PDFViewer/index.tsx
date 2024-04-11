@@ -88,7 +88,7 @@ function PDFViewer({ src }: {
         <div className="w-full h-full">
             {
                 isShowChat ?
-                    <Card className="absolute z-50 max-w-[500px] max-h-[500px] w-[80%] h-[80%] right-2 top-[70px]">
+                    <Card className="absolute z-50 max-w-[500px] max-h-[800px] w-[80%] h-[80%] right-2 top-[70px]">
                         <CardHeader className="flex flex-row justify-end">
                             <div
                                 className="w-[35px] h-[35px] cursor-pointer"
@@ -205,7 +205,7 @@ function PDFViewer({ src }: {
                             getContainer={false}
                             onClose={() => setIsCatalogueDrawerOpen(false)}
                         >
-                            <div className="flex flex-col items-center">
+                            <div className="flex flex-col">
                                 <Document
                                     file={pdfUrl}
                                     onLoadSuccess={({ numPages } ) => {
