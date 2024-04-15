@@ -5,6 +5,7 @@ import {useRouter} from "next/navigation";
 import Loading from "@/components/Loading";
 import useTaskCharts from "@/hooks/useTaskCharts";
 import {useState} from "react";
+import {convertToEC4StyleForCustomSerise} from "echarts/types/src/util/styleCompat";
 
 function TaskManageNoteEditChart(props: {
     noteTaskId: number
@@ -80,6 +81,7 @@ function TaskManageNoteEditChart(props: {
         tooltip: {
             position: 'top',
             trigger: 'item',
+            confine:true,
             formatter: function (params) {
                 const students = chartData.data.find(item => {
                     return item[0] == params.data[0] && item[1] == params.data[1]
