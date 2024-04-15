@@ -26,46 +26,52 @@ function TaskManageNoteEditChart(props: {
             </div>
         )
     } else {
-        // 找出updateTime参数的最大和最小值
-        const updateTimes = data?.map(entry => new Date(entry.updateTime).getTime());
-        const minUpdateTime = new Date(Math.min(...updateTimes));
-        const maxUpdateTime = new Date(Math.max(...updateTimes));
+        chartData.hourArray = []
+        let maxEditCount = -1
 
-        // 找出noteEditCount的最大值
-        const maxEditCount = Math.max(...data.map(entry => entry.noteEditCount));
-
+        data.forEach((entry: any) => {
+            entry.chartsPOList.forEach((item: any) => {
+                if (item.editCount > maxEditCount) {
+                    maxEditCount = item.editCount;
+                }
+            });
+        });
         const segmentCount = 5;
-
-        const segmentInterval = Math.floor(maxEditCount / segmentCount);
+        const segmentInterval = maxEditCount > 500 ? 50 : Math.floor(maxEditCount / segmentCount);
 
         chartData.segments = []
         for (let i = 1; i <= segmentCount; i++) {
             const start = (i - 1) * segmentInterval;
             const end = i * segmentInterval;
             chartData.segments.push({start, end});
-        }
 
-        const minHour = minUpdateTime.getHours();
-        const maxHour = maxUpdateTime.getHours();
-
-        chartData.hourArray = []
-        for (let hour = minHour; hour <= maxHour; hour++) {
-            chartData.hourArray.push(hour);
+            if (i == segmentCount && maxEditCount > 500) chartData.segments.push({start:end,end:maxEditCount});
         }
 
         chartData.data = []
-        data?.forEach((item, index) => {
-            const entry = [new Date(item.updateTime).getHours() - minHour, Math.floor(item.noteEditCount / segmentInterval), [item]]
+        data?.forEach((item: any) => {
+            if (item.chartsPOList.length > 0) {
+                chartData.hourArray.push(item.startTime)
 
-            const entryIndex = chartData.data.findIndex(item => {
-                return item[0] == entry[0] && item[1] == entry[1]
-            })
-            if (entryIndex != -1) {
-                const students: any = chartData.data[entryIndex][2]
-                students[students.length] = item
-                chartData.data[entryIndex] = [new Date(item.updateTime).getHours() - minHour, Math.floor(item.noteEditCount / segmentInterval), students]
-            } else {
-                chartData.data.push(entry)
+                item.chartsPOList.forEach((student: any) => {
+                    const entry = [chartData.hourArray.findIndex((time: any) => {
+                        return time == item.startTime
+                    }), student.editCount > 500 ? 5 : Math.floor(student.editCount / segmentInterval), [student]]
+
+                    const entryIndex = chartData.data.findIndex((item: any) => {
+                        return item[0] == entry[0] && item[1] == entry[1]
+                    })
+
+                    if (entryIndex != -1) {
+                        const students: any = chartData.data[entryIndex][2]
+                        students[students.length] = student
+                        chartData.data[entryIndex] = [chartData.hourArray.findIndex((time: any) => {
+                            return time == item.startTime
+                        }), student.editCount > 500 ? 6 :  Math.floor(student.editCount / segmentInterval), students]
+                    } else {
+                        chartData.data.push(entry)
+                    }
+                })
             }
         })
     }
@@ -81,7 +87,7 @@ function TaskManageNoteEditChart(props: {
                 let html = '统计人数: <br>'
 
                 students.forEach((item, index) => {
-                    html += '姓名：' + item.nickname + ' , 编辑次数：' + item.noteEditCount + '<br>'
+                    html += '姓名：' + item.nickname + ' , 编辑次数：' + item.editCount + '<br>'
                 })
                 return html
             }
@@ -92,8 +98,9 @@ function TaskManageNoteEditChart(props: {
         },
         xAxis: {
             type: 'category',
-            data: chartData.hourArray.map(item =>{
-                return item + '点'
+            data: chartData.hourArray.map(item => {
+                const date = new Date(item)
+                return date.getMonth() + '/' + date.getDate() + ' ' + date.getHours() + '时'
             }),
             splitArea: {
                 show: true
