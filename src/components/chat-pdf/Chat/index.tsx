@@ -2,14 +2,15 @@
 import { Input, Button, Textarea } from "@nextui-org/react";
 import {useEffect, useState, useRef} from "react";
 import {nanoid} from "nanoid";
+import { query } from "@/requests/client/note/doc";
 
 import ChatText from "@/components/chat-pdf/Chat/ChatText";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 
 import { chat } from "@/requests/chatPDF";
 
-function Chat({ pdfUrl }: {
-    pdfUrl: string
+function Chat({ docId }: {
+    docId: number
 }) {
 
     let controller = new AbortController()
@@ -19,10 +20,11 @@ function Chat({ pdfUrl }: {
     const [messages, setMessages] = useState<{
         id: string,
         message: string,
-        role: "user" | "bot"
+        role: string
     }[]>([])
 
     const isChatBegin = useRef<boolean>(false)
+    const resTextLength = useRef(0);
 
 
 
@@ -34,46 +36,50 @@ function Chat({ pdfUrl }: {
 
         const question = prompt
         setPrompt("")
-        const match = pdfUrl.match(/\/([^\/]*\.pdf)/)
-        if (match) {
-            console.log(match[1]);
-        }
-        const fileKey = match?.[1].replace(".", "_")
-        if (!fileKey) {
-            return;
-        }
-        console.log(fileKey)
-        chat({
-            signal: controller.signal,
-            data: {
-                url: pdfUrl,
-                user_id: 1,
-                question: question,
-                file_key: fileKey,
-                model: "gpt-3.5-turbo-16k"
-            },
-            onDownloadProcess: ({ event }: {event: any}) => {
-
-                const responseText = event.target.responseText
-                // console.log(responseText)
-                const parts = responseText.split("\n\n")
-                // console.log(parts)
-                const last = parts[parts.length-2]
-                const newMessages = messages
-                console.log(newMessages)
-                const lastParts = last.split("\n")
-                // console.log(lastParts)
-                newMessages[newMessages.length-1] = {
-                    id: nanoid(),
-                    message: JSON.parse(lastParts[2].substring(6)).data.message,
-                    role: "bot"
+        // const match = pdfUrl.match(/\/([^\/]*\.pdf)/)
+        // if (match) {
+        //     console.log(match[1]);
+        // }
+        // const fileKey = match?.[1].replace(".", "_")
+        // if (!fileKey) {
+        //     return;
+        // }
+        // console.log(fileKey)
+        resTextLength.current = 0
+        query({
+            signal: new AbortController().signal,
+            docId: docId,
+            prompt: prompt,
+            onDownloadProgress: (event) => {
+                console.log(event.event.target.responseText)
+                const responseText = event.event.target.responseText
+                const regex = /data:\s*([^]+?)(?=\n\nid:|\n$|$)/g;
+                let matches = [...responseText.matchAll(regex)];
+                console.log("LastPart", matches[matches.length-1][1])
+                const lastJsonString = matches[matches.length-1][1]; // 确保找到以"data: "开头的部分
+                if (lastJsonString) {
+                    try {
+                        console.log(JSON.parse(lastJsonString))
+                        const messageData = JSON.parse(lastJsonString); // 正确地解析JSON字符串
+                        console.log(messageData.data.message.replace(/\n/g, "\n\n"))
+                        const newMessage = {
+                            id: nanoid(), // 确保nanoid()函数已被正确引入
+                            message: messageData.data.message.replace(/\n/g, "\n\n"),
+                            role: "bot"
+                        };
+                        const newMessages = [...messages]
+                        newMessages[newMessages.length-1] = newMessage
+                        setMessages(newMessages); // 使用函数式更新以防止依赖旧的state
+                        resTextLength.current = responseText.length
+                    } catch (e) {
+                        console.log(e)
+                    }
                 }
-                console.log(newMessages)
-                setMessages([
-                    ...newMessages
-                ])
             }
-        }).catch(
+
+        }).then(
+            res => console.log(res)
+        ).catch(
             e => console.log(e)
         ).finally(
             () => {

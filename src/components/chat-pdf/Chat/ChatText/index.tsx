@@ -3,6 +3,7 @@ import { Avatar, Card } from "@nextui-org/react";
 
 import MarkDownViewer from "@/components/MarkDownViewer";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
+import MarkDownEditor from "@/components/MarkDownEditor";
 import Bot from "@/components/svg/Bot"
 
 function ChatText({ text, role }: {
@@ -21,7 +22,7 @@ function ChatText({ text, role }: {
                         className="w-[85%] p-3 mt-1"
                         radius="sm"
                     >
-                        {text}
+                        <MarkDownViewer content={text}/>
                     </Card>
                 </div>
             </div>

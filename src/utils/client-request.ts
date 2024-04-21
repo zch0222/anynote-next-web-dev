@@ -103,6 +103,7 @@ export default function clientRequest<T>(options: {
     data?: any,
     params?: any,
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
+    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
     headers?: HeadersDefaults & {
         [key: string]: AxiosHeaderValue
     },

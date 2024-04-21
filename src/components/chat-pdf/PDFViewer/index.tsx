@@ -21,8 +21,9 @@ import {blob} from "stream/consumers";
 import {nanoid} from "nanoid";
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://anynote.obs.cn-east-3.myhuaweicloud.com/cdn/pdfjs-dist/%403.11.174/build/pdf.worker.js"
-function PDFViewer({ src }: {
-    src: string
+function PDFViewer({ src, docId }: {
+    src: string,
+    docId: number
 }) {
     const { theme } = useTheme()
 
@@ -102,7 +103,7 @@ function PDFViewer({ src }: {
                         </CardHeader>
                         <CardBody>
                             <Chat
-                                pdfUrl={src}
+                                docId={docId}
                             />
                         </CardBody>
                     </Card>

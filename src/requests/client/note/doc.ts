@@ -2,6 +2,7 @@ import request, {Method} from "@/utils/client-request"
 import { HuaweiOBSTemporarySignature } from "@/types/fileTypes";
 import {PageBean, ResData} from "@/types/requestTypes";
 import {CreateDTO, DocListVO, DocVO} from "@/types/noteTypes";
+import {AxiosProgressEvent, GenericAbortSignal} from "axios";
 
 
 export function docUploadTempLink(params: {
@@ -52,4 +53,23 @@ export function getDocById(params: {
         method: Method.GET,
         needToken: true
     })
+}
+
+export function query(params: {
+    docId: number,
+    prompt: string,
+    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
+    signal?: GenericAbortSignal
+}) {
+
+    return  request<void>({
+        url: `/api/note/docs/${params.docId}/query`,
+        data: {
+          prompt: params.prompt
+        },
+        method: Method.POST,
+        needToken: true,
+        onDownloadProgress: params.onDownloadProgress
+    })
+
 }

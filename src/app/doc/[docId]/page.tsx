@@ -22,7 +22,7 @@ function Doc({params}: {
 
     return (
         <div className="flex w-full h-full">
-            <PDFViewer src={data.url}/>
+            <PDFViewer src={data.url} docId={params.docId}/>
         </div>
     )
 }

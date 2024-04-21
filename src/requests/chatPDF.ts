@@ -4,16 +4,15 @@ import {GenericAbortSignal} from "axios";
 
 export function chat(params: {
     data: {
-        url: string,
-        question: string,
-        user_id: number,
-        file_key: string,
-        model: string
+        id: number,
+        prompt: string
     },
     onDownloadProcess: any,
     signal: GenericAbortSignal
 }) {
-    return service.post('/api/rag/pdf', params.data, {
+    return service.post(`/api/note/docs/${params.data.id}/query`, {
+        prompt: params.data.prompt
+    }, {
         onDownloadProgress: params.onDownloadProcess,
         signal: params.signal
     })
