@@ -21,7 +21,10 @@ export function getUserInfo() {
         console.log("Server")
         const { cookies } = require('next/headers');
         // console.log(typeof cookies().get("userInfo"))
-        return cookies().get("userInfo")
+        const cookieUser = cookies().get("userInfo")
+        if (cookieUser) {
+            return cookieUser
+        }
     }
     return {
         username: "test",
