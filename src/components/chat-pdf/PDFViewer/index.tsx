@@ -7,11 +7,13 @@ import { Document, Page, pdfjs, Outline } from "react-pdf";
 import Plus from "@/components/svg/Plus";
 import Reduce from "@/components/svg/Reduce"
 import Catalogue from "@/components/svg/Catalogue";
-import { Drawer } from "antd";
+import { Drawer, Dropdown, Space } from "antd";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import { useTheme } from "next-themes";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css"
 import "react-pdf/dist/esm/Page/TextLayer.css"
+import type { MenuProps } from 'antd';
+import {MoreOutlined} from "@ant-design/icons";
 
 import PDFPage from "@/components/chat-pdf/PDFPage";
 import Chat from "@/components/chat-pdf/Chat";
@@ -19,6 +21,7 @@ import Loading from "@/components/Loading";
 import Close from "@/components/svg/Close";
 import {blob} from "stream/consumers";
 import {nanoid} from "nanoid";
+
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://anynote.obs.cn-east-3.myhuaweicloud.com/cdn/pdfjs-dist/%403.11.174/build/pdf.worker.js"
 function PDFViewer({ src, docId }: {
@@ -56,6 +59,15 @@ function PDFViewer({ src, docId }: {
             setInputPage(page.toString())
         }
     }, [page]);
+
+    const items: MenuProps['items'] = [
+        {
+            key: '1',
+            label: (
+                <div>删除</div>
+            ),
+        },
+    ];
 
     const previous = () => {
         if (page > 1) {
@@ -179,7 +191,22 @@ function PDFViewer({ src, docId }: {
                         <Plus width={16} height={16}/>
                     </div>
 
-                    <div className="flex-grow flex flex-row justify-end">
+                    <div className="flex-grow flex flex-row justify-end  items-center">
+                        <Dropdown
+                            menu={{ items }}
+                            className="mr-2"
+                        >
+                            <Button
+                                isIconOnly={true}
+                                variant="light"
+                            >
+                                <MoreOutlined
+                                    style={{
+                                        fontSize: 25
+                                    }}
+                                />
+                            </Button>
+                        </Dropdown>
                         <Card isPressable className="rounded-[50px]" onClick={() => {
                             setIsShowChat(!isShowChat)
                         }}>

@@ -17,7 +17,7 @@ export interface DocFormType {
 }
 
 function DocForm() {
-    const { searchParams } = useRouter()
+    const { searchParams, router } = useRouter()
 
     const dispatch = useDispatch()
     const [docUploadFileList, setDocUploadFileList] = useState<UploadFile[]>([])
@@ -61,6 +61,11 @@ function DocForm() {
                     status: "done",
                     percent: 100
                 }])
+                showMessage({
+                    type: "success",
+                    content: "上传成功"
+                })
+                router.replace(`/doc/${res.data.data.id}`)
             }
         ).catch(e => {
             setDocUploadFileList([{

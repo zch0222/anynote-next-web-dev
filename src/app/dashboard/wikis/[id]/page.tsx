@@ -1,6 +1,6 @@
 'use client'
 import { Typography } from "antd";
-import {EditOutlined, SettingOutlined} from "@ant-design/icons";
+import {EditOutlined, SettingOutlined, UploadOutlined} from "@ant-design/icons";
 
 import Loading from "@/components/Loading";
 
@@ -64,9 +64,17 @@ function Wiki({params}: {
                 <CardButton
                     icon={<EditOutlined style={{fontSize: CARD_BUTTON_ICON_FONT_SIZE}}/>}
                     title="创建新笔记"
-                    content="文档"
+                    content="笔记"
                     clickEvent={fetchCreateNote}
                 />
+                {data.permissions === 1 ?
+                    <CardButton
+                        icon={<UploadOutlined style={{fontSize: 20}}/>}
+                        title="上传新文档"
+                        clickEvent={() => router.push(`/dashboard/doc/new?knowledgeBaseId=${id}`)}
+                        content="文档"
+                    /> : <></>
+                }
             </div>
             <WikiTabs
                 knowledgeBaseId={id}

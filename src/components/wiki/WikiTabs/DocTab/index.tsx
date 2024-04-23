@@ -16,13 +16,14 @@ function DocItem({ data }: {
 
     return (
         <Card
+            className="w-[180px] h-[280px] flex flex-col items-center mr-5 mb-5"
             radius="sm"
             isPressable
             onPress={() => router.push(`/doc/${data.id}`)}
         >
             <Image
-                className="object-cover"
-                height={200}
+                className="object-cover h-[200px]"
+                width={180}
                 alt="doc cover"
                 src="https://anynote.obs.cn-east-3.myhuaweicloud.com/images/knowledge_base_cover.png"
             />
