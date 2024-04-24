@@ -81,6 +81,7 @@ service.interceptors.response.use(
             }
         } else if (errorResponse.status !== 401) {
             console.log(1212121)
+            message.error("服务器异常，请稍后再试")
             // alert("服务器异常请稍后再试试");
             // PubSub.publish("MODAL NOTICE", {
             //     type: 'error',

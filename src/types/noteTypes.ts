@@ -222,6 +222,8 @@ export interface DocListVO {
     /** 创建者ID */
     createBy: number;
 
+    indexStatus: number;
+
     creatorNickname: string;
 
     creatorUsername: string;
@@ -250,6 +252,8 @@ export interface DocVO {
      * 创建者ID
      */
     createBy: number;
+
+    indexStatus: number;
 
     creatorNickname: string;
 

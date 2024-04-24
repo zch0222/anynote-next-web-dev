@@ -73,3 +73,19 @@ export function query(params: {
     })
 
 }
+
+export function indexDoc(id: number) {
+    return request<ResData<string>>({
+        url: `/api/note/docs/${id}/index`,
+        method: Method.POST,
+        needToken: true
+    })
+}
+
+export function deleteDoc(id: number) {
+    return request<ResData<string>>({
+        url: `/api/note/docs/${id}`,
+        method: Method.DELETE,
+        needToken: true
+    })
+}

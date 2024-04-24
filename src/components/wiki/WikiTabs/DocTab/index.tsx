@@ -1,5 +1,5 @@
 'use client'
-import { Card, Image, CardFooter } from "@nextui-org/react";
+import {Card, Image, CardFooter, Chip} from "@nextui-org/react";
 
 import useDocList from "@/hooks/useDocList";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
@@ -13,6 +13,22 @@ function DocItem({ data }: {
 }) {
 
     const router = useRouter()
+
+    const getIndexStatusChip = () => {
+        if (0 === data.indexStatus) {
+            return <Chip className="text-white" color="success">已索引</Chip>
+        }
+        else if (1 == data.indexStatus) {
+            return <Chip className="text-white" color="primary">索引中</Chip>
+        }
+        else if (2 == data.indexStatus) {
+            return <Chip className="text-white" color="danger">索引失败</Chip>
+        }
+        else if (3 == data.indexStatus) {
+            return <Chip className="text-white" color="default">未索引</Chip>
+        }
+        return <></>
+    }
 
     return (
         <Card
@@ -29,9 +45,13 @@ function DocItem({ data }: {
             />
             <CardFooter
             >
-                <p className="text-base">
-                    {data.docName}
-                </p>
+                <div className="flex flex-col">
+                    <div className="text-base h-[25px]">
+                        {data.docName}
+                    </div>
+                    {getIndexStatusChip()}
+                </div>
+
 
             </CardFooter>
 
@@ -40,7 +60,7 @@ function DocItem({ data }: {
     )
 }
 
-function DocTab({ knowledgeBaseId }: {
+function DocTab({knowledgeBaseId }: {
     knowledgeBaseId: number
 }) {
 

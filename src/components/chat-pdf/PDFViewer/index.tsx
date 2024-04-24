@@ -2,34 +2,43 @@
 import {useState, useRef, useEffect} from "react";
 // @ts-ignore
 import { usePdf } from '@mikecousins/react-pdf';
-import { Card, Button, Image, CardHeader, CardBody, Input } from "@nextui-org/react";
+import {Card, Button, Image, CardHeader, CardBody, Input, Chip} from "@nextui-org/react";
 import { Document, Page, pdfjs, Outline } from "react-pdf";
 import Plus from "@/components/svg/Plus";
 import Reduce from "@/components/svg/Reduce"
 import Catalogue from "@/components/svg/Catalogue";
-import { Drawer, Dropdown, Space } from "antd";
+import {Drawer, Dropdown, message, Space} from "antd";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import { useTheme } from "next-themes";
 import "react-pdf/dist/esm/Page/AnnotationLayer.css"
 import "react-pdf/dist/esm/Page/TextLayer.css"
 import type { MenuProps } from 'antd';
 import {MoreOutlined} from "@ant-design/icons";
+import { useCallback } from "react";
+import { useRouter } from "next/navigation";
 
 import PDFPage from "@/components/chat-pdf/PDFPage";
 import Chat from "@/components/chat-pdf/Chat";
 import Loading from "@/components/Loading";
 import Close from "@/components/svg/Close";
+import { indexDoc, deleteDoc } from "@/requests/client/note/doc";
 import {blob} from "stream/consumers";
 import {nanoid} from "nanoid";
+import {DocVO} from "@/types/noteTypes";
+import {showMessage} from "@/store/message/messageSlice";
+import {router} from "next/client";
+
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://anynote.obs.cn-east-3.myhuaweicloud.com/cdn/pdfjs-dist/%403.11.174/build/pdf.worker.js"
-function PDFViewer({ src, docId }: {
+function PDFViewer({ src, docId, doc }: {
     src: string,
-    docId: number
+    docId: number,
+    doc: DocVO
 }) {
     const { theme } = useTheme()
 
+    const router = useRouter()
     const canvasRef = useRef<HTMLCanvasElement | null>(null)
 
     const [page, setPage] = useState(1)
@@ -60,14 +69,72 @@ function PDFViewer({ src, docId }: {
         }
     }, [page]);
 
+    const fetchIndexDoc = useCallback(() => {
+        indexDoc(doc.id).then(res => {
+            console.log(res)
+            showMessage({
+                type: "success",
+                content: "索引任务开始"
+            })
+            message.success("索引任务提交")
+        }).catch(
+            e => console.log(e)
+        )
+    }, [doc])
+
+    const fetchDeleteDoc = useCallback(() => {
+        deleteDoc(doc.id).then(res => {
+            console.log(res)
+            message.success("删除文档成功").then(() => {
+                router.back()
+            })
+        }).catch(
+            e => console.log(e)
+        )
+    }, [doc])
+
+
     const items: MenuProps['items'] = [
         {
-            key: '1',
+          key: '1',
+          label: (
+              <div
+                  onClick={() => {
+                      fetchIndexDoc()
+                  }}
+              >
+                  建立索引
+              </div>
+          )
+        },
+        {
+            key: '2',
             label: (
-                <div>删除</div>
+                <div
+                    className="text-red-600"
+                    onClick={() => fetchDeleteDoc()}
+                >
+                    删除
+                </div>
             ),
         },
     ];
+
+    const getIndexStatusChip = (indexStatus: number) => {
+        if (0 === indexStatus) {
+            return <Chip className="text-white select-none" color="success">已索引</Chip>
+        }
+        else if (1 == indexStatus) {
+            return <Chip className="text-white select-none" color="primary">索引中</Chip>
+        }
+        else if (2 == indexStatus) {
+            return <Chip className="text-white select-none" color="danger">索引失败</Chip>
+        }
+        else if (3 == indexStatus) {
+            return <Chip className="text-white select-none" color="default">未索引</Chip>
+        }
+        return <></>
+    }
 
     const previous = () => {
         if (page > 1) {
@@ -134,6 +201,9 @@ function PDFViewer({ src, docId }: {
                     >
                         <Catalogue width={16} height={16}/>
                     </Button>
+                    <div className="font-bold text-xl mr-5">
+                        {doc.docName}
+                    </div>
                     <Button size="sm" onClick={previous}>Previous</Button>
                     <div className="flex justify-center items-center mr-1 ml-1">
                         <span>
@@ -151,8 +221,7 @@ function PDFViewer({ src, docId }: {
                                     if (/^\d+$/.test(value)) {
                                         if (+value > numPages) {
                                             setInputPage(numPages.toString())
-                                        }
-                                        else {
+                                        } else {
                                             setInputPage(value)
                                         }
                                     } else if (value === '') {
@@ -191,9 +260,12 @@ function PDFViewer({ src, docId }: {
                         <Plus width={16} height={16}/>
                     </div>
 
-                    <div className="flex-grow flex flex-row justify-end  items-center">
+                    <div className="flex-grow flex flex-row justify-end items-center">
+                        <div className="mr-2">
+                            {getIndexStatusChip(doc.indexStatus)}
+                        </div>
                         <Dropdown
-                            menu={{ items }}
+                            menu={{items}}
                             className="mr-2"
                         >
                             <Button
