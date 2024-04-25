@@ -6,6 +6,7 @@ import { query } from "@/requests/client/note/doc";
 
 import ChatText from "@/components/chat-pdf/Chat/ChatText";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
+import { scrollToBottoms } from "@/utils/nodeUtil";
 
 import { chat } from "@/requests/chatPDF";
 
@@ -25,6 +26,7 @@ function Chat({ docId }: {
 
     const isChatBegin = useRef<boolean>(false)
     const resTextLength = useRef(0);
+    const textRef = useRef<HTMLDivElement>(null);
 
 
 
@@ -36,6 +38,7 @@ function Chat({ docId }: {
 
         const question = prompt
         setPrompt("")
+        scrollToBottoms(textRef)
         // const match = pdfUrl.match(/\/([^\/]*\.pdf)/)
         // if (match) {
         //     console.log(match[1]);
@@ -84,6 +87,7 @@ function Chat({ docId }: {
         ).finally(
             () => {
                 setIsChatting(false)
+                scrollToBottoms(textRef)
             }
         )
     }, [messages])
@@ -115,7 +119,10 @@ function Chat({ docId }: {
 
     return (
         <div className="flex flex-col w-full h-full">
-            <div className="flex-grow flex flex-col overflow-y-auto">
+            <div
+                className="flex-grow flex flex-col overflow-y-auto"
+                ref={textRef}
+            >
                 {messages.map(item => (
                     <ChatText
                         key={item.id}
