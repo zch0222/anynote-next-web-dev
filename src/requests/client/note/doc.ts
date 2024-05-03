@@ -63,9 +63,10 @@ export function query(params: {
 }) {
 
     return  request<void>({
-        url: `/api/note/docs/${params.docId}/query`,
+        url: `/api/ai/rag/query/docs`,
         data: {
-          prompt: params.prompt
+            prompt: params.prompt,
+            docId: params.docId
         },
         method: Method.POST,
         needToken: true,
