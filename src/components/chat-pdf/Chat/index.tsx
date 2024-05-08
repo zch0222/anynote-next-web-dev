@@ -3,12 +3,59 @@ import { Input, Button, Textarea } from "@nextui-org/react";
 import {useEffect, useState, useRef} from "react";
 import {nanoid} from "nanoid";
 import { query } from "@/requests/client/note/doc";
+import { MoreOutlined } from "@ant-design/icons";
+import { Drawer } from "antd";
 
 import ChatText from "@/components/chat-pdf/Chat/ChatText";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import { scrollToBottoms } from "@/utils/nodeUtil";
+import useChatConversationList from "@/hooks/useChatConversationList";
+import { updateChatConversation } from "@/requests/client/ai/chat";
+import Pagination from "@/components/Pagination";
+import createPage from "@/components/hoc/createPage/createPage";
 
 import { chat } from "@/requests/chatPDF";
+import {ChatConversationInfoVO} from "@/types/aiTypes";
+import InfiniteScroll from "@/components/InfiniteScroll";
+import {useTheme} from "next-themes";
+
+function ChatConversationListItem({ data }: {
+    data: ChatConversationInfoVO
+}) {
+
+    const { theme } = useTheme()
+
+    const hoveredBg = 'light' === theme ? 'bg-[#FAFAFA]' :  'bg-[#262626]'
+
+    const [isHover, setIsHover] = useState(false)
+
+    return (
+        <div
+            className={`${isHover ? hoveredBg : ""} cursor-pointer`}
+            style={{
+                minHeight: "50px"
+            }}
+            onMouseEnter={() => setIsHover(true)}
+            onMouseLeave={() => setIsHover(false)}
+            onClick={() => {
+                updateChatConversation({
+                    id: data.id
+                }).then(res => {
+                    console.log(res)
+                }).catch(
+                    e => console.log(e)
+                )
+            }}
+        >
+            <div
+                className="text-base font-bold"
+            >
+                {data.title}
+            </div>
+        </div>
+    )
+}
+
 
 function Chat({ docId }: {
     docId: number
@@ -17,6 +64,7 @@ function Chat({ docId }: {
     let controller = new AbortController()
 
     const [isChatting, setIsChatting] = useState<boolean>(false)
+    const [isOpenHistoryDrawer, setIsOpenHistoryDrawer] = useState<boolean>(false)
     const [prompt, setPrompt] = useState("")
     const [messages, setMessages] = useState<{
         id: string,
@@ -119,6 +167,44 @@ function Chat({ docId }: {
 
     return (
         <div className="flex flex-col w-full h-full">
+            <div>
+                <Button
+                    isIconOnly={true}
+                    onPress={() => setIsOpenHistoryDrawer(true)}
+                >
+                    <MoreOutlined
+                        style={{
+                            fontSize: 25
+                        }}
+                    />
+                </Button>
+                <Drawer
+                    open={isOpenHistoryDrawer}
+                    closable={false}
+                    placement="left"
+                    onClose={() => setIsOpenHistoryDrawer(false)}
+                    getContainer={false}
+                    destroyOnClose={true}
+                >
+                    <div className="flex flex-col w-full h-full overflow-hidden">
+                        <Button
+                            className="text-white"
+                            color="primary"
+                        >
+                            新建对话
+                        </Button>
+                        <div className="flex-grow overflow-hidden w-full mt-2">
+                            <InfiniteScroll
+                                swr={useChatConversationList}
+                                params={{
+                                    docId: docId
+                                }}
+                                Item={ChatConversationListItem}
+                            />
+                        </div>
+                    </div>
+                </Drawer>
+            </div>
             <div
                 className="flex-grow flex flex-col overflow-y-auto"
                 ref={textRef}
