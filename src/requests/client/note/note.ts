@@ -129,3 +129,15 @@ export function searchNote(params: {
         params: params
     })
 }
+
+export function getNoteList(params: {
+    page: number,
+    pageSize: number
+}) {
+    return request<ResData<PageBean<NoteInfo>>>({
+        url: `/api/note/notes`,
+        method: Method.GET,
+        needToken: true,
+        params: params
+    })
+}

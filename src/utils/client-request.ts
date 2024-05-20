@@ -1,24 +1,38 @@
-import {all, AxiosHeaders, AxiosProgressEvent, AxiosResponse} from "axios";
+import axios, {all, AxiosHeaders, AxiosProgressEvent, AxiosResponse} from "axios";
 import store from "@/store";
 import {message} from "antd";
 import { showMessage } from "@/store/message/messageSlice";
 
-import {service, MyAxiosRequestConfig, Method, getTokenDebounce} from "./request";
+import {service, MyAxiosRequestConfig, Method, getTokenDebounce, streamService} from "./request";
 import {AxiosHeaderValue, HeadersDefaults} from "axios";
+import { Readable } from 'stream';
+import {EventSourceMessage, fetchEventSource} from '@microsoft/fetch-event-source';
 
-service.interceptors.request.use(
-    async (config: MyAxiosRequestConfig) => {
+
+
+
+const onBeforeFulfilled = async (config: MyAxiosRequestConfig) => {
         console.log(store.getState().user)
         const accessToken: string | undefined = store.getState().user.token?.accessToken;
         if (config.needToken && accessToken) {
             config.headers['accessToken'] = accessToken;
         }
         return config;
-    },
+}
+
+service.interceptors.request.use(
+    onBeforeFulfilled,
     error => {
         Promise.reject(error);
     }
 );
+
+streamService.interceptors.request.use(
+    onBeforeFulfilled,
+    error => {
+        Promise.reject(error);
+    }
+)
 
 export const refreshToken = getTokenDebounce();
 var isRefreshToken = 0;
@@ -108,8 +122,48 @@ export default function clientRequest<T>(options: {
     headers?: HeadersDefaults & {
         [key: string]: AxiosHeaderValue
     },
-    withCredentials?: boolean
+    withCredentials?: boolean,
 }): Promise<AxiosResponse<T>> {
     return service(options);
+}
+
+export function streamRequest<T>(options: {
+    url: string,
+    method: string,
+    needToken: boolean,
+    data?: any,
+    params?: any,
+    onmessage: (event: EventSourceMessage) => void,
+    onerror: (event: ErrorEvent) => void,
+    headers?: HeadersDefaults & {
+        [key: string]: AxiosHeaderValue
+    },
+    withCredentials?: boolean,
+}) {
+
+    console.log(options.url, process.env.NEXT_PUBLIC_BASE_URL)
+
+    return fetchEventSource(`${process.env.NEXT_PUBLIC_BASE_URL}${options.url}`, {
+        method: options.method,
+        headers: {
+            'Content-Type': 'application/json',
+            // 'Content-Type': 'application/x-www-form-urlencoded',
+            "accessToken": store.getState().user.token?.accessToken || ""
+        },
+        body: options.data ? JSON.stringify(options.data) : undefined,
+        onmessage: options.onmessage,
+        onerror: options.onerror
+    })
+
+    // return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${options.url}`, {
+    //     method: options.method,
+    //     headers: {
+    //         'Content-Type': 'application/json',
+    //         // 'Content-Type': 'application/x-www-form-urlencoded',
+    //         "accessToken": store.getState().user.token?.accessToken || ""
+    //     },
+    //     body: options.data ? JSON.stringify(options.data) : undefined
+    // })
+
 }
 

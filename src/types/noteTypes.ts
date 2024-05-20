@@ -67,10 +67,12 @@ export interface NoteInfo {
     createTime: string;
     updateBy: number;
     updateTime: string;
+    latestOperationTime?: string;
     id: number;
     title: string;
     noteTextId: number;
     knowledgeBaseId: number;
+    knowledgeBaseName?: string;
     status: number;
     dataScope: number;
     deleted: number;

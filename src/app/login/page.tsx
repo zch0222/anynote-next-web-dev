@@ -52,7 +52,7 @@ function Login() {
                 console.log(res)
                 setCookie("user", JSON.stringify(res.data.data), {
                     path: "/",
-                    maxAge: 3600,
+                    maxAge: 3600 * 24 * 7,
                     sameSite: true
                 })
                 dispatch(setUserInfo(res.data.data))
@@ -63,6 +63,7 @@ function Login() {
                 router.push(DASHBOARD)
             }
         ).catch(
+            e => console.log(e)
         ).finally(
             () => {
                 setIsLoading(false)
@@ -115,7 +116,7 @@ function Login() {
                         wrapperCol={{ span: 24 }}
                     >
                         <Button
-                            className="w-full"
+                            className="w-full text-white"
                             isLoading={isLoading}
                             color="primary"
                             type="submit"

@@ -1,5 +1,5 @@
 import request, {Method} from "@/utils/client-request"
-import { ChatConversationInfoVO } from "@/types/aiTypes";
+import {ChatConversationInfoVO, ChatConversationVO,} from "@/types/aiTypes";
 import {PageBean, ResData} from "@/types/requestTypes";
 
 export function getChatConversationList(params: {
@@ -31,3 +31,13 @@ export function updateChatConversation(params: {
     })
 }
 
+
+export function getConversationById({id}: {
+    id: number
+}) {
+    return request<ResData<ChatConversationVO>>({
+        url: `/api/ai/chat/conversations/${id}`,
+        method: Method.GET,
+        needToken: true
+    })
+}

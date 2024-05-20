@@ -1,8 +1,9 @@
-import request, {Method} from "@/utils/client-request"
+import request, {Method, streamRequest} from "@/utils/client-request"
 import { HuaweiOBSTemporarySignature } from "@/types/fileTypes";
 import {PageBean, ResData} from "@/types/requestTypes";
 import {CreateDTO, DocListVO, DocVO} from "@/types/noteTypes";
 import {AxiosProgressEvent, GenericAbortSignal} from "axios";
+import {EventSourceMessage} from "@microsoft/fetch-event-source";
 
 
 export function docUploadTempLink(params: {
@@ -49,7 +50,7 @@ export function getDocById(params: {
     docId: number
 }) {
     return request<ResData<DocVO>>({
-        url: `/api/note/docs/${params.docId}`,
+        url: `/api/note/docs/public/${params.docId}`,
         method: Method.GET,
         needToken: true
     })
@@ -58,21 +59,47 @@ export function getDocById(params: {
 export function query(params: {
     docId: number,
     prompt: string,
-    onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
+    conversationId: number | null,
+    onmessage: (event: EventSourceMessage) => void,
+    onerror: (event: ErrorEvent) => void,
     signal?: GenericAbortSignal
 }) {
 
-    return  request<void>({
-        url: `/api/ai/rag/query/docs`,
+    return streamRequest<void>({
+        url: `/api/ai/rag/query/docs/v2`,
         data: {
             prompt: params.prompt,
-            docId: params.docId
+            docId: params.docId,
+            conversationId: params.conversationId
         },
         method: Method.POST,
         needToken: true,
-        onDownloadProgress: params.onDownloadProgress
+        onmessage: params.onmessage,
+        onerror: params.onerror
     })
 
+}
+
+export function freeDocQuery(params: {
+    docId: number,
+    prompt: string,
+    conversationId: number | null,
+    onmessage: (event: EventSourceMessage) => void,
+    onerror: (event: ErrorEvent) => void,
+    signal?: GenericAbortSignal
+}) {
+    return streamRequest<void>({
+        url: `/api/ai/rag/public/query/docs`,
+        data: {
+            prompt: params.prompt,
+            docId: params.docId,
+            conversationId: params.conversationId
+        },
+        method: Method.POST,
+        needToken: false,
+        onmessage: params.onmessage,
+        onerror: params.onerror
+    })
 }
 
 export function indexDoc(id: number) {
@@ -88,5 +115,13 @@ export function deleteDoc(id: number) {
         url: `/api/note/docs/${id}`,
         method: Method.DELETE,
         needToken: true
+    })
+}
+
+export function getHomeDoc() {
+    return request<ResData<DocVO>>({
+        url: `/api/note/docs/home`,
+        method: Method.GET,
+        needToken: false
     })
 }

@@ -27,14 +27,17 @@ import {nanoid} from "nanoid";
 import {DocVO} from "@/types/noteTypes";
 import {showMessage} from "@/store/message/messageSlice";
 import {router} from "next/client";
+import useIsMobile from "@/hooks/useIsMobile";
 
 
 
 pdfjs.GlobalWorkerOptions.workerSrc = "https://anynote.obs.cn-east-3.myhuaweicloud.com/cdn/pdfjs-dist/%403.11.174/build/pdf.worker.js"
-function PDFViewer({ src, docId, doc }: {
+function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
     src: string,
     docId: number,
-    doc: DocVO
+    doc: DocVO,
+    isShowAIModule: boolean,
+    isShowTitle: boolean | undefined
 }) {
     const { theme } = useTheme()
 
@@ -44,10 +47,11 @@ function PDFViewer({ src, docId, doc }: {
     const [page, setPage] = useState(1)
     const [isShowChat, setIsShowChat] = useState<boolean>(false)
     const [isCatalogueDrawerOpen, setIsCatalogueDrawerOpen] = useState<boolean>(false)
-    const [scale, setScale] = useState(1.0)
+    const [scale, setScale] = useState(0.9)
     const [pdfUrl, setPdfUrl] = useState<string | null>(null)
     const [numPages , setNumPages ] = useState(0)
     const [inputPage, setInputPage] = useState<string>(page.toString())
+    const isMobile = useIsMobile()
 
     const viewerBackgroundColor = theme === 'light' ? "bg-[#F7F7F8]" : "bg-black"
 
@@ -61,6 +65,12 @@ function PDFViewer({ src, docId, doc }: {
                 setPdfUrl(url)
             })
     }, [src])
+
+    useEffect(() => {
+        if (isMobile) {
+            setScale(0.6)
+        }
+    }, [isMobile]);
 
     useEffect(() => {
         if (page.toString() !== inputPage) {
@@ -166,6 +176,8 @@ function PDFViewer({ src, docId, doc }: {
 
     return (
         <div className="w-full h-full">
+
+
             {
                 isShowChat ?
                     <Card className="absolute z-50 max-w-[500px] max-h-[800px] w-[80%] h-[80%] right-2 top-[70px]">
@@ -197,13 +209,16 @@ function PDFViewer({ src, docId, doc }: {
                     <Button
                         className="mr-2"
                         variant="light"
+                        size={isMobile ? "sm" : "md"}
                         onClick={() => setIsCatalogueDrawerOpen(!isCatalogueDrawerOpen)}
                     >
                         <Catalogue width={16} height={16}/>
                     </Button>
-                    <div className="font-bold text-xl mr-5">
-                        {doc.docName}
-                    </div>
+                    {isMobile || false == isShowTitle ? <></> :
+                        <div className="font-bold text-base mr-5">
+                            {doc.docName}
+                        </div>
+                    }
                     <Button size="sm" onClick={previous}>Previous</Button>
                     <div className="flex justify-center items-center mr-1 ml-1">
                         <span>
@@ -259,36 +274,38 @@ function PDFViewer({ src, docId, doc }: {
                     >
                         <Plus width={16} height={16}/>
                     </div>
-
-                    <div className="flex-grow flex flex-row justify-end items-center">
-                        <div className="mr-2">
-                            {getIndexStatusChip(doc.indexStatus)}
-                        </div>
-                        <Dropdown
-                            menu={{items}}
-                            className="mr-2"
-                        >
-                            <Button
-                                isIconOnly={true}
-                                variant="light"
-                            >
-                                <MoreOutlined
-                                    style={{
-                                        fontSize: 25
-                                    }}
-                                />
-                            </Button>
-                        </Dropdown>
-                        <Card isPressable className="rounded-[50px]" onClick={() => {
-                            setIsShowChat(!isShowChat)
-                        }}>
-                            <Image
-                                className="select-none object-cover rounded-[50px] w-[50px] h-[50px]"
-                                src="https://anynote.obs.cn-east-3.myhuaweicloud.com/images/gpt_button.jpg"
-                                alt="chat"
-                            />
-                        </Card>
-                    </div>
+                    {
+                        false === isShowAIModule ? <></> :
+                            <div className="flex-grow flex flex-row justify-end items-center">
+                                <div className="mr-2">
+                                    {getIndexStatusChip(doc.indexStatus)}
+                                </div>
+                                <Dropdown
+                                    menu={{items}}
+                                    className="mr-2"
+                                >
+                                    <Button
+                                        isIconOnly={true}
+                                        variant="light"
+                                    >
+                                        <MoreOutlined
+                                            style={{
+                                                fontSize: 25
+                                            }}
+                                        />
+                                    </Button>
+                                </Dropdown>
+                                <Card isPressable className="rounded-[50px]" onClick={() => {
+                                    setIsShowChat(!isShowChat)
+                                }}>
+                                    <Image
+                                        className="select-none object-cover rounded-[50px] w-[50px] h-[50px]"
+                                        src="https://anynote.obs.cn-east-3.myhuaweicloud.com/images/gpt_button.jpg"
+                                        alt="chat"
+                                    />
+                                </Card>
+                            </div>
+                    }
                 </Card>
                 <div
                     className={`w-full flex-grow overflow-auto ${viewerBackgroundColor}`}
@@ -305,10 +322,10 @@ function PDFViewer({ src, docId, doc }: {
                             getContainer={false}
                             onClose={() => setIsCatalogueDrawerOpen(false)}
                         >
-                            <div className="flex flex-col">
+                            <div className="flex flex-col w-full overflow-auto">
                                 <Document
                                     file={pdfUrl}
-                                    onLoadSuccess={({ numPages } ) => {
+                                    onLoadSuccess={({numPages}) => {
                                         console.log(numPages)
                                     }}
                                     onLoadError={(e) => {

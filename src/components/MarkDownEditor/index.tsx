@@ -22,7 +22,7 @@ export default function MarkDownEditor({onInput, onBlur, onUpload, content, vdit
             after() {
                 console.log(content)
                 vditor.setValue(content)
-                vditor.focus()
+                // vditor.focus()
                 setVd(vditor)
                 vditorRef.current = vditor
             },

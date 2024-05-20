@@ -15,3 +15,12 @@ export interface SearchVO<T, K> {
     highlight: T
     source: K
 }
+
+export interface BaseEntity {
+    createBy?: number;
+    createTime?: string;
+    updateBy?: number;
+    updateTime: string;
+    remark?: string;
+    params?: Map<string, any>;
+}

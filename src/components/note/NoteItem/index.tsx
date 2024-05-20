@@ -1,20 +1,15 @@
 'use client'
-import { Chip } from "@nextui-org/chip";
-import { useState } from "react";
-import { useTheme } from "next-themes";
-import {useRouter} from "next/navigation";
 
-import useNoteList from "@/hooks/useNoteList";
-
-import createPage from "@/components/hoc/createPage/createPage";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 
+import {NoteInfo} from "@/types/noteTypes";
+import {useRouter} from "next/navigation";
+import {useState} from "react";
+import {useTheme} from "next-themes";
+import {Chip} from "@nextui-org/chip";
+import {NOTE} from "@/constants/route";
 import NoteIcon from "@/components/svg/NoteIcon";
-import { NoteInfo } from "@/types/noteTypes";
-import Pagination from "@/components/Pagination";
-import { NOTE } from "@/constants/route";
-import { stringToDateString } from "@/utils/date";
-import dayjs from "dayjs";
+import {stringToDateString} from "@/utils/date";
 
 function NoteItem({ data }: {
     data: NoteInfo
@@ -59,8 +54,15 @@ function NoteItem({ data }: {
                     <div>
                         {data.title}
                     </div>
-                    <div className="text-[12px] text-default-500">
-                        {`最近更新时间: ${stringToDateString(data.updateTime)}`}
+                    <div className="flex flex-row">
+                        {!data.knowledgeBaseName ? <></> :
+                            <div className="text-[12px] text-default-500 mr-2">
+                                {data.knowledgeBaseName}
+                            </div>
+                        }
+                        <div className="text-[12px] text-default-500">
+                            {`最近更新时间: ${stringToDateString(data.updateTime)}`}
+                        </div>
                     </div>
                 </div>
             </div>
@@ -71,23 +73,5 @@ function NoteItem({ data }: {
     )
 }
 
-function NoteTab({ knowledgeBaseId }: {
-    knowledgeBaseId: number
-}) {
+export default withThemeConfigProvider(NoteItem)
 
-
-    return (
-        <div className="h-full pt-2 overflow-hidden">
-            <Pagination
-                direction="col"
-                Page={createPage(NoteItem)}
-                swr={useNoteList}
-                params={{
-                    knowledgeBaseId: knowledgeBaseId
-                }}
-            />
-        </div>
-    )
-}
-
-export default withThemeConfigProvider(NoteTab)

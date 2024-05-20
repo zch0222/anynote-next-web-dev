@@ -25,3 +25,20 @@ export function resetPassword(params: {
         data: params
     })
 }
+
+export function register(params: {
+    username: string,
+    nickname: string,
+    password: string,
+    email?: string,
+    sex: number
+}) {
+    
+    return request<ResData<UserInfo>>({
+        url: "/api/auth/register",
+        method: Method.POST,
+        needToken: false,
+        data: params
+    })
+    
+}

@@ -1,3 +1,5 @@
+import {BaseEntity} from "@/types/requestTypes";
+
 export interface ChatConversationInfoVO {
     id: number;
     title: string;
@@ -5,7 +7,25 @@ export interface ChatConversationInfoVO {
     docId: number;
     permission: number;
     createBy?: number;
-    createTime?: Date;
+    createTime?: string;
     updateBy?: number;
-    updateTime?: Date;
+    updateTime?: string;
+}
+
+export interface ChatMessage extends BaseEntity {
+    id: string;
+    conversationId?: number;
+    orderIndex?: number;
+    content: string;
+    role: number;
+    type?: number;
+    docId?: number;
+    deleted?: number;
+    status?: string
+}
+
+
+export interface ChatConversationVO {
+    conversation: ChatConversationInfoVO,
+    messages: ChatMessage[]
 }

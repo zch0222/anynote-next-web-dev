@@ -20,8 +20,15 @@ let requests: Function[] = [];
 
 export const service = axios.create({
     timeout: 360000,
-    baseURL: baseURL,
+    baseURL: baseURL
 })
+
+export const streamService = axios.create({
+    baseURL: process.env.NEXT_PUBLIC_BASE_URL,
+    timeout: 360000,
+    responseType: 'stream'
+})
+
 
 // service.interceptors.request.use(
 //     async (config: MyAxiosRequestConfig) => {
@@ -122,6 +129,8 @@ export default function clientRequest<T>(options: {
 }): Promise<AxiosResponse<T>> {
     return service(options);
 }
+
+
 
 
 
