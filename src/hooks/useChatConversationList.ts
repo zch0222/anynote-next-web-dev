@@ -13,7 +13,6 @@ export default function useChatConversationList({ params, page, pageSize }: SWRP
     if (params.docId) {
         key += `&docId=${params.docId}`
     }
-    console.log(key)
     return useSWR(key, () => getChatConversationList({
         page: page,
         pageSize: pageSize,

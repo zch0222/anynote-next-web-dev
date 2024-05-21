@@ -27,6 +27,7 @@
     "next-themes": "^0.2.1",
     "nookies": "^2.5.2",
     "pdfjs-dist": "^2.16.105",
+    "rc-virtual-list": "^3.13.0",
     "react": "^18",
     "react-cookie": "^6.1.1",
     "react-dom": "^18",

@@ -5,7 +5,7 @@ import ChatText from "@/components/AIChatBox/ChatText";
 import {Button, Textarea, Chip } from "@nextui-org/react";
 import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {ChatConversationInfoVO, ChatConversationVO, ChatMessage} from "@/types/aiTypes";
-import {getConversationById, updateChatConversation} from "@/requests/client/ai/chat";
+import {getChatConversationList, getConversationById, updateChatConversation} from "@/requests/client/ai/chat";
 import Chat from "@/components/AIChatBox/Chat";
 import useChatConversation from "@/hooks/useChatConversation";
 import Loading from "@/components/Loading";
@@ -29,7 +29,7 @@ function ChatConversationListItem({ data, itemProps }: {
     }
 }) {
 
-    console.log(itemProps)
+    // console.log(itemProps)
 
     const { theme } = useTheme()
 
@@ -41,7 +41,7 @@ function ChatConversationListItem({ data, itemProps }: {
         <div
             className={`${isHover ? hoveredBg : ""} ${itemProps?.selectedId === data.id ? "border-l-3 border-[#01B96B]" : ''} cursor-pointer p-2`}
             style={{
-                minHeight: "50px"
+                height: "50px"
             }}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
@@ -300,6 +300,8 @@ function AIChatBox({generate, docId, isShowHead}: {
                                         }}
                                         Item={ChatConversationListItem}
                                         itemProps={conversationScrollItemProps}
+                                        rowHeight={50}
+                                        getPage={getChatConversationList}
                                     />
                                 </div>
                             </div>

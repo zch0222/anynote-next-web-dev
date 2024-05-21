@@ -1,8 +1,8 @@
 import { RefObject } from "react";
 
-export function scrollToBottoms(ref: RefObject<HTMLElement>) {
-    if (ref.current) {
-        ref.current.scrollTo({ top: ref.current.scrollHeight, behavior: 'smooth' });
+export function scrollToBottoms(ref: any) {
+    if (ref) {
+        ref.scrollTo({ top: ref.scrollHeight, behavior: 'smooth' });
     }
 }
 

@@ -5,12 +5,15 @@ import {Button} from "@nextui-org/react";
 import { PRIMARY_COLOR } from "@/constants/color";
 import { scrollTo } from "@/utils/nodeUtil";
 import { useRouter } from "next/navigation";
+import useNode from "@/hooks/useNode";
 import MarkDownEditor from "@/components/MarkDownEditor";
 
 
 export default function HomeTop() {
 
     const router = useRouter()
+    const [canvas, canvasRef] = useNode()
+    // const index = useRef<number>(0)
 
     const selectList = useMemo(() => (
         [
@@ -76,7 +79,7 @@ export default function HomeTop() {
         button: JSX.Element
     }>(selectList[0])
 
-    const canvasRef = useRef<HTMLCanvasElement | null>(null);
+    // const canvasRef = useRef<HTMLCanvasElement | null>(null);
     const isSelectedChanged = useRef<boolean>(false)
     // const [startTime, setStartTime] = useState<null | number>(null)
 
@@ -98,14 +101,19 @@ export default function HomeTop() {
     // }, [selectList, selected]);
 
     useEffect(() => {
-        if (!canvasRef.current) {
+        if (!canvas) {
             return
         }
-        const canvas = canvasRef.current;
-        const context = canvas.getContext('2d');
+        // const canvas = canvasRef.current;
+        // @ts-ignore
+        const context = (canvas as HTMLCanvasElement).getContext('2d');
+        console.log(context)
         // setStartTime(new Date().getTime());
         const startTime = new Date().getTime()
         isSelectedChanged.current = false
+        // setTimeout(() => {
+        //     setSelected(selectList[(index.current + 1) % selectList.length])
+        // }, 5000)
 
         const drawProgress = () => {
 
@@ -115,14 +123,19 @@ export default function HomeTop() {
             setStayPercent(progress)
 
             // 清除画布
+            // @ts-ignore
             context.clearRect(0, 0, canvas.width, canvas.height);
 
             // 绘制背景
+            // @ts-ignore
             context.fillStyle = '#ddd';
+            // @ts-ignore
             context.fillRect(0, 0, 36, 4);
 
             // 绘制进度条
+            // @ts-ignore
             context.fillStyle = PRIMARY_COLOR;
+            // @ts-ignore
             context.fillRect(0, 0, 36 * progress, 4);
 
             if (progress < 1) {
@@ -130,10 +143,13 @@ export default function HomeTop() {
             }
             else {
                 console.log(selected, startTime, currentTime, elapsedTime, isSelectedChanged.current)
+                // setSelected(selectList[(index.current + 1) % selectList.length])
                 // if (!isSelectedChanged.current) {
                 //     setSelected(prevState => selectList[(prevState.index + 1) % 2])
                 //     isSelectedChanged.current = true
                 // }
+                // setSelected(prevState => selectList[(prevState.index + 1) % selectList.length])
+                // isSelectedChanged.current = true
             }
         };
 
@@ -145,10 +161,10 @@ export default function HomeTop() {
         //         setStartTime(null);
         //     }
         // };
-    }, [selectList, selected]);
+    }, [canvas, selectList, selected]);
 
     useEffect(() => {
-        console.log(stayPercent)
+        // console.log(stayPercent)
         if (stayPercent > 1 && !isSelectedChanged.current) {
             setSelected(prevState => selectList[(prevState.index + 1) % selectList.length])
             isSelectedChanged.current = true

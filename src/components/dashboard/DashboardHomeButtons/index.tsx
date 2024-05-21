@@ -6,9 +6,12 @@ import {ContainerOutlined, EditOutlined} from "@ant-design/icons";
 import CreateWikiForm from "@/components/wiki/CreateWikiForm";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import useNoteListV2 from "@/hooks/useNoteListV2";
+import AutoInfiniteScroll from "@/components/AutoInfiniteScroll";
 
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import NoteItem from "@/components/note/NoteItem";
+import {getChatConversationList} from "@/requests/client/ai/chat";
+import {getNoteList} from "@/requests/client/note/note";
 
 function DashboardHomeButtons() {
 
@@ -49,11 +52,13 @@ function DashboardHomeButtons() {
             >
                 最近更新
             </div>
-            <div className="flex-grow w-full overflow-hidden">
+            <div className="flex-grow w-full overflow-hidden pb-10">
                 <InfiniteScroll
                     swr={useNoteListV2}
                     params={{}}
                     Item={NoteItem}
+                    rowHeight={60}
+                    getPage={getNoteList}
                 />
             </div>
         </div>

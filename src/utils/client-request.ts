@@ -12,7 +12,7 @@ import {EventSourceMessage, fetchEventSource} from '@microsoft/fetch-event-sourc
 
 
 const onBeforeFulfilled = async (config: MyAxiosRequestConfig) => {
-        console.log(store.getState().user)
+        // console.log(store.getState().user)
         const accessToken: string | undefined = store.getState().user.token?.accessToken;
         if (config.needToken && accessToken) {
             config.headers['accessToken'] = accessToken;

@@ -12,6 +12,7 @@ import { Button } from "antd";
 import {NoteHistoryListItemVO} from "@/types/noteTypes";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import MarkDownViewer from "@/components/MarkDownViewer";
+import {getNoteHistoryList} from "@/requests/client/note/note";
 
 function HistoryListItem({ data, itemProps }: {
     data: NoteHistoryListItemVO,
@@ -32,14 +33,14 @@ function HistoryListItem({ data, itemProps }: {
         <div
             className={`${isHover ? hoveredBg : ""} ${itemProps?.selectOperationLogId === data.operationLogId ? "border-l-3 border-[#01B96B]" : ''} flex flex-col justify-center cursor-pointer p-2`}
             style={{
-                minHeight: "8vh"
+                height: 60
             }}
             onMouseEnter={() => setIsHover(true)}
             onMouseLeave={() => setIsHover(false)}
             onClick={() => itemProps?.setSelectOperationLogId(data.operationLogId)}
         >
-            <div>{data.updaterNickname}</div>
-            <div>{getDateString(new Date(data.operationTime))}</div>
+            <div className="font-bold">{data.updaterNickname}</div>
+            <div className="text-sm text-gray-400">{getDateString(new Date(data.operationTime))}</div>
         </div>
     )
 }
@@ -125,6 +126,8 @@ function NoteHistory({params}: {
                             selectOperationLogId: selectHistoryId,
                             setSelectOperationLogId: setSelectHistoryId,
                         }}
+                        getPage={getNoteHistoryList}
+                        rowHeight={60}
                     />
                 </div>
             </div>

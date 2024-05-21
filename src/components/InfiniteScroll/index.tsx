@@ -1,11 +1,14 @@
 import React, {ComponentType, ReactElement, useState, useRef, useEffect, ReactNode} from "react";
 import Loading from "../Loading";
 import {SWRResponse} from "swr";
-import { PageBean } from "@/types/requestTypes";
+import {PageBean, ResData} from "@/types/requestTypes";
 import { Pagination as NextUIPagination } from "@nextui-org/react";
 import ReactInfiniteScroll from 'react-infinite-scroll-component';
 import useSWR from "swr";
+import useNode from "@/hooks/useNode";
 import {nanoid} from "nanoid";
+import {node} from "prop-types";
+import {AxiosResponse} from "axios";
 
 
 function Page({ Item, swr, page, pageSize, params, itemProps }: {
@@ -63,49 +66,99 @@ function InfiniteScroll(props: {
     params: any | undefined,
     Item: ComponentType<{data: any}>,
     itemProps?: any
+    rowHeight: number,
+    getPage: ({page, pageSize}: {
+        page: number,
+        pageSize: number,
+        [key: string]: any;
+    }) => Promise<AxiosResponse<ResData<PageBean<any>>>>
 }) {
 
-    const pages: ReactElement[] = []
+    // const pages: ReactElement[] = []
 
-    const { swr, params, Item, itemProps} = props;
+    const [pages, setPages] = useState<ReactElement[]>([]);
+
+    const { swr, params, Item, itemProps, rowHeight, getPage } = props;
     const reactInfiniteScrollRef = useRef()
 
+    const [divNode, divRef] = useNode()
+    const [isLoading, setIsLoading] = useState(true)
+
     const [hasMore, setHasMore] = useState<boolean>(true)
+    const [totalPages, setTotalPages] = useState(0)
 
     const [pageParam, setPageParam] = useState<{
         page: number,
         pageSize: number
     }>({
-        page: 1,
-        pageSize: 15,
+        page: 0,
+        pageSize: 0,
     })
 
-    const { data, error } = swr({
-        params: params,
-        page: 1,
-        pageSize: 15
-    })
+    // const { data, error } = swr({
+    //     params: params,
+    //     page: 1,
+    //     pageSize: 1
+    // })
 
     useEffect(() => {
-        // if (reactInfiniteScrollRef.current) {
-        //     const resizeObserver = new ResizeObserver(entries => {
-        //         for (let entry of entries) {
-        //             console.log('Height:', entry.target.offsetHeight);
-        //         }
-        //     });
-        //
-        // }
-    }, [data])
+        console.log(divNode)
+        if (!divNode) {
+            return
+        }
+        // @ts-ignore
+        console.log("HEIGHT", Math.ceil(divNode.getBoundingClientRect().height / rowHeight) + 1)
+        // @ts-ignore
+        const pageSize = Math.ceil(divNode.getBoundingClientRect().height / rowHeight) + 1
+        console.log(getPage)
+        getPage({
+            ...params,
+            page: 1,
+            pageSize: pageSize
+        }).then(
+            res => {
+                setTotalPages(res.data.data.pages)
+                setPageParam(prevState => ({
+                    page: 1,
+                    pageSize: pageSize
+                }))
+            }
+        ).finally(
+            () => setIsLoading(false)
+        )
+    }, [divNode, getPage, params, rowHeight]);
 
-    if (!data) {
-        console.log("Loading....")
-        return <Loading/>
-    }
+    useEffect(() => {
+        console.log(pageParam)
+        if (pageParam.page === 0) {
+            return
+        }
+        if (hasMore && pageParam.page >= totalPages) {
+            setHasMore(false)
+        }
+        const newPages: ReactElement[] = []
+        for (let i = 0; i < pageParam.page; ++i) {
+            newPages.push(<Page key={nanoid()} Item={Item} itemProps={itemProps} swr={swr} page={i + 1} pageSize={pageParam.pageSize} params={params}/>)
+        }
+        setPages(newPages)
+    }, [Item, itemProps, pageParam, params, swr, totalPages]);
+
+    // useEffect(() => {
+    //     // if (reactInfiniteScrollRef.current) {
+    //     //     const resizeObserver = new ResizeObserver(entries => {
+    //     //         for (let entry of entries) {
+    //     //             console.log('Height:', entry.target.offsetHeight);
+    //     //         }
+    //     //     });
+    //     //
+    //     // }
+    // }, [data])
 
 
-    if (hasMore && pageParam.page >= data.pages) {
-        setHasMore(false)
-    }
+    // for (let i = 0; i < pageParam.page; ++i) {
+    //     pages.push(<Page key={nanoid()} Item={Item} itemProps={itemProps} swr={swr} page={i + 1} pageSize={pageParam.pageSize} params={params}/>)
+    // }
+
 
     // const onPageChange = (page: number) => {
     //     console.log(page)
@@ -122,29 +175,28 @@ function InfiniteScroll(props: {
         })
     }
 
-
-
-    for (let i = 0; i < pageParam.page; ++i) {
-        pages.push(<Page key={nanoid()} Item={Item} itemProps={itemProps} swr={swr} page={i + 1} pageSize={pageParam.pageSize} params={params}/>)
-    }
-
     return (
         <div
             id={"scrollableDiv"}
             className={`flex h-full flex-col w-full overflow-y-auto`}
+            ref={divRef}
         >
-            <ReactInfiniteScroll
-                className="overflow-hidden"
-                next={next}
-                hasMore={hasMore}
-                loader={"loading..."}
+            {isLoading ? <Loading/> :
+                <>
+                    <ReactInfiniteScroll
+                        className="overflow-hidden"
+                        next={next}
+                        hasMore={hasMore}
+                        loader={"loading..."}
+                        dataLength={pages.length}
+                        scrollableTarget="scrollableDiv"
+                    >
+                        {pages}
+                    </ReactInfiniteScroll>
 
-                dataLength={pages.length}
-                scrollableTarget="scrollableDiv"
-            >
-                {pages}
-            </ReactInfiniteScroll>
-            {data.pages === 0 ? <div className="m-auto p-3">无数据</div> : <></>}
+                    {totalPages === 0 ? <div className="m-auto p-3">无数据</div> : <></>}
+                </>
+            }
         </div>
     )
 }

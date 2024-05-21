@@ -12,6 +12,7 @@ import useChatConversation from "@/hooks/useChatConversation";
 import EmptyIcon from "@/components/svg/EmptyIcon";
 import {EventSourceMessage} from "@microsoft/fetch-event-source";
 import { getDateString } from "@/utils/date";
+import useNode from "@/hooks/useNode";
 import {it} from "node:test";
 
 function Chat({generate, conversationId, setChatInfo, setConversationId}: {
@@ -31,7 +32,10 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
 }) {
 
     const [isChatting, setIsChatting] = useState<boolean>(false)
-    const textRef = useRef<HTMLDivElement>(null);
+    // const textRef = useRef<HTMLDivElement>(null);
+
+    const [textBox, textBoxRef] = useNode()
+
     const [prompt, setPrompt] = useState("")
     const [messages, setMessages] = useState<ChatMessage[]>([])
 
@@ -41,7 +45,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
     const messagesRef = useRef<ChatMessage[]>([])
 
     useEffect(() => {
-        scrollToBottoms(textRef)
+        // scrollToBottoms(textBox)
 
         if (data) {
             setMessages(data.messages)
@@ -56,7 +60,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
                 messageCount: 0
             })
         }
-    }, [data]);
+    }, [data, setChatInfo, textBox]);
 
     useEffect(() => {
         if (!conversationId) {
@@ -76,6 +80,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
             title: data?.conversation.title || "New Chat",
             messageCount: messages.length
         })
+        scrollToBottoms(textBox)
         // scrollToBottoms(textRef)
         //
         // const question = prompt
@@ -122,7 +127,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
         //         }
         //     }
         // )
-    }, [messages])
+    }, [data, messages, setChatInfo])
 
     const send = () => {
         if (!prompt || "" === prompt) {
@@ -153,6 +158,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
         setMessages(messagesRef.current)
 
         setPrompt("")
+        // scrollToBottoms(textBox)
         // scrollToBottoms(textRef)
         generate({
             conversationId: conversationId,
@@ -183,7 +189,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
             () => {
                 console.log(messagesRef.current)
                 setIsChatting(false)
-                scrollToBottoms(textRef)
+                // scrollToBottoms(textBox)
                 if (!conversationId) {
                     console.log(messagesRef.current[messagesRef.current.length-1])
                     setConversationId(messagesRef.current[messagesRef.current.length-1].conversationId || null)
@@ -196,7 +202,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
         <div className="flex flex-col w-full h-full overflow-hidden">
             <div
                 className="flex-grow flex flex-col overflow-y-auto"
-                ref={textRef}
+                ref={textBoxRef}
             >
                 {messages.length > 0 ? messages.map(item => (
                     <ChatText

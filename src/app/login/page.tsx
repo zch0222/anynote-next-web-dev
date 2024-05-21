@@ -11,8 +11,9 @@ import { useSelector, useDispatch } from "react-redux";
 import { showMessage } from "@/store/message/messageSlice";
 import { Image } from "antd";
 import {setUserInfo} from "@/store/user/userSlice";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import { DASHBOARD } from "@/constants/route";
+import Loading from "@/components/Loading";
 
 type FieldType = {
     username?: string;
@@ -37,6 +38,12 @@ function Login() {
     // const dispatch = useDispatch()
     //
     console.log(user)
+
+    // useEffect(() => {
+    //     if (user.token) {
+    //         router.push(DASHBOARD)
+    //     }
+    // }, [user, router]);
 
     const onFinish = async (value: {
         username: string,
@@ -70,6 +77,10 @@ function Login() {
             }
         );
     }
+
+    // if (user.token) {
+    //     return <Loading/>
+    // }
 
     return (
         <div className="flex items-center justify-center h-full">

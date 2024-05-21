@@ -19,25 +19,25 @@ function FloatButton() {
           trigger="hover"
           icon={<MoreOutlined/>}
         >
-            <AntdFloatButton
-                type={"dark" === theme ? "primary" : "default"}
-                icon={
-                    <Image
-                        src="https://anynote.obs.cn-east-3.myhuaweicloud.com/anynote_%20Shanghai/assets/moon.svg"
-                        height={20}
-                        width={20}
-                        alt="moon"
-                    />
-                }
-                onClick={() => {
-                    if ("dark" === theme) {
-                        dispatch(setTheme("light"))
-                    }
-                    else {
-                        dispatch(setTheme("dark"))
-                    }
-                }}
-            />
+            {/*<AntdFloatButton*/}
+            {/*    type={"dark" === theme ? "primary" : "default"}*/}
+            {/*    icon={*/}
+            {/*        <Image*/}
+            {/*            src="https://anynote.obs.cn-east-3.myhuaweicloud.com/anynote_%20Shanghai/assets/moon.svg"*/}
+            {/*            height={20}*/}
+            {/*            width={20}*/}
+            {/*            alt="moon"*/}
+            {/*        />*/}
+            {/*    }*/}
+            {/*    onClick={() => {*/}
+            {/*        if ("dark" === theme) {*/}
+            {/*            dispatch(setTheme("light"))*/}
+            {/*        }*/}
+            {/*        else {*/}
+            {/*            dispatch(setTheme("dark"))*/}
+            {/*        }*/}
+            {/*    }}*/}
+            {/*/>*/}
             <AntdFloatButton
                 icon={<HomeOutlined/>}
                 onClick={() => router.push("/")}
