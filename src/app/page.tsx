@@ -16,7 +16,7 @@ export default function Home() {
             <HomeTop/>
             <DocQuery/>
             <EditorDemo/>
-            <ChartsDemo/>
+            {/*<ChartsDemo/>*/}
         </div>
         {/*<div className="w-full flex flex-col items-center">*/}
           {/*<Image*/}

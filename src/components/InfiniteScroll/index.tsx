@@ -141,7 +141,7 @@ function InfiniteScroll(props: {
             newPages.push(<Page key={nanoid()} Item={Item} itemProps={itemProps} swr={swr} page={i + 1} pageSize={pageParam.pageSize} params={params}/>)
         }
         setPages(newPages)
-    }, [Item, itemProps, pageParam, params, swr, totalPages]);
+    }, [Item, hasMore, itemProps, pageParam, params, swr, totalPages]);
 
     // useEffect(() => {
     //     // if (reactInfiniteScrollRef.current) {

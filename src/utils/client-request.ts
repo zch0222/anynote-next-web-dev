@@ -152,7 +152,8 @@ export function streamRequest<T>(options: {
         },
         body: options.data ? JSON.stringify(options.data) : undefined,
         onmessage: options.onmessage,
-        onerror: options.onerror
+        onerror: options.onerror,
+        openWhenHidden: true
     })
 
     // return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${options.url}`, {

@@ -1,20 +1,20 @@
 'use client'
-import { Chip } from "@nextui-org/chip";
-import { useState } from "react";
-import { useTheme } from "next-themes";
-import {useRouter} from "next/navigation";
+// import { Chip } from "@nextui-org/chip";
+// import { useState } from "react";
+// import { useTheme } from "next-themes";
+// import {useRouter} from "next/navigation";
 
 import useNoteList from "@/hooks/useNoteList";
 
 import createPage from "@/components/hoc/createPage/createPage";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 
-import NoteIcon from "@/components/svg/NoteIcon";
-import { NoteInfo } from "@/types/noteTypes";
-import Pagination from "@/components/Pagination";
-import { NOTE } from "@/constants/route";
-import { stringToDateString } from "@/utils/date";
-import dayjs from "dayjs";
+// import NoteIcon from "@/components/svg/NoteIcon";
+// import { NoteInfo } from "@/types/noteTypes";
+// import Pagination from "@/components/Pagination";
+// import { NOTE } from "@/constants/route";
+// import { stringToDateString } from "@/utils/date";
+// import dayjs from "dayjs";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import NoteItem from "@/components/note/NoteItem";
 import {getNoteInfoList} from "@/requests/client/note/note";

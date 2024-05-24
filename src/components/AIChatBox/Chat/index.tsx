@@ -44,6 +44,8 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
     const resTextLength = useRef(0);
     const messagesRef = useRef<ChatMessage[]>([])
 
+    const controller = new AbortController();
+
     useEffect(() => {
         // scrollToBottoms(textBox)
 
@@ -163,6 +165,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
         generate({
             conversationId: conversationId,
             prompt: prompt,
+            // signal: controller.signal,
             onmessage: (event: EventSourceMessage) => {
                 try {
                     console.log(event.data)
@@ -184,6 +187,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
             },
             onerror: (event: ErrorEvent) => {
                 console.log(event)
+                // controller.abort()
             },
         }).finally(
             () => {
