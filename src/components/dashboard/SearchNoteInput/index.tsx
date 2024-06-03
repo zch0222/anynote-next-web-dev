@@ -5,6 +5,7 @@ import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import { useState } from "react";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import useNoteSearchList from "@/hooks/useNoteSearchList";
+import { searchNote } from "@/requests/client/note/note";
 import {SearchVO} from "@/types/requestTypes";
 import { NoteSearchSource, NoteSearchHighlight } from "@/types/noteTypes";
 import NoteIcon from "@/components/svg/NoteIcon";
@@ -12,6 +13,7 @@ import {useTheme} from "next-themes";
 import { useRouter } from "next/navigation";
 import { NOTE } from "@/constants/route";
 import {Chip} from "@nextui-org/chip";
+import Loading from "@/components/Loading";
 
 function SearchItem({ data }: {
     data: SearchVO<NoteSearchHighlight, NoteSearchSource>
@@ -40,15 +42,15 @@ function SearchItem({ data }: {
 
     return (
         <div
-            className={`flex flex-row items-center p-2 cursor-pointer ${isHovered ? hoveredBg : ''}`}
+            className={`flex flex-row items-center p-2 pt-3 pb-3 min-h-[55px] cursor-pointer ${isHovered ? hoveredBg : ''}`}
             onMouseEnter={() => setIsHovered(true)}
             onMouseLeave={() => setIsHovered(false)}
             onClick={() => router.push(`${NOTE}/${data.source.id}`)}
         >
             <div className="mr-3">
-                <NoteIcon width={30} height={35}/>
+                <NoteIcon width={35} height={40}/>
             </div>
-            <div className="flex flex-col">
+            <div className="flex flex-col flex-grow">
                 <div className="flex flex-row">
                     {data.highlight.title !== undefined ?
                         <div className="mr-1" dangerouslySetInnerHTML={{__html: data.highlight.title}}/> :  <div className="mr-1">{data.source.title}</div>}
@@ -56,20 +58,52 @@ function SearchItem({ data }: {
                         {getPermissions(data.source.permissions)}
                     </div>
                 </div>
-                {data.highlight.content?.map((item, index) => (
-                    <div key={index} className="text-default-500 text-sm">
-                        {item !== undefined ?
-                            <div dangerouslySetInnerHTML={{__html: item}}/> : <></>}
-                    </div>
-                ))}
+                {data.highlight.content?.map((item, index) => {
+                    if (index > 2) {
+                        return <></>
+                    }
+                    return (
+                        <div key={index} className="text-default-500 text-sm">
+                            {item !== undefined ?
+                                <div dangerouslySetInnerHTML={{__html: item}}/> : <></>}
+                        </div>
+                    )
+                })}
             </div>
         </div>
     )
 }
 
+function SearchList(params: {
+    keyword: string
+}) {
+    const {data, isLoading} = useNoteSearchList({
+        params: {
+            keyword: params.keyword
+        },
+        page: 1,
+        pageSize: 50
+    });
+
+    if (isLoading) {
+        return (<Loading/>)
+    }
+
+
+    return (
+        <>
+            {data?.rows.map((item, index) => (
+                <SearchItem key={index} data={item}/>
+            ))}
+        </>
+    )
+
+}
+
 function Search() {
 
     const [keyword, setKeyword] = useState("")
+
 
 
     return (
@@ -82,13 +116,23 @@ function Search() {
                 startContent={<SearchOutlined style={{fontSize: 18}}/>}
             />
             { keyword !== "" ?
-                <InfiniteScroll
-                    swr={useNoteSearchList}
-                    params={{
-                        keyword: keyword
-                    }}
-                    Item={SearchItem}
-                /> : <></>}
+                <div className="max-h-[500px] overflow-y-auto">
+                    <SearchList keyword={keyword}/>
+                    {/*{searchNote({*/}
+                    {/*    keyword: keyword,*/}
+                    {/*    page: 1,*/}
+                    {/*    pageSize: 50*/}
+                    {/*})}*/}
+                    {/*<InfiniteScroll*/}
+                    {/*    swr={useNoteSearchList}*/}
+                    {/*    params={{*/}
+                    {/*        keyword: keyword*/}
+                    {/*    }}*/}
+                    {/*    Item={SearchItem}*/}
+                    {/*    getPage={searchNote}*/}
+                    {/*    rowHeight={80}*/}
+                    {/*/>*/}
+                </div>: <></>}
         </div>
 
     )
