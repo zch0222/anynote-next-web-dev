@@ -106,8 +106,6 @@ function InfiniteScroll(props: {
         if (!divNode) {
             return
         }
-        console.log(rowHeight)
-        console.log(divNode.getBoundingClientRect().height)
         // @ts-ignore
         console.log("HEIGHT", Math.ceil(divNode.getBoundingClientRect().height / rowHeight) + 1)
         // @ts-ignore
