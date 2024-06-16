@@ -4,6 +4,7 @@ import HomeFooter from "@/components/home/HomeFooter";
 import DocQuery from "@/components/home/DocQuery";
 import HomeTop from "../components/home/HomeTop"
 import EditorDemo from "@/components/home/EditorDemo";
+import AIWorkflow from "@/components/home/AIWorkflow";
 import ChartsDemo from "@/components/home/ChartsDemo";
 
 export default function Home() {
@@ -16,6 +17,7 @@ export default function Home() {
             <HomeTop/>
             <DocQuery/>
             <EditorDemo/>
+            <AIWorkflow/>
         </div>
         {/*<div className="w-full flex flex-col items-center">*/}
           {/*<Image*/}
