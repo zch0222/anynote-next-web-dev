@@ -4,6 +4,7 @@ import './globals.css'
 import FloatButton from "@/components/FloatButton";
 import {Providers} from "@/app/providers";
 import Message from "@/components/Message";
+import Notice from "@/components/notice/Notice";
 
 const inter = Inter({ subsets: ['latin'] })
 
@@ -24,6 +25,7 @@ export default function RootLayout({
         {children}
         <Message/>
         <FloatButton/>
+          <Notice/>
       </Providers>
       </body>
       </html>

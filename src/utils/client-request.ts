@@ -1,4 +1,4 @@
-import axios, {all, AxiosHeaders, AxiosProgressEvent, AxiosResponse} from "axios";
+import axios, {all, AxiosHeaders, AxiosProgressEvent, AxiosResponse, GenericAbortSignal} from "axios";
 import store from "@/store";
 import {message} from "antd";
 import { showMessage } from "@/store/message/messageSlice";
@@ -139,6 +139,7 @@ export function streamRequest<T>(options: {
         [key: string]: AxiosHeaderValue
     },
     withCredentials?: boolean,
+    signal?: GenericAbortSignal
 }) {
 
     console.log(options.url, process.env.NEXT_PUBLIC_BASE_URL)
@@ -153,7 +154,8 @@ export function streamRequest<T>(options: {
         body: options.data ? JSON.stringify(options.data) : undefined,
         onmessage: options.onmessage,
         onerror: options.onerror,
-        openWhenHidden: true
+        openWhenHidden: true,
+        signal: options.signal
     })
 
     // return fetch(`${process.env.NEXT_PUBLIC_BASE_URL}${options.url}`, {
