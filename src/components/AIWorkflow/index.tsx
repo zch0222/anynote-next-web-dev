@@ -55,7 +55,7 @@ function AIWorkflow() {
 
 
     return (
-        <div className="w-full h-[600px] mt-10">
+        <div className="w-full h-full">
             <ReactFlow
                 //@ts-ignore
                 nodes={nodes}
