@@ -363,4 +363,4 @@ function AIChatBox({generate, docId, isShowHead}: {
     )
 }
 
-export default withThemeConfigProvider(AIChatBox)
+export default  withThemeConfigProvider(AIChatBox)

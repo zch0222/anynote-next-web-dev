@@ -56,6 +56,28 @@ export function getDocById(params: {
     })
 }
 
+export function chatCompletions(params: {
+    prompt: string,
+    conversationId: number | null,
+    model: string,
+    onmessage: (event: EventSourceMessage) => void,
+    onerror: (event: ErrorEvent) => void,
+    signal?: GenericAbortSignal
+}) {
+    return streamRequest<void>({
+        url: `/api/aiNio/chat/completions`,
+        data: {
+            prompt: params.prompt,
+            conversationId: params.conversationId,
+            model: params.model
+        },
+        method: Method.POST,
+        needToken: true,
+        onmessage: params.onmessage,
+        onerror: params.onerror
+    })
+}
+
 export function query(params: {
     docId: number,
     prompt: string,

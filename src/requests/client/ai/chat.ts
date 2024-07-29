@@ -9,7 +9,7 @@ export function getChatConversationList(params: {
     pageSize: number
 }) {
     return request<ResData<PageBean<ChatConversationInfoVO>>>({
-        url: `/api/ai/chat/conversations`,
+        url: `/api/aiNio/chat/conversations/list`,
         params: params,
         method: Method.GET,
         needToken: true
@@ -22,7 +22,7 @@ export function updateChatConversation(params: {
     title?: string
 }) {
     return request<ResData<string>>({
-        url: `/api/ai/chat/conversations/${params.id}`,
+        url: `/api/aiNio/chat/conversations/${params.id}`,
         data: {
             title: params.title
         },
@@ -36,7 +36,7 @@ export function getConversationById({id}: {
     id: number
 }) {
     return request<ResData<ChatConversationVO>>({
-        url: `/api/ai/chat/conversations/${id}`,
+        url: `/api/aiNio/chat/conversations/${id}`,
         method: Method.GET,
         needToken: true
     })

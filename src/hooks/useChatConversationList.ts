@@ -6,7 +6,7 @@ export default function useChatConversationList({ params, page, pageSize }: SWRP
     id?: number,
     docId?: number
 }>) {
-    let key: string = `/api/ai/chat/conversations?pageSize=${pageSize}&page=${page}`
+    let key: string = `/api/aiNio/chat/conversations?pageSize=${pageSize}&page=${page}`
     if (params.id) {
         key += `&id=${params.id}`
     }
