@@ -1,5 +1,5 @@
 'use client'
-import {useState, useRef, useEffect} from "react";
+import {useState, useRef, useEffect, useCallback} from "react";
 import { Drawer } from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
@@ -7,6 +7,7 @@ import { getNoteById } from "@/requests/client/note/note";
 import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
 import MarkDownEditor from "@/components/MarkDownEditor";
+import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
 import MarkDownViewer from "@/components/MarkDownViewer";
 import DrawerContent from "@/components/note/DrawerContent";
 
@@ -56,7 +57,7 @@ function Note({params}: {
     useEffect(() => {
     }, [vditorRef.current])
 
-    const fetchUpdateNote = (value: string) => {
+    const fetchUpdateNote = useCallback((value: string) => {
         const match = value.match(/^# (.*)$/m);
         console.log(match)
         setIsUpdatingNote(true)
@@ -80,7 +81,7 @@ function Note({params}: {
                 setIsUpdatingNote(false)
             }
         )
-    }
+    }, [id])
 
     const onUpload = (files: File[]) => {
 
@@ -142,12 +143,17 @@ function Note({params}: {
                         content={data.content}
                     /> :
                     <div className="w-full h-full">
-                        <MarkDownEditor
+                        {/*<MarkDownEditor*/}
+                        {/*    onInput={fetchUpdateNote}*/}
+                        {/*    onBlur={() => {}}*/}
+                        {/*    onUpload={onUpload}*/}
+                        {/*    content={data.content}*/}
+                        {/*    vditorRef={vditorRef}*/}
+                        {/*/>*/}
+                        <MuyaMarkDownEditor
                             onInput={fetchUpdateNote}
                             onBlur={() => {}}
-                            onUpload={onUpload}
                             content={data.content}
-                            vditorRef={vditorRef}
                         />
                     </div>
                 }

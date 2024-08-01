@@ -6,7 +6,10 @@ export default function MuyaPage() {
 
     return (
         <div className="w-full h-full">
-            <MuyaMarkDownEditor/>
+            {/*<MuyaMarkDownEditor*/}
+            {/*    onInput={(value: string) => console.log(value)}*/}
+            {/*    content={"# Hello World"}*/}
+            {/*/>*/}
         </div>
     )
 }
