@@ -4,10 +4,10 @@ import {Card, CardBody, CardHeader} from "@nextui-org/card";
 import {Button, Input, Select, SelectedItems, SelectItem} from "@nextui-org/react";
 import {Handle, Position} from 'reactflow';
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-import {useState} from "react";
+import {useCallback, useEffect, useState} from "react";
 import {ArrowDownOutlined, ArrowRightOutlined, DeleteOutlined} from "@ant-design/icons";
 import { nanoid } from "nanoid";
-import {it} from "node:test";
+import { NodeData } from "@/types/aiWorkflowTypes";
 
 const variableOptions = [
     {
@@ -20,7 +20,27 @@ const variableOptions = [
     }
 ]
 
-function StartNode() {
+function StartNode(props: {
+    data: NodeData<{
+        id: string,
+        key: string,
+        type: string,
+        description: string,
+        defaultValue: any,
+    }[]>,
+    id: string
+}) {
+
+    const { data, id } = props
+
+    const { onNodeUpdate } = data
+
+    console.log(id)
+
+    useEffect(() => {
+        console.log(data)
+    }, [data]);
+
 
     const [variableList, setVariableList] = useState<{
         id: string,
@@ -29,36 +49,58 @@ function StartNode() {
         description: string,
         defaultValue: any,
         isShowSetting: boolean
-    }[]>([
-        {
-            id: nanoid(),
-            key: "a",
-            type: "number",
-            description: "",
-            defaultValue: 1,
-            isShowSetting: false
-        },
-        {
-            id: nanoid(),
-            key: "b",
-            type: "string",
-            description: "",
-            defaultValue: "b",
-            isShowSetting: false
-        },
-    ]);
+    }[]>(data.data.map(item => ({
+        id: item.id,
+        key: item.key,
+        type: item.type,
+        description: item.description,
+        defaultValue: item.defaultValue,
+        isShowSetting: true
+    })));
 
-    const updateVariableList = (id: string, variable: {
+    useEffect(() => {
+        onNodeUpdate(id, variableList)
+    }, [id, onNodeUpdate, variableList]);
+    
+    const addVariableList = useCallback(() => {
+        setVariableList([...variableList,
+            {
+                id: nanoid(),
+                key: "",
+                type: "string",
+                description: "",
+                defaultValue: "",
+                isShowSetting: false
+            }
+        ])
+    }, [variableList])
+
+    const deleteVariable = useCallback((itemId: string) => {
+        setVariableList(variableList.filter(prevItem => prevItem.id != itemId))
+    }, [variableList])
+
+    const updateVariableList = (itemId: string, variable: {
         key?: string,
         type?: string,
         description?: string,
         defaultValue?: any,
         isShowSetting?: boolean
     }) => {
+        // updateNode(id, data.data.map(prevItem => {
+        //     if (prevItem.id === itemId) {
+        //         // 对匹配的元素进行属性修改，并返回一个新的对象
+        //         return {
+        //             ...prevItem,
+        //             ...variable
+        //         };
+        //     }
+        //     // 对于不匹配的元素，直接返回原对象
+        //     return prevItem;
+        // }))
         setVariableList((prevList) => {
             // 创建一个新的数组，其中每个元素都是新的对象
             return prevList.map(prevItem => {
-                if (prevItem.id === id) {
+                if (prevItem.id === itemId) {
                     // 对匹配的元素进行属性修改，并返回一个新的对象
                     return {
                         ...prevItem,
@@ -87,16 +129,7 @@ function StartNode() {
                         className="text-white mb-2"
                         color="primary"
                         size="sm"
-                        onClick={() => setVariableList([...variableList,
-                            {
-                                id: nanoid(),
-                                key: "",
-                                type: "string",
-                                description: "",
-                                defaultValue: "",
-                                isShowSetting: false
-                            }
-                        ])}
+                        onClick={addVariableList}
                     >
                         添加变量
                     </Button>
@@ -129,8 +162,7 @@ function StartNode() {
                                 </div>
                                 <DeleteOutlined
                                     onClick={() => {
-                                        setVariableList((prevList) => prevList
-                                            .filter(prevItem => prevItem.id != item.id))
+                                        deleteVariable(item.id)
                                     }}
                                 />
                             </CardHeader>

@@ -175,7 +175,7 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
 
 
     return (
-        <div className="w-full h-full">
+        <div className="w-full h-full overflow-y-auto">
 
 
             {
@@ -310,7 +310,7 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
                 <div
                     className={`w-full flex-grow overflow-auto ${viewerBackgroundColor}`}
                 >
-                    <div className="z-0 relative w-full min-h-full flex flex-col items-center">
+                    <div className="z-0 relative w-full min-h-full flex flex-col items-center overflow-y-auto">
                         <Drawer
                             mask={false}
                             contentWrapperStyle={{
@@ -324,6 +324,7 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
                         >
                             <div className="flex flex-col w-full overflow-auto">
                                 <Document
+                                    className="h-full w-full"
                                     file={pdfUrl}
                                     onLoadSuccess={({numPages}) => {
                                         console.log(numPages)
@@ -352,6 +353,7 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
                                 </Document>
                             </div>
                         </Drawer>
+
                         <Document
                             file={pdfUrl}
                             onLoadSuccess={({ numPages } ) => {
@@ -362,6 +364,7 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
                             <Page className="w-[80%]" pageNumber={page} scale={scale}/>
                         </Document>
                     </div>
+
                 </div>
 
             </div>

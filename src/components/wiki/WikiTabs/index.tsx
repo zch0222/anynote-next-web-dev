@@ -56,6 +56,9 @@ function WikiTabs({ knowledgeBaseId }: {
                 <Tab className="w-full h-full overflow-hidden" key="doc" title="文档">
                     <DocTab knowledgeBaseId={knowledgeBaseId}/>
                 </Tab>
+                <Tab className="w-full h-full overflow-hidden" key="video" title="视频">
+                    <DocTab knowledgeBaseId={knowledgeBaseId}/>
+                </Tab>
             </Tabs>
 
         </div>

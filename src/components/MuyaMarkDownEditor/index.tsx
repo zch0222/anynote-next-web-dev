@@ -6,6 +6,7 @@ import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import '@marktext/muya/dist/assets/style.css';
 import Vditor from "vditor";
 import {ImageEditTool} from "@marktext/muya/dist/ui";
+import requestAnimationFrame from "zrender/lib/animation/requestAnimationFrame";
 
 function MuyaMarkDownEditor({onInput, content}: {
     onInput: (value: string) => void,
@@ -27,26 +28,58 @@ function MuyaMarkDownEditor({onInput, content}: {
             const muya = new Muya(container)
             muya.init()
             muya.setContent(content)
+
+            // muya.domNode.addEventListener("keydown", (e) => {
+            //     // console.log(e.target.innerText)
+            //     // onInput(e.target.innerText)
+            //     onInput(muya.getMarkdown())
+            //     console.log(muya.getMarkdown())
+            //     console.log(muya.getState())
+            //     // console.log(e)
+            //     // onInput(e.target.innerText)
+            //     // muya.setContent(e.target.innerText)
+            // })
+            // muya.on("input", (e) => {
+            //     console.log(e)
+            // })
             muya.domNode.addEventListener("input", (e) => {
                 // console.log(e.target.innerText)
-                onInput(e.target.innerText)
-                // console.log(e)
+                // onInput(e.target.innerText)
+                // onInput(muya.getMarkdown())
+                // console.log(muya.getState())
+                requestAnimationFrame(() => {
+                    console.log(muya.getMarkdown())
+                    onInput(muya.getMarkdown())
+                })
+
+                // console.log(e.target.__MUYA_BLOCK__.editor)
+                // console.log(e.target.__MUYA_BLOCK__.editor.jsonState)
+                // console.log(e.target.__MUYA_BLOCK__.editor.jsonState.state)
                 // onInput(e.target.innerText)
                 // muya.setContent(e.target.innerText)
             })
-
+            //
             muya.domNode.addEventListener("keydown", (e) => {
                 if (e.key === 'Backspace' || e.key === 'Delete') {
-                    onInput(e.target.innerText);
+                    // onInput(e.target.innerText);
+                    requestAnimationFrame(() => {
+                        onInput(muya.getMarkdown())
+                    })
                 }
             });
-
+            //
             muya.domNode.addEventListener('paste', (e) => {
-                onInput(e.target.innerText)
+                // onInput(e.target.innerText)
+                requestAnimationFrame(() => {
+                    onInput(muya.getMarkdown())
+                })
             })
 
             muya.domNode.addEventListener('cut', (e) => {
-                onInput(e.target.innerText)
+                // onInput(e.target.innerText)
+                requestAnimationFrame(() => {
+                    onInput(muya.getMarkdown())
+                })
             })
         }
 

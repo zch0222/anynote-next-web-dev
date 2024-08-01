@@ -20,6 +20,11 @@ import Vditor from "vditor";
 import {nanoid} from "nanoid";
 import {Note} from "@/types/noteTypes";
 
+const EditorType = {
+    "MUYA": 0,
+    "VDITOR": 1
+}
+
 function Note({params}: {
     params: {
         id: number
@@ -34,6 +39,7 @@ function Note({params}: {
     const [latestUpdateTime, setLatestUpdateTime] = useState<Date>()
     const [title, setTitle] = useState<string>("")
     const vditorRef = useRef<Vditor>()
+    const [editorType, setEditorType] = useState<number>(EditorType.MUYA);
 
     useEffect(() => {
         getNoteById({
@@ -61,7 +67,9 @@ function Note({params}: {
         const match = value.match(/^# (.*)$/m);
         console.log(match)
         setIsUpdatingNote(true)
-        value = value.replace(/\n+/g, '\n\n')
+        if (EditorType.VDITOR == editorType) {
+            value = value.replace(/\n+/g, '\n\n')
+        }
         updateNote({
             id: id,
             title: match?.[1],
@@ -143,18 +151,20 @@ function Note({params}: {
                         content={data.content}
                     /> :
                     <div className="w-full h-full">
-                        {/*<MarkDownEditor*/}
-                        {/*    onInput={fetchUpdateNote}*/}
-                        {/*    onBlur={() => {}}*/}
-                        {/*    onUpload={onUpload}*/}
-                        {/*    content={data.content}*/}
-                        {/*    vditorRef={vditorRef}*/}
-                        {/*/>*/}
-                        <MuyaMarkDownEditor
-                            onInput={fetchUpdateNote}
-                            onBlur={() => {}}
-                            content={data.content}
-                        />
+                        {EditorType.MUYA == editorType ?
+                            <MuyaMarkDownEditor
+                                onInput={fetchUpdateNote}
+                                onBlur={() => {}}
+                                content={data.content}
+                            /> :
+                            <MarkDownEditor
+                                onInput={fetchUpdateNote}
+                                onBlur={() => {}}
+                                onUpload={onUpload}
+                                content={data.content}
+                                vditorRef={vditorRef}
+                            />
+                        }
                     </div>
                 }
                 <Drawer
