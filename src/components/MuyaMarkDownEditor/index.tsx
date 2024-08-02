@@ -67,6 +67,13 @@ function MuyaMarkDownEditor({onInput, content}: {
                     })
                 }
             });
+            muya.domNode.addEventListener('blur', (e) => {
+                onInput(muya.getMarkdown())
+            })
+
+            muya.domNode.addEventListener("focus", (e) => {
+                onInput(muya.getMarkdown())
+            })
             //
             muya.domNode.addEventListener('paste', (e) => {
                 // onInput(e.target.innerText)
@@ -81,6 +88,9 @@ function MuyaMarkDownEditor({onInput, content}: {
                     onInput(muya.getMarkdown())
                 })
             })
+            return () => {
+                onInput(muya.getMarkdown())
+            }
         }
 
 
@@ -120,7 +130,6 @@ function MuyaMarkDownEditor({onInput, content}: {
         //
         //
         // })
-
 
 
     }, [onInput, content]);
