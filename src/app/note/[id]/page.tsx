@@ -137,6 +137,8 @@ function Note({params}: {
         <div className="flex flex-col w-full h-full">
             <div className="w-full h-[60px]">
                 <NoteHead
+                    editorType={editorType}
+                    setEditorType={setEditorType}
                     title={title}
                     updateTime={isUpdatingNote ? '正在更新...' : `最近更新：${getDateString(latestUpdateTime)}`}
                     onShowDrawer={() => {

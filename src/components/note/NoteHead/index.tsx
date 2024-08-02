@@ -6,10 +6,12 @@ import { PicLeftOutlined } from "@ant-design/icons";
 import DrawerIcon from "@/components/svg/DrawerIcon";
 import { useRouter } from "next/navigation";
 
-function NoteHead({ title, updateTime, onShowDrawer }: {
+function NoteHead({ title, updateTime, onShowDrawer, editorType, setEditorType }: {
     title: string,
     updateTime: string,
-    onShowDrawer: () => void
+    onShowDrawer: () => void,
+    editorType: number
+    setEditorType: (newEditorType: number) => void
 }) {
 
     const router = useRouter()
@@ -37,6 +39,12 @@ function NoteHead({ title, updateTime, onShowDrawer }: {
                 </div>
             </div>
             <div className="mr-2">
+                <Button
+                    type="primary"
+                    onClick={() => setEditorType(editorType == 0 ? 1 : 0)}
+                >
+                    {editorType === 0 ? "返回旧版" : "体验新版"}
+                </Button>
                 {/*<Card*/}
                 {/*    className="flex justify-center items-center w-[45px] h-[30px]"*/}
                 {/*    radius="sm"*/}

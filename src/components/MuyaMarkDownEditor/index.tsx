@@ -21,6 +21,8 @@ function MuyaMarkDownEditor({onInput, content}: {
 
     useEffect(() => {
 
+
+
         if (typeof window !== "undefined") {
             console.log(window)
             const container = document.querySelector('#muyaEditor')
@@ -88,8 +90,27 @@ function MuyaMarkDownEditor({onInput, content}: {
                     onInput(muya.getMarkdown())
                 })
             })
+
+            const documentOnKeydown = (event: KeyboardEvent) => {
+                // 检查是否同时按下了Ctrl键和S键
+                if (event.ctrlKey && event.key === 's') {
+                    // 阻止默认行为，例如浏览器的保存页面操作
+                    event.preventDefault();
+
+                    // 在这里执行你想要的操作
+                    console.log('Ctrl + S 被按下了');
+                    onInput(muya.getMarkdown())
+
+                    // 例如，你可以调用一个函数来保存数据
+                    // saveData();
+                }
+            }
+
+            document.addEventListener('keydown', documentOnKeydown)
             return () => {
+                console.log("muya unmounted")
                 onInput(muya.getMarkdown())
+                document.removeEventListener('keydown', documentOnKeydown)
             }
         }
 
