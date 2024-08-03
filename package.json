@@ -3,7 +3,7 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev -p 8000",
+    "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -41,7 +41,6 @@
     "reactflow": "^11.11.3",
     "remark-gfm": "^4.0.0",
     "remark-math": "^6.0.0",
-    "sass": "^1.77.8",
     "swr": "^2.2.4",
     "vditor": "^3.9.6"
   },

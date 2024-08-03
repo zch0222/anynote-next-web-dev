@@ -19,6 +19,7 @@ import { getDateString } from "@/utils/date";
 import Vditor from "vditor";
 import {nanoid} from "nanoid";
 import {Note} from "@/types/noteTypes";
+import debounce from "@/utils/debounce";
 
 const EditorType = {
     "MUYA": 0,
@@ -63,7 +64,7 @@ function Note({params}: {
     useEffect(() => {
     }, [vditorRef.current])
 
-    const fetchUpdateNote = useCallback((value: string) => {
+    const fetchUpdateNote = useCallback(debounce((value: string) => {
         const match = value.match(/^# (.*)$/m);
         console.log(match)
         setIsUpdatingNote(true)
@@ -89,7 +90,7 @@ function Note({params}: {
                 setIsUpdatingNote(false)
             }
         )
-    }, [id])
+    }, 2000, false), [id])
 
     const onUpload = (files: File[]) => {
 

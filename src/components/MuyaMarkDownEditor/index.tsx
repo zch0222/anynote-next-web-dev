@@ -104,6 +104,13 @@ function MuyaMarkDownEditor({onInput, content}: {
                     // 例如，你可以调用一个函数来保存数据
                     // saveData();
                 }
+                else if (event.ctrlKey && event.key === 'z') {
+                    event.preventDefault();
+                    muya.editor.history.undo()
+                    requestAnimationFrame(() => {
+                        onInput(muya.getMarkdown())
+                    })
+                }
             }
 
             document.addEventListener('keydown', documentOnKeydown)
