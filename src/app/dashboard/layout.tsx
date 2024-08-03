@@ -9,7 +9,7 @@ export default function DashboardLayout({children}: {
 
     return (
         <div className="flex-grow flex flex-row w-full h-full">
-            <div className="w-[250px]">
+            <div>
                 <DashboardSider/>
             </div>
             <div className="flex-grow h-full">

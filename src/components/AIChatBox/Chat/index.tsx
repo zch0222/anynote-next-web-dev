@@ -7,6 +7,7 @@ import {useEffect, useRef, useState} from "react";
 import {ChatMessage} from "@/types/aiTypes";
 import {scrollToBottoms} from "@/utils/nodeUtil";
 import {nanoid} from "nanoid";
+import { Input, Drawer } from "antd";
 import {AxiosProgressEvent, AxiosResponse, GenericAbortSignal} from "axios";
 import useChatConversation from "@/hooks/useChatConversation";
 import EmptyIcon from "@/components/svg/EmptyIcon";
@@ -14,6 +15,7 @@ import {EventSourceMessage} from "@microsoft/fetch-event-source";
 import { getDateString } from "@/utils/date";
 import useNode from "@/hooks/useNode";
 import {it} from "node:test";
+import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
 
 function Chat({generate, conversationId, setChatInfo, setConversationId}: {
     generate: (params: {
@@ -38,6 +40,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
 
     const [prompt, setPrompt] = useState("")
     const [messages, setMessages] = useState<ChatMessage[]>([])
+    const [inputType, setInputType] = useState<"text" | "markdown">("text")
 
     const { data } = useChatConversation(conversationId)
 
@@ -131,6 +134,15 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
         // )
     }, [data, messages, setChatInfo])
 
+    const updateInputType = () => {
+        if ("text" === inputType) {
+            setInputType("markdown")
+        }
+        else {
+            setInputType("text")
+        }
+    }
+
     const send = () => {
         if (!prompt || "" === prompt) {
             return
@@ -203,10 +215,18 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
     }
 
     return (
-        <div className="flex flex-col w-full h-full overflow-hidden">
+        <div
+            className="flex flex-col w-full h-full overflow-hidden"
+            style={{
+                position: 'relative'
+            }}
+        >
             <div
                 className="flex-grow flex flex-col overflow-y-auto"
                 ref={textBoxRef}
+                style={{
+                    position: 'relative'
+                }}
             >
                 {messages.length > 0 ? messages.map(item => (
                     <ChatText
@@ -221,17 +241,87 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
                     />
                 )) : <div className="w-full h-full flex items-center justify-center"><EmptyIcon width={65} height={65}/></div>}
             </div>
+            <Drawer
+                open={'markdown' === inputType }
+                placement={"bottom"}
+                getContainer={false}
+                onClose={() => {
+                    updateInputType()
+                }}
+                mask={false}
+                destroyOnClose={true}
+            >
+                <form
+                    className="flex flex-col justify-between w-full h-full"
+                    onSubmit={(event) => {
+                        event.preventDefault()
+                    }}
+                >
+                    <div className="w-full flex-grow overflow-y-auto">
+                        <MuyaMarkDownEditor
+                            onInput={(value: string) => setPrompt(value)}
+                            content={prompt}
+                        />
+                    </div>
+                    <div className="h-[50px] self-end">
+                        <Button
+                            className="font-bold text-white w-[60px] h-[32px] mt-1"
+                            size="sm"
+                            color="primary"
+                            onClick={() => {
+                                send()
+                                updateInputType()
+                            }}
+                            isLoading={isChatting}
+                            type="submit"
+                        >
+                            Send
+                        </Button>
+                    </div>
+                </form>
+            </Drawer>
             <form
-                className="flex flex-row items-center"
+                className="flex flex-col"
                 onSubmit={(event) => {
                     event.preventDefault()
                 }}
             >
-                <Textarea
-                    className="mr-2"
-                    placeholder={"请输入问题"}
-                    onValueChange={setPrompt}
+                {/*<Textarea*/}
+                {/*    className="mr-2"*/}
+                {/*    placeholder={"请输入问题"}*/}
+                {/*    onValueChange={setPrompt}*/}
+                {/*    value={prompt}*/}
+                {/*    onKeyDown={(e) => {*/}
+                {/*        console.log(e.keyCode)*/}
+                {/*        if (e.keyCode === 13) {*/}
+                {/*            e.preventDefault()*/}
+                {/*            send()*/}
+                {/*        }*/}
+                {/*    }}*/}
+                {/*/>*/}
+                <Button
+                    className="w-[100px] self-end mb-1"
+                    size="sm"
+                    onPress={() => {
+                        if ("text" === inputType) {
+                            setInputType("markdown")
+                        }
+                        else {
+                            setInputType("text")
+                        }
+                    }}
+                >
+                    Markdown输入
+                </Button>
+                <Input.TextArea
+                    rows={4}
+                    style={{
+                        resize: 'none',
+                    }}
+                    autoFocus={true}
+                    onChange={(e) => setPrompt(e.target.value)}
                     value={prompt}
+                    placeholder={"请输入问题"}
                     onKeyDown={(e) => {
                         console.log(e.keyCode)
                         if (e.keyCode === 13) {
@@ -241,7 +331,8 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
                     }}
                 />
                 <Button
-                    className="h-[55px] font-bold"
+                    className="font-bold text-white w-[60px] self-end mt-1"
+                    size="sm"
                     color="primary"
                     onClick={send}
                     isLoading={isChatting}

@@ -1,8 +1,8 @@
 'use client'
-import {Input, Modal, ModalContent, ModalBody, ModalHeader} from "@nextui-org/react";
+import {Input, Modal, ModalContent, ModalBody, ModalHeader, Button} from "@nextui-org/react";
 import { SearchOutlined } from "@ant-design/icons";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-import { useState } from "react";
+import { useState, useContext } from "react";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import useNoteSearchList from "@/hooks/useNoteSearchList";
 import { searchNote } from "@/requests/client/note/note";
@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { NOTE } from "@/constants/route";
 import {Chip} from "@nextui-org/chip";
 import Loading from "@/components/Loading";
+import DashboardContext from "@/components/dashboard/Sider/context/DashboardContext";
 
 function SearchItem({ data }: {
     data: SearchVO<NoteSearchHighlight, NoteSearchSource>
@@ -141,26 +142,38 @@ function Search() {
 function SearchNoteInput() {
 
     const [isOpenSearch, setIsOpenSearch] = useState(false)
+    const dashboardContextValue = useContext(DashboardContext)
 
     return (
         <div
-            className="p-2"
-            onClick={() => setIsOpenSearch(true)}
+            className="w-full flex flex-row justify-center p-2"
+            // onClick={() => setIsOpenSearch(true)}
         >
-            <Input
-                className="cursor-pointer"
-                classNames={{
-                    innerWrapper: [
-                        "cursor-pointer"
-                    ],
-                    input: [
-                        "cursor-pointer"
-                    ]
-                }}
-                size="sm"
-                startContent={<SearchOutlined style={{fontSize: 18}}/>}
-                placeholder="搜索"
-            />
+            {
+                !dashboardContextValue.inlineCollapsed ?
+                    <Input
+                        className="cursor-pointer"
+                        classNames={{
+                            innerWrapper: [
+                                "cursor-pointer"
+                            ],
+                            input: [
+                                "cursor-pointer"
+                            ]
+                        }}
+                        size="sm"
+                        startContent={<SearchOutlined style={{fontSize: 18}}/>}
+                        placeholder={"搜索"}
+                        onClick={() => setIsOpenSearch(true)}
+                    />
+                    :
+                    <Button
+                        isIconOnly
+                        onPress={() => setIsOpenSearch(true)}
+                    >
+                        <SearchOutlined style={{fontSize: 18}}/>
+                    </Button>
+            }
             <Modal
                 isOpen={isOpenSearch}
                 onClose={() => {

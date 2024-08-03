@@ -1,19 +1,25 @@
 'use client'
 
 import {ItemType} from "antd/es/menu/hooks/useItems";
-import KnowledgeBaseSVG from "@/components/svg/KnowledgeBaseSVG";
+import getKnowledgeBaseSVG from "@/components/svg/KnowledgeBaseSVG";
+import { getBotSVG } from "@/components/svg/Bot"
 import {UserOutlined, HomeOutlined} from "@ant-design/icons";
-import React from "react";
+import React, {useEffect, useMemo, useState, useContext} from "react";
 import { useRouter, usePathname } from "next/navigation";
 import {Menu} from "antd";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider"
-import { DASHBOARD, WIKIS } from "@/constants/route";
+import { DASHBOARD, WIKIS, CHAT_GPT } from "@/constants/route";
+import DashboardContext from "@/components/dashboard/Sider/context/DashboardContext";
+import Icon from "@ant-design/icons";
 
 function ManageSiderMenu() {
 
     const pathname = usePathname()
 
     const router = useRouter()
+
+    const [selectedKeys, setSelectKeys] = useState<string[]>([])
+    const dashboardContextValue = useContext(DashboardContext)
 
     const defaultSelectedKeys = () => {
         if (pathname.startsWith("/dashboard/wikis")) {
@@ -25,42 +31,62 @@ function ManageSiderMenu() {
         return []
     }
 
+    useEffect(() => {
+        console.log(pathname)
+        if (pathname.startsWith("/dashboard/wikis")) {
+            setSelectKeys(['2'])
+        }
+        else if (pathname.startsWith("/dashboard/chat")) {
+            setSelectKeys(['3'])
+        }
+        else if (pathname.startsWith('/dashboard')) {
+            setSelectKeys(['1'])
+        }
+        else {
+            setSelectKeys([])
+        }
+    }, [pathname]);
+
     const menuItems: ItemType[] = [
         {
             key: '1',
-            icon: <div className="w-[30px] mr-1"><HomeOutlined style={{fontSize: 25}} /></div>,
-            label: (
-                <div>
-                    开始
-                </div>
-            ),
+            icon: <HomeOutlined style={{fontSize: 18}}/>,
+            label: '开始',
             onClick: () => {
                 router.push(DASHBOARD)
             }
         },
         {
             key: '2',
-            icon: <div className="w-[30px] mr-1"><KnowledgeBaseSVG width={25} height={25}/></div>,
-            label: (
-                <div>
-                    知识库
-                </div>
-            ),
+            icon: <Icon component={getKnowledgeBaseSVG(18, 18)}/> ,
+            label: '知识库',
             onClick: () => {
                 router.push(WIKIS)
+            }
+        },
+        {
+            key: '3',
+            icon: <Icon component={getBotSVG(18, 18)}/> ,
+            label: 'ChatGPT',
+            onClick: () => {
+                router.push(`${CHAT_GPT}/new`)
             }
         }
     ]
 
     return (
         <Menu
+            inlineCollapsed={dashboardContextValue.inlineCollapsed}
             style={{
-                border: "none !important"
+                // border: "none !important"
+                // border: dashboardContextValue.inlineCollapsed ? "" : "none !important"
+                // height: dashboardContextValue.inlineCollapsed ? 80 : 250
             }}
             className="w-full flex-grow"
             mode="inline"
             items={menuItems}
-            defaultSelectedKeys={defaultSelectedKeys()}
+            selectedKeys={selectedKeys}
+            // defaultSelectedKeys={defaultSelectedKeys()}
         />
     )
 }

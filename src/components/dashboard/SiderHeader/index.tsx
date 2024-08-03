@@ -5,7 +5,7 @@ import React from "react";
 export default function SiderHeader() {
     return (
         <div
-            className="flex flex-row justify-between items-center p-5 w-[250px] box-border"
+            className="flex flex-row justify-between items-center w-[250px] box-border"
         >
             <div className="flex flex-row items-center">
                 <Image
@@ -18,9 +18,9 @@ export default function SiderHeader() {
                     学习随记
                 </div>
             </div>
-            <div>
+            {/*<div>*/}
 
-            </div>
+            {/*</div>*/}
         </div>
     )
 }

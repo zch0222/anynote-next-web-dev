@@ -9,8 +9,8 @@
     "lint": "next lint"
   },
   "dependencies": {
-    "@marktext/muya": "^0.2.5",
     "@microsoft/fetch-event-source": "^2.0.1",
+    "@muyajs/core": "^0.0.32",
     "@nextui-org/react": "^2.2.9",
     "@reduxjs/toolkit": "^1.9.7",
     "@types/js-cookie": "^3.0.6",

@@ -29,8 +29,10 @@ function ChatConversationListItem({ data, itemProps }: {
     }
 }) {
 
-    // console.log(itemProps)
-
+    console.log(itemProps)
+    // if (itemProps?.selectedId === data.id ) {
+    //     console.log(itemProps)
+    // }
     const { theme } = useTheme()
 
     const hoveredBg = 'light' === theme ? 'bg-[#FAFAFA]' :  'bg-[#262626]'
@@ -68,8 +70,8 @@ function ChatConversationListItem({ data, itemProps }: {
 }
 
 
-function AIChatBox({generate, docId, isShowHead}: {
-    // conversationId: number,
+function AIChatBox({generate, docId, isShowHead, onConversationChange, initConversationId}: {
+    initConversationId?: number,
     docId?: number
     generate: (params: {
         prompt: string,
@@ -78,7 +80,8 @@ function AIChatBox({generate, docId, isShowHead}: {
         onerror: (event: ErrorEvent) => void,
         signal?: GenericAbortSignal
     }) => Promise<void>,
-    isShowHead: boolean | undefined
+    isShowHead: boolean | undefined,
+    onConversationChange?: (id: number) => void
 }) {
 
     const [isChatting, setIsChatting] = useState<boolean>(false)
@@ -88,7 +91,7 @@ function AIChatBox({generate, docId, isShowHead}: {
     const [prompt, setPrompt] = useState("")
     const [messages, setMessages] = useState<ChatMessage[]>([])
     const [isOpenHistoryDrawer, setIsOpenHistoryDrawer] = useState<boolean>(false)
-    const [conversationId, setConversationId] = useState<number | null>(null)
+    const [conversationId, setConversationId] = useState<number | null>(initConversationId || null)
     const [chatInfo, setChatInfo] = useState<{
         title: string,
         messageCount: number
@@ -100,6 +103,19 @@ function AIChatBox({generate, docId, isShowHead}: {
 
     const textRef = useRef<HTMLDivElement>(null);
     const resTextLength = useRef(0);
+
+    useEffect(() => {
+        if (!initConversationId) {
+            return
+        }
+        updateChatConversation({
+            id: initConversationId
+        }).then(res => {
+            console.log(res)
+        }).catch(
+            e => console.log(e)
+        )
+    }, [initConversationId]);
 
     useEffect(() => {
         if (conversationId) {
@@ -190,6 +206,10 @@ function AIChatBox({generate, docId, isShowHead}: {
         )
     }, [messages])
 
+    useEffect(() => {
+        onConversationChange && onConversationChange(conversationId)
+    }, [conversationId, onConversationChange]);
+
     const conversationScrollItemProps = useMemo(() => ({
         setConversationId: setConversationId,
         selectedId: conversationId,
@@ -232,7 +252,12 @@ function AIChatBox({generate, docId, isShowHead}: {
 
 
     return (
-        <div className="flex flex-col w-full h-full overflow-hidden">
+        <div
+            className="flex flex-col w-full h-full overflow-hidden"
+            style={{
+                position: "relative"
+            }}
+        >
             {
                 !docId ? <></> :
                     <div className="flex flex-row justify-center items-center w-full">
@@ -250,7 +275,9 @@ function AIChatBox({generate, docId, isShowHead}: {
             }
             {
                 false === isShowHead ? <></> :
-                    <div className="flex flex-row">
+                    <div
+                        className="flex flex-row"
+                    >
                         <Button
                             className="mr-2"
                             isIconOnly={true}
@@ -271,43 +298,43 @@ function AIChatBox({generate, docId, isShowHead}: {
                                 {`共 ${chatInfo.messageCount} 条对话`}
                             </div>
                         </div>
-                        <Drawer
-                            open={isOpenHistoryDrawer}
-                            closable={false}
-                            placement="left"
-                            onClose={() => setIsOpenHistoryDrawer(false)}
-                            getContainer={false}
-                            destroyOnClose={true}
-                        >
-                            <div className="flex flex-col w-full h-full overflow-hidden">
-                                <div className="h-[40px] w-full">
-                                    <Button
-                                        className="text-base font-bold text-white w-full"
-                                        color="primary"
-                                        onPress={() => {
-                                            setConversationId(null)
-                                            setIsOpenHistoryDrawer(false)
-                                        }}
-                                    >
-                                        新建对话
-                                    </Button>
-                                </div>
-                                <div className="flex-grow overflow-hidden w-full mt-2">
-                                    <InfiniteScroll
-                                        swr={useChatConversationList}
-                                        params={{
-                                            docId: docId
-                                        }}
-                                        Item={ChatConversationListItem}
-                                        itemProps={conversationScrollItemProps}
-                                        rowHeight={50}
-                                        getPage={getChatConversationList}
-                                    />
-                                </div>
-                            </div>
-                        </Drawer>
                     </div>
             }
+            <Drawer
+                open={isOpenHistoryDrawer}
+                placement="left"
+                onClose={() => setIsOpenHistoryDrawer(false)}
+                getContainer={false}
+                destroyOnClose={true}
+                mask={false}
+            >
+                <div className="flex flex-col w-full h-full overflow-hidden">
+                    <div className="h-[40px] w-full">
+                        <Button
+                            className="text-base font-bold text-white w-full"
+                            color="primary"
+                            onPress={() => {
+                                setConversationId(null)
+                                setIsOpenHistoryDrawer(false)
+                            }}
+                        >
+                            新建对话
+                        </Button>
+                    </div>
+                    <div className="flex-grow overflow-hidden w-full mt-2">
+                        <InfiniteScroll
+                            swr={useChatConversationList}
+                            params={{
+                                docId: docId
+                            }}
+                            Item={ChatConversationListItem}
+                            itemProps={conversationScrollItemProps}
+                            rowHeight={50}
+                            getPage={getChatConversationList}
+                        />
+                    </div>
+                </div>
+            </Drawer>
             <div
                 className="flex-grow overflow-hidden"
             >

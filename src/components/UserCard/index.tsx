@@ -8,8 +8,9 @@ import { useRouter } from "next/navigation";
 import {useEffect, useState} from "react";
 import { UserInfo } from "@/types/authTypes";
 
-function UserCard({isShowSetting} :{
-    isShowSetting: boolean
+function UserCard({isShowSetting, inlineCollapsed} :{
+    isShowSetting: boolean,
+    inlineCollapsed?: boolean
 }) {
 
     const user = useSelector((state: RootState) => state.user)
@@ -30,21 +31,31 @@ function UserCard({isShowSetting} :{
     }, [user])
 
     return (
-        <div className="w-full flex flex-row justify-between items-center p-2">
+        <div className={`w-full flex flex-row ${inlineCollapsed ? 'justify-center' : 'justify-between'} items-center p-2`}>
             <div className="flex flex-row items-center">
                 <Avatar src={user.avatar}/>
-                <div className="flex flex-col ml-3">
-                    <div className="text-base font-bold">{userInfo.nickname}</div>
-                    <div className="text-sm text-gray-500">{userInfo.username}</div>
-                </div>
-            </div>
-            <div>
-                {isShowSetting ?
-                    <Button onPress={() => router.push("/settings/profile")} isIconOnly={true} variant="light">
-                        <SettingOutlined style={{fontSize: 18}}/>
-                    </Button> : <></>
+                {
+                    inlineCollapsed ?
+                        <></>
+                        :
+                        <div className="flex flex-col ml-3">
+                            <div className="text-base font-bold">{userInfo.nickname}</div>
+                            <div className="text-sm text-gray-500">{userInfo.username}</div>
+                        </div>
                 }
             </div>
+            {
+                inlineCollapsed ?
+                    <></>
+                    :
+                    <div>
+                        {isShowSetting ?
+                            <Button onPress={() => router.push("/settings/profile")} isIconOnly={true} variant="light">
+                                <SettingOutlined style={{fontSize: 18}}/>
+                            </Button> : <></>
+                        }
+                    </div>
+            }
         </div>
     )
 }

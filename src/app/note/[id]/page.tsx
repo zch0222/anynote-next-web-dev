@@ -3,6 +3,8 @@ import {useState, useRef, useEffect, useCallback} from "react";
 import { Drawer } from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
+import { useSearchParams } from 'next/navigation'
+
 
 import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
@@ -22,8 +24,8 @@ import {Note} from "@/types/noteTypes";
 import debounce from "@/utils/debounce";
 
 const EditorType = {
-    "MUYA": 0,
-    "VDITOR": 1
+    "MUYA": "muya",
+    "VDITOR": "vditor"
 }
 
 function Note({params}: {
@@ -40,7 +42,9 @@ function Note({params}: {
     const [latestUpdateTime, setLatestUpdateTime] = useState<Date>()
     const [title, setTitle] = useState<string>("")
     const vditorRef = useRef<Vditor>()
-    const [editorType, setEditorType] = useState<number>(EditorType.MUYA);
+    // const [editorType, setEditorType] = useState<number>(EditorType.MUYA);
+    const searchParams = useSearchParams()
+    const editorType = searchParams.get("editorType") || EditorType.MUYA
 
     useEffect(() => {
         getNoteById({
@@ -90,7 +94,7 @@ function Note({params}: {
                 setIsUpdatingNote(false)
             }
         )
-    }, 2000, false), [id])
+    }, 500, false), [id])
 
     const onUpload = (files: File[]) => {
 
@@ -139,7 +143,7 @@ function Note({params}: {
             <div className="w-full h-[60px]">
                 <NoteHead
                     editorType={editorType}
-                    setEditorType={setEditorType}
+                    // setEditorType={setEditorType}
                     title={title}
                     updateTime={isUpdatingNote ? '正在更新...' : `最近更新：${getDateString(latestUpdateTime)}`}
                     onShowDrawer={() => {
@@ -168,6 +172,14 @@ function Note({params}: {
                                 vditorRef={vditorRef}
                             />
                         }
+
+                        {/*<MarkDownEditor*/}
+                        {/*    onInput={fetchUpdateNote}*/}
+                        {/*    onBlur={() => {}}*/}
+                        {/*    onUpload={onUpload}*/}
+                        {/*    content={data.content}*/}
+                        {/*    vditorRef={vditorRef}*/}
+                        {/*/>*/}
                     </div>
                 }
                 <Drawer
