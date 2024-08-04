@@ -12,14 +12,15 @@ import 'github-markdown-css/github-markdown-light.css'
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 
 
-function MarkDownViewer({ content }: {
+function MarkDownViewer({ content, maxWidth }: {
     content: string
+    maxWidth: number
 }) {
 
     return (
-        <div className="w-full h-full max-w-[800px]">
+        <div className={`w-full h-full ${maxWidth ? 'max-w-[' + maxWidth + 'px]' : ''}`}>
             <ReactMarkdown
-                className={'markdown-body bg-white'}
+                className={'markdown-body bg-white w-full'}
                 components={{
                     // @ts-ignore
                     code({ node, inline, className, children, ...props }) {

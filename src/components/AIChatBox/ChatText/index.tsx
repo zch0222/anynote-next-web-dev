@@ -45,15 +45,17 @@ function ChatText({data, status}: {
 
     if (role === 1) {
         return (
-            <div className="w-full flex flex-row mb-5">
-                <div className="mr-2">
+            <div className="w-full flex flex-row mb-5 pt-2">
+                {/*<div className="flex flex-row">*/}
+                {/*    <Bot width={40} height={40}/>*/}
+                {/*</div>*/}
+                <div className="w-[50px]">
                     <Bot width={40} height={40}/>
                 </div>
-                <div className="flex-grow flex flex-col">
+                <div className="flex flex-col flex-grow ml-2 mt-2 overflow-x-hidden">
                     <div
                         className="flex flex-row items-center"
                     >
-                        <div className="mr-2">Bot</div>
                         {
                             "running" !== status ? <></> :
                                 <div className="text-sm text-gray-400">
@@ -62,22 +64,23 @@ function ChatText({data, status}: {
                         }
                     </div>
                     <div
-                        className="flex flex-col w-[85%] items-end"
+                        className="flex flex-col w-full"
                     >
-                        <Card
-                            className="flex flex-col w-full p-3 mt-1"
-                            radius="sm"
+                        <MarkDownViewer content={content}/>
+                        <Button
+                            className="w-[50px]"
+                            variant="light"
+                            color="primary"
+                            onClick={onCopyClick}
                         >
-                            <MarkDownViewer content={content}/>
-                            <Button
-                                className="w-[50px]"
-                                variant="light"
-                                color="primary"
-                                onClick={onCopyClick}
-                            >
-                                复制
-                            </Button>
-                        </Card>
+                            复制
+                        </Button>
+                        {/*<Card*/}
+                        {/*    className="flex flex-col w-full p-3 mt-1"*/}
+                        {/*    radius="sm"*/}
+                        {/*>*/}
+                        {/*    */}
+                        {/*</Card>*/}
                         <div
                             className="text-sm text-gray-400 mt-1"
                         >
@@ -87,15 +90,14 @@ function ChatText({data, status}: {
                 </div>
             </div>
         )
-    }
-    else {
+    } else {
         return (
             <div className="w-full flex flex-row justify-end mb-5">
 
                 <div className="flex-grow flex flex-col items-end">
-                    <div className="font-blod">User</div>
+                    {/*<div className="font-blod">User</div>*/}
                     <Card
-                        className="flex flex-col w-[85%] p-3 mt-1"
+                        className="flex flex-col w-[85%] p-3 mt-1 mr-2"
                         radius="sm"
                     >
                         <MarkDownViewer content={content}/>
@@ -117,9 +119,9 @@ function ChatText({data, status}: {
                         {updateTime}
                     </div>
                 </div>
-                <Avatar
-                    className="ml-2"
-                />
+                {/*<Avatar*/}
+                {/*    className="ml-2"*/}
+                {/*/>*/}
             </div>
         )
     }

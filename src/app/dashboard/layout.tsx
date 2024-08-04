@@ -9,10 +9,8 @@ export default function DashboardLayout({children}: {
 
     return (
         <div className="flex-grow flex flex-row w-full h-full">
-            <div>
-                <DashboardSider/>
-            </div>
-            <div className="flex-grow h-full">
+            <DashboardSider/>
+            <div className="flex-grow h-full overflow-x-auto overflow-y-hidden">
                 {children}
             </div>
         </div>
