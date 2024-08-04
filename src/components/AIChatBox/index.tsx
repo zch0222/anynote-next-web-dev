@@ -19,6 +19,8 @@ import useChatConversationList from "@/hooks/useChatConversationList";
 import {useTheme} from "next-themes";
 import {EventSourceMessage} from "@microsoft/fetch-event-source";
 import useDoc from "@/hooks/useDoc";
+import type { DrawerProps } from 'antd';
+import "./index.css"
 
 function ChatConversationListItem({ data, itemProps }: {
     data: ChatConversationInfoVO,

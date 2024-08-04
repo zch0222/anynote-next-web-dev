@@ -73,7 +73,7 @@ function Note({params}: {
         console.log(match)
         setIsUpdatingNote(true)
         if (EditorType.VDITOR == editorType) {
-            // value = value.replace(/\n+/g, '\n\n')
+            value = value.replace(/\n+/g, '\n\n')
         }
         updateNote({
             id: id,
