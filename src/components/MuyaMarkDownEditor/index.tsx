@@ -80,6 +80,7 @@ function MuyaMarkDownEditor({onInput, content}: {
 
                     // 在这里执行你想要的操作
                     console.log('Ctrl + S 被按下了');
+                    console.log(muya.getMarkdown())
                     onInput(muya.getMarkdown())
 
                     // 例如，你可以调用一个函数来保存数据
@@ -95,7 +96,14 @@ function MuyaMarkDownEditor({onInput, content}: {
             }
 
             muya.domNode.addEventListener('keydown', onKeydown)
+            return () => {
+                // if (muya && muya.getMarkdown()) {
+                //     requestAnimationFrame(() => {
+                //         onInput(muya.getMarkdown())
+                //     })
+                // }
 
+            }
         }
 
 

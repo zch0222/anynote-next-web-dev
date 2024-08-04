@@ -1,6 +1,6 @@
 'use client'
 import {useState, useRef, useEffect, useCallback} from "react";
-import { Drawer } from "antd";
+import {Drawer, message} from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
 import { useSearchParams } from 'next/navigation'
@@ -85,6 +85,7 @@ function Note({params}: {
                 if (match) {
                     setTitle(match[1])
                 }
+                message.success("保存成功", 1)
             }
         ).catch(
             e => console.log(e)
