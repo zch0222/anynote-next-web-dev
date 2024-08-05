@@ -94,7 +94,7 @@ function ChatText({data, status}: {
         return (
             <div className="w-full flex flex-row justify-end mb-5">
 
-                <div className="flex-grow flex flex-col items-end">
+                <div className="flex-grow w-full flex flex-col items-end">
                     {/*<div className="font-blod">User</div>*/}
                     <Card
                         className="flex flex-col w-[85%] p-3 mt-1 mr-2"
