@@ -5,6 +5,7 @@ import FloatButton from "@/components/FloatButton";
 import {Providers} from "@/app/providers";
 import Message from "@/components/Message";
 import Notice from "@/components/notice/Notice";
+import './style.css'
 
 const inter = Inter({ subsets: ['latin'] })
 

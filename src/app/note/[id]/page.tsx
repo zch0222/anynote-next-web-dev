@@ -1,5 +1,5 @@
 'use client'
-import {useState, useRef, useEffect, useCallback} from "react";
+import {useState, useRef, useEffect, useCallback, useMemo} from "react";
 import {Drawer, message} from "antd";
 
 import { getNoteById } from "@/requests/client/note/note";
@@ -10,6 +10,7 @@ import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
 import MarkDownEditor from "@/components/MarkDownEditor";
 import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
+import MilkdownEditorWrapper from "@/components/MilkdownEditor";
 import MarkDownViewer from "@/components/MarkDownViewer";
 import DrawerContent from "@/components/note/DrawerContent";
 
@@ -25,7 +26,8 @@ import debounce from "@/utils/debounce";
 
 const EditorType = {
     "MUYA": "muya",
-    "VDITOR": "vditor"
+    "VDITOR": "vditor",
+    "MILKDOWN": "milkdown"
 }
 
 function Note({params}: {
@@ -44,7 +46,7 @@ function Note({params}: {
     const vditorRef = useRef<Vditor>()
     // const [editorType, setEditorType] = useState<number>(EditorType.MUYA);
     const searchParams = useSearchParams()
-    const editorType = searchParams.get("editorType") || EditorType.MUYA
+    const editorType = searchParams.get("editorType") || EditorType.MILKDOWN
 
     useEffect(() => {
         getNoteById({
@@ -107,7 +109,7 @@ function Note({params}: {
                 content: "上传中",
                 duration: 0,
             }))
-            uploadNoteImage({
+            return uploadNoteImage({
                 noteId: id,
                 uploadId: nanoid(),
                 image: file
@@ -117,6 +119,15 @@ function Note({params}: {
                     if (vditorRef) {
                         vditorRef.current?.insertValue(res.data.data.image, true)
                     }
+                    if (res.data.data.image) {
+                        const regex = /\]\((.*?)\)/;
+                        const match = res.data.data.image.match(regex);
+                        if (match && match[1]) {
+                            console.log("Extracted URL:", match[1]);
+                            return match[1]
+                        }
+                    }
+                    return res.data.data.image
                 }
             ).catch(
                 e => console.log(e)
@@ -130,6 +141,40 @@ function Note({params}: {
         }
         return null
     }
+
+    const getEditor = useMemo(() => {
+        if (!data) {
+            return  <></>
+        }
+        if (EditorType.MUYA == editorType) {
+            return (
+                <MuyaMarkDownEditor
+                    onInput={fetchUpdateNote}
+                    onBlur={() => {}}
+                    content={data.content}
+                />
+            )
+        }
+        else if (EditorType.MILKDOWN === editorType) {
+            return (
+                <MilkdownEditorWrapper
+                    onInput={fetchUpdateNote}
+                    onBlur={() => {}}
+                    content={data.content}
+                    onUpload={onUpload}
+                />
+            )
+        }
+        return (
+            <MarkDownEditor
+                onInput={fetchUpdateNote}
+                onBlur={() => {}}
+                onUpload={onUpload}
+                content={data.content}
+                vditorRef={vditorRef}
+            />
+        )
+    }, [data, editorType, fetchUpdateNote, onUpload])
 
     if (!data) {
         return (
@@ -159,20 +204,21 @@ function Note({params}: {
                         content={data.content}
                     /> :
                     <div className="w-full h-full">
-                        {EditorType.MUYA == editorType ?
-                            <MuyaMarkDownEditor
-                                onInput={fetchUpdateNote}
-                                onBlur={() => {}}
-                                content={data.content}
-                            /> :
-                            <MarkDownEditor
-                                onInput={fetchUpdateNote}
-                                onBlur={() => {}}
-                                onUpload={onUpload}
-                                content={data.content}
-                                vditorRef={vditorRef}
-                            />
-                        }
+                        {getEditor}
+                        {/*{EditorType.MUYA == editorType ?*/}
+                        {/*    <MuyaMarkDownEditor*/}
+                        {/*        onInput={fetchUpdateNote}*/}
+                        {/*        onBlur={() => {}}*/}
+                        {/*        content={data.content}*/}
+                        {/*    /> :*/}
+                        {/*    <MarkDownEditor*/}
+                        {/*        onInput={fetchUpdateNote}*/}
+                        {/*        onBlur={() => {}}*/}
+                        {/*        onUpload={onUpload}*/}
+                        {/*        content={data.content}*/}
+                        {/*        vditorRef={vditorRef}*/}
+                        {/*    />*/}
+                        {/*}*/}
 
                         {/*<MarkDownEditor*/}
                         {/*    onInput={fetchUpdateNote}*/}

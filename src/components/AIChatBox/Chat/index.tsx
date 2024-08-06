@@ -15,7 +15,8 @@ import {EventSourceMessage} from "@microsoft/fetch-event-source";
 import { getDateString } from "@/utils/date";
 import useNode from "@/hooks/useNode";
 import {it} from "node:test";
-import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
+// import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
+import MilkdownEditorWrapper from "@/components/MilkdownEditor";
 
 function Chat({generate, conversationId, setChatInfo, setConversationId}: {
     generate: (params: {
@@ -258,7 +259,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
                     }}
                 >
                     <div className="w-full flex-grow overflow-y-auto">
-                        <MuyaMarkDownEditor
+                        <MilkdownEditorWrapper
                             onInput={(value: string) => setPrompt(value)}
                             content={prompt}
                         />
