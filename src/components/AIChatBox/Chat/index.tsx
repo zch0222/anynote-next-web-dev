@@ -223,27 +223,33 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
             }}
         >
             <div
-                className="flex-grow flex flex-col overflow-y-auto"
+                className="w-full h-full overflow-y-auto"
                 ref={textBoxRef}
-                style={{
-                    position: 'relative'
-                }}
             >
-                {messages.length > 0 ? messages.map(item => (
-                    <ChatText
-                        key={item.id}
-                        data={{
-                            id: item.id,
-                            content: item.content,
-                            role: item.role,
-                            updateTime: getDateString(new Date(item.updateTime))
-                        }}
-                        status={item.status}
-                    />
-                )) : <div className="w-full h-full flex items-center justify-center"><EmptyIcon width={65} height={65}/></div>}
+                <div
+                    className="flex-grow flex flex-col max-w-[800px] m-auto"
+                    style={{
+                        position: 'relative'
+                    }}
+                >
+                    {messages.length > 0 ? messages.map(item => (
+                        <ChatText
+                            key={item.id}
+                            data={{
+                                id: item.id,
+                                content: item.content,
+                                role: item.role,
+                                updateTime: getDateString(new Date(item.updateTime))
+                            }}
+                            status={item.status}
+                        />
+                    )) : <div className="w-full h-full flex items-center justify-center"><EmptyIcon width={65}
+                                                                                                    height={65}/></div>}
+                </div>
             </div>
+
             <Drawer
-                open={'markdown' === inputType }
+                open={'markdown' === inputType}
                 placement={"bottom"}
                 getContainer={false}
                 onClose={() => {
@@ -315,7 +321,7 @@ function Chat({generate, conversationId, setChatInfo, setConversationId}: {
                     Markdown输入
                 </Button>
                 <Input.TextArea
-                    rows={4}
+                    rows={2}
                     style={{
                         resize: 'none',
                     }}

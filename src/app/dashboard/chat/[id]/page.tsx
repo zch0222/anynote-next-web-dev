@@ -93,12 +93,12 @@ function ChatPage({params}: {
 
     return (
         <div className="flex flex-col w-full h-full p-5">
-            <div className="mb-2">
-                <Input size="sm" value={model} onChange={e => setModel(e.target.value)}/>
+            <div className="flex flex-row justify-center flex-wrap items-center mb-2">
+                <Input className="w-[40%] mr-2 min-w-[200px]" size="sm" value={model} onChange={e => setModel(e.target.value)}/>
                 <Select
                     value={model}
                     onSelect={(value) => setModel(value)}
-                    className="w-full mt-2"
+                    className="w-[40%] min-w-[200px] mt-2"
                     options={modelOptions}
                 />
             </div>

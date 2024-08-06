@@ -111,7 +111,7 @@ function MuyaMarkDownEditor({onInput, content}: {
     return (
         <div
             id="muyaEditor"
-            className="w-full h-full"
+            className="w-full h-full overflow-y-auto"
             ref={editorRef}
         >
 
