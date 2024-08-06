@@ -1,6 +1,9 @@
+'use client'
 import { useNodeViewContext } from "@prosemirror-adapter/react";
 import clsx from "clsx";
 import type { FC } from "react";
+import { useDispatch } from "react-redux";
+import { showMessage } from "@/store/message/messageSlice";
 
 const langs = [
     "text",
@@ -16,6 +19,7 @@ const langs = [
 
 export const CodeBlock: FC = () => {
     const { contentRef, selected, node, setAttrs } = useNodeViewContext();
+    const dispatch = useDispatch();
     return (
         <div
             className={clsx(
@@ -46,7 +50,11 @@ export const CodeBlock: FC = () => {
                     className="inline-flex items-center justify-center rounded border border-gray-200 bg-white px-4 py-2 text-base font-medium leading-6 shadow-sm hover:bg-gray-50 focus:ring-2 focus:ring-offset-2 dark:bg-black"
                     onClick={(e) => {
                         e.preventDefault();
-                        navigator.clipboard.writeText(node.textContent);
+                        navigator.clipboard.writeText(node.textContent)
+                            .then(res => dispatch(showMessage({
+                                type: "success",
+                                content: "复制成功"
+                            })));
                     }}
                 >
                     Copy
