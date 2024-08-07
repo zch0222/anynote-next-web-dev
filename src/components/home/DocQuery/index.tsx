@@ -3,9 +3,8 @@
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import PDFViewer from "@/components/chat-pdf/PDFViewer";
 import {useCallback, useEffect, useState} from "react";
-import {getHomeDoc, query} from "@/requests/client/note/doc";
+import {getHomeDoc} from "@/requests/client/note/doc";
 import Loading from "@/components/Loading";
-import {data} from "autoprefixer";
 import {DocVO} from "@/types/noteTypes";
 import useIsMobile from "@/hooks/useIsMobile";
 import AIChatBox from "@/components/AIChatBox";

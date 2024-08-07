@@ -1,4 +1,3 @@
-'use client'
 import { editorViewCtx } from "@milkdown/core"
 import { Ctx } from "@milkdown/ctx"
 import { slashFactory, SlashProvider } from "@milkdown/plugin-slash"
@@ -28,11 +27,11 @@ export const SlashView = () => {
         }
         slashProvider.current = new SlashProvider({
             content: div,
-            tippyOptions: {
-                onMount: (_) => {
-                    (ref.current?.children[0] as HTMLButtonElement).focus();
-                }
-            }
+            // tippyOptions: {
+            //     onMount: (_) => {
+            //         (ref.current?.children[0] as HTMLButtonElement).focus();
+            //     }
+            // }
         })
 
         return () => {

@@ -9,7 +9,7 @@ import { useSearchParams } from 'next/navigation'
 import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
 import MarkDownEditor from "@/components/MarkDownEditor";
-import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
+// import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
 import MilkdownEditorWrapper from "@/components/MilkdownEditor";
 import MarkDownViewer from "@/components/MarkDownViewer";
 import DrawerContent from "@/components/note/DrawerContent";
@@ -148,11 +148,12 @@ function Note({params}: {
         }
         if (EditorType.MUYA == editorType) {
             return (
-                <MuyaMarkDownEditor
-                    onInput={fetchUpdateNote}
-                    onBlur={() => {}}
-                    content={data.content}
-                />
+                // <MuyaMarkDownEditor
+                //     onInput={fetchUpdateNote}
+                //     onBlur={() => {}}
+                //     content={data.content}
+                // />
+                <></>
             )
         }
         else if (EditorType.MILKDOWN === editorType) {

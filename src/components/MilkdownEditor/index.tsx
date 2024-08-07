@@ -1,7 +1,6 @@
 'use client'
 
 import { defaultValueCtx, Editor, rootCtx } from '@milkdown/core';
-import {FC, MutableRefObject} from 'react';
 
 import { Milkdown, useEditor, MilkdownProvider } from '@milkdown/react'
 import { commonmark } from '@milkdown/preset-commonmark';
@@ -23,35 +22,23 @@ import "./prism-nord.css"
 import { prism } from '@milkdown/plugin-prism';
 import { ProsemirrorAdapterProvider, useNodeViewFactory } from '@prosemirror-adapter/react'
 import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { shiki } from 'milkdown-plugin-shiki';
-import { $view, getMarkdown } from "@milkdown/utils";
+import { $view } from "@milkdown/utils";
 import {upload, uploadConfig, Uploader} from '@milkdown/plugin-upload';
+import { slash, SlashView } from './Slash';
 
 import {
     codeBlockSchema,
 } from "@milkdown/preset-commonmark";
 
-
-import { slash, SlashView } from './Slash';
-import Vditor from "vditor";
 import {CodeBlock} from "@/components/MilkdownEditor/CodeBlock";
 import "./index.css"
-
-
-
-const markdown =
-    `# Milkdown React Commonmark
-
-> You're scared of a world where you're needed.
-
-This is a demo for using Milkdown with **React**.`
 
 export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: {
     onInput: (value: string) => void,
     onBlur?: (value: string) => void,
-    onUpload?: (files: File[]) => string | Promise<string> | Promise<null> | null,
+    onUpload?: (files: File[]) => string | Promise<string | void> | Promise<null> | null,
     content: string,
-    vditorRef?: MutableRefObject<Vditor | undefined>
+    vditorRef?: any
 }) => {
     const pluginViewFactory = usePluginViewFactory();
     const nodeViewFactory = useNodeViewFactory();
@@ -138,6 +125,12 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
                 //         component: SlashView,
                 //     })
                 // })
+                // ctx.set(slash.key, {
+                //     view: pluginViewFactory({
+                //         component: SlashView,
+                //     })
+                // })
+                // slash.config(ctx)
             })
             .config(nord)
             .use(commonmark)
@@ -152,6 +145,8 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
             .use(tooltip)
             .use(listener)
             .use(upload)
+            // .use([...remarkDirective, directiveNode, inputRule])
+            // .use(slash.plugins)
             .use(
                 $view(codeBlockSchema.node, () =>
                     nodeViewFactory({ component: CodeBlock })
@@ -169,9 +164,9 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
 export default function MilkdownEditorWrapper({onInput, onBlur, onUpload, content, vditorRef}: {
     onInput: (value: string) => void,
     onBlur?: (value: string) => void,
-    onUpload?: (files: File[]) => string | Promise<string> | Promise<null> | null,
+    onUpload?: (files: File[]) => string | Promise<string | void> | Promise<null> | null,
     content: string,
-    vditorRef?: MutableRefObject<Vditor | undefined>
+    vditorRef?: any
 }) {
 
     const [isClient, setIsClient] = useState(false);
