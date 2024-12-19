@@ -18,11 +18,15 @@ function ChatPage({params}: {
 
     const { id } = params
     const router = useRouter()
-    const [model, setModel] = useState<string>("gpt-4-turbo-preview")
+    const [model, setModel] = useState<string>("gemma2")
     const [modelOptions, setModelOptions] = useState<{
         key: string,
         value: string
     }[]>([
+        {
+            key: "gemma2",
+            value: "gemma2"
+        },
         {
             key: "gpt-4-turbo-preview",
             value: "gpt-4-turbo-preview"
@@ -93,15 +97,15 @@ function ChatPage({params}: {
 
     return (
         <div className="flex flex-col w-full h-full p-5">
-            <div className="flex flex-row justify-center flex-wrap items-center mb-2">
-                <Input className="w-[40%] mr-2 min-w-[200px]" size="sm" value={model} onChange={e => setModel(e.target.value)}/>
-                <Select
-                    value={model}
-                    onSelect={(value) => setModel(value)}
-                    className="w-[40%] min-w-[200px] mt-2"
-                    options={modelOptions}
-                />
-            </div>
+            {/*<div className="flex flex-row justify-center flex-wrap items-center mb-2">*/}
+            {/*    <Input className="w-[40%] mr-2 min-w-[200px]" size="sm" value={model} onChange={e => setModel(e.target.value)}/>*/}
+            {/*    <Select*/}
+            {/*        value={model}*/}
+            {/*        onSelect={(value) => setModel(value)}*/}
+            {/*        className="w-[40%] min-w-[200px] mt-2"*/}
+            {/*        options={modelOptions}*/}
+            {/*    />*/}
+            {/*</div>*/}
             <AIChatBox
                 onConversationChange={onConversationChange}
                 initConversationId={'new' === id ? undefined : parseInt(id)}

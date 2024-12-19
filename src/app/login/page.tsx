@@ -137,6 +137,13 @@ function Login() {
                     </Form.Item>
 
                 </Form>
+                <Button
+                    className="w-[50px]"
+                    size="sm"
+                    onPress={() => router.push("/register")}
+                >
+                    注册账号
+                </Button>
             </Card>
         </div>
     )

@@ -46,10 +46,10 @@ function DocItem({ data }: {
             <CardFooter
             >
                 <div className="flex flex-col">
-                    <div className="text-base h-[25px]">
+                    <div className="text-base">
                         {data.docName}
                     </div>
-                    {getIndexStatusChip()}
+                    {/*{getIndexStatusChip()}*/}
                 </div>
 
 

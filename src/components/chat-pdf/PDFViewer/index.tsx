@@ -105,18 +105,18 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
 
 
     const items: MenuProps['items'] = [
-        {
-          key: '1',
-          label: (
-              <div
-                  onClick={() => {
-                      fetchIndexDoc()
-                  }}
-              >
-                  建立索引
-              </div>
-          )
-        },
+        // {
+        //   key: '1',
+        //   label: (
+        //       // <div
+        //       //     onClick={() => {
+        //       //         fetchIndexDoc()
+        //       //     }}
+        //       // >
+        //       //     建立索引
+        //       // </div>
+        //   )
+        // },
         {
             key: '2',
             label: (
@@ -277,9 +277,9 @@ function PDFViewer({ src, docId, doc, isShowAIModule, isShowTitle }: {
                     {
                         false === isShowAIModule ? <></> :
                             <div className="flex-grow flex flex-row justify-end items-center">
-                                <div className="mr-2">
-                                    {getIndexStatusChip(doc.indexStatus)}
-                                </div>
+                                {/*<div className="mr-2">*/}
+                                {/*    {getIndexStatusChip(doc.indexStatus)}*/}
+                                {/*</div>*/}
                                 <Dropdown
                                     menu={{items}}
                                     className="mr-2"

@@ -67,7 +67,7 @@ function ManageSiderMenu() {
         {
             key: '3',
             icon: <Icon component={getBotSVG(18, 18)}/> ,
-            label: 'ChatGPT',
+            label: 'AI助手',
             onClick: () => {
                 router.push(`${CHAT_GPT}/new`)
             }
