@@ -3,7 +3,7 @@
 import type { CSSProperties } from 'react';
 import React from 'react';
 import { CaretRightOutlined } from '@ant-design/icons';
-import {Card, CollapseProps} from 'antd';
+import {Button, Card, CollapseProps} from 'antd';
 import { Collapse, theme } from 'antd';
 import Title from "@/components/Title";
 
@@ -16,7 +16,7 @@ const text = `
 const getItems: (panelStyle: CSSProperties) => CollapseProps['items'] = (panelStyle) => [
     {
         key: '1',
-        label: 'This is panel header 1',
+        label: <Button type="primary" shape="circle">1</Button>,
         children: <p>{text}</p>,
         style: panelStyle,
     },
@@ -51,13 +51,14 @@ export default function MoocCatalogue({params}: {
     return (
         <div className="flex flex-col h-full box-border overflow-hidden p-8">
             <Title text={"XXXX"}/>
-            <Card>
+            <Card title="目录">
                 <Collapse
                     bordered={false}
                     defaultActiveKey={['1']}
                     expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                     style={{ background: token.colorBgContainer }}
                     items={getItems(panelStyle)}
+                    expandIconPosition={"end"}
                 />
             </Card>
         </div>
