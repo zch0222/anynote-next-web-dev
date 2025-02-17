@@ -11,7 +11,6 @@ const { Title } = Typography;
 
 function Dashboard() {
 
-
     return (
         <div className="static flex w-full h-full flex-col p-8">
             <Title level={2}>开始</Title>

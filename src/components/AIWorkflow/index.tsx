@@ -57,7 +57,7 @@ function AIWorkflow() {
                 return {
                     label: "Start",
                     value: node.id,
-                    children: node.data.data.map(item => (
+                    children: node.data.data.map((item: { key: any; value: any; }) => (
                         {
                             label: item.key,
                             value: item.value
