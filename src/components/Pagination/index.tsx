@@ -64,8 +64,6 @@ function Pagination(props: {
         })
     }
 
-
-
     // for (let i = 0; i < pageParam.page; ++i) {
     //     pages.push(
     //         <Page
@@ -82,7 +80,7 @@ function Pagination(props: {
         <div
             className={`flex h-full flex-col w-full overflow-y-auto overflow-x-hidden`}
         >
-            <div className={`flex ${"row" === direction ? "flex-row flex-wrap" : "flex-col"} pt-3 pb-3`}>
+            <div className={`flex ${"row" === direction ? "flex-row flex-wrap" : "flex-col"} p-[10px]`}>
                 <Page
                     pageSize={pageParam.pageSize}
                     page={pageParam.page}

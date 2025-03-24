@@ -67,11 +67,7 @@ function InfiniteScroll(props: {
     Item: ComponentType<{data: any}>,
     itemProps?: any
     rowHeight: number,
-    getPage: ({page, pageSize}: {
-        page: number,
-        pageSize: number,
-        [key: string]: any;
-    }) => Promise<AxiosResponse<ResData<PageBean<any>>>>
+    getPage: any
 }) {
 
     // const pages: ReactElement[] = []
@@ -116,7 +112,7 @@ function InfiniteScroll(props: {
             page: 1,
             pageSize: pageSize
         }).then(
-            res => {
+            (res: any) => {
                 setTotalPages(res.data.data.pages)
                 setPageParam(prevState => ({
                     page: 1,

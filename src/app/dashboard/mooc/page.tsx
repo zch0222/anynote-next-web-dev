@@ -2,7 +2,7 @@
 
 import Pagination from "@/components/Pagination";
 import createPage from "@/components/hoc/createPage/createPage";
-import useMoocList from "@/hooks/useMoocList";
+import useMoocList from "@/hooks/mooc/useMoocList";
 import {Card, Typography} from "antd";
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
 import {NoteKnowledgeBaseDTO} from "@/types/noteTypes";

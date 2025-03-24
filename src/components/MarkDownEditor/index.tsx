@@ -19,8 +19,8 @@ export default function MarkDownEditor({onInput, onBlur, onUpload, content, vdit
         const vditor = new Vditor("vditor", {
             mode: "ir",
             height: "100%",
-            after() {
-                console.log(content)
+            after:()=> {
+                console.log(-2)
                 vditor.setValue(content)
                 // vditor.focus()
                 setVd(vditor)
@@ -88,13 +88,5 @@ export default function MarkDownEditor({onInput, onBlur, onUpload, content, vdit
         })
     }, [])
 
-
-    return (
-        <div
-            id="vditor"
-        >
-
-        </div>
-    )
-
+    return <div id="vditor" className="vditor" />;
 }

@@ -30,13 +30,15 @@ function TaskManageNoteEditChart(props: {
         chartData.hourArray = []
         let maxEditCount = -1
 
-        data.forEach((entry: any) => {
-            entry.chartsPOList.forEach((item: any) => {
-                if (item.editCount > maxEditCount) {
-                    maxEditCount = item.editCount;
-                }
+        if (data) {
+            data.forEach((entry: any) => {
+                entry.chartsPOList.forEach((item: any) => {
+                    if (item.editCount > maxEditCount) {
+                        maxEditCount = item.editCount;
+                    }
+                });
             });
-        });
+        }
         const segmentCount = 5;
         const segmentInterval = maxEditCount > 500 ? 50 : Math.floor(maxEditCount / segmentCount);
 

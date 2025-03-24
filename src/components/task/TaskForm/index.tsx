@@ -15,6 +15,7 @@ import useNoteKnowledgeBaseList from "@/hooks/useNoteKnowledgeBaseList";
 import { isNotNull } from "@/utils/objectUtil";
 import MarkDownEditor from "@/components/MarkDownEditor";
 import Vditor from "vditor";
+import VditorEditor from "@/components/VditorEditor";
 
 const {RangePicker} = DatePicker;
 
@@ -221,13 +222,23 @@ function TaskForm({ onFinish, isShowKnowledgeBase, taskDescribe }: {
                 <div className="flex flex-col">
                     <div className="text-base font-bold">任务描述：</div>
                     <div className="w-full h-[500px] mt-2">
-                        <MarkDownEditor
+                        {/*<MarkDownEditor*/}
+                        {/*    onInput={onDescribeInput}*/}
+                        {/*    onBlur={() => {}}*/}
+                        {/*    onUpload={onDescribeUpload}*/}
+                        {/*    content={"taskForm.taskDescribe"}*/}
+                        {/*    vditorRef={vditorRef}*/}
+                        {/*/>*/}
+                        <VditorEditor
                             onInput={onDescribeInput}
                             onBlur={() => {}}
                             onUpload={onDescribeUpload}
                             content={taskForm.taskDescribe}
                             vditorRef={vditorRef}
                         />
+                        {/*<Input>*/}
+
+                        {/*</Input>*/}
                     </div>
                 </div>
             </Form.Item>

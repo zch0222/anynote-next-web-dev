@@ -8,6 +8,7 @@ import NoteTab from "./NoteTab";
 import TaskTab from "./TaskTab";
 import DocTab from "./DocTab";
 import useRouter from "@/hooks/useRouter";
+import MoocTab from "@/components/wiki/WikiTabs/MoocTab";
 
 
 function WikiTabs({ knowledgeBaseId }: {
@@ -56,8 +57,8 @@ function WikiTabs({ knowledgeBaseId }: {
                 <Tab className="w-full h-full overflow-hidden" key="doc" title="文档">
                     <DocTab knowledgeBaseId={knowledgeBaseId}/>
                 </Tab>
-                <Tab className="w-full h-full overflow-hidden" key="video" title="视频">
-                    <DocTab knowledgeBaseId={knowledgeBaseId}/>
+                <Tab className="w-full h-full overflow-hidden" key="video" title="慕课">
+                    <MoocTab knowledgeBaseId={knowledgeBaseId}/>
                 </Tab>
             </Tabs>
 

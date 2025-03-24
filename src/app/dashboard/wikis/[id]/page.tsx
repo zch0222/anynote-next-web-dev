@@ -1,6 +1,6 @@
 'use client'
 import { Typography } from "antd";
-import {EditOutlined, SettingOutlined, UploadOutlined} from "@ant-design/icons";
+import {EditOutlined, ReadOutlined, SettingOutlined, UploadOutlined} from "@ant-design/icons";
 
 import Loading from "@/components/Loading";
 
@@ -14,6 +14,9 @@ import {NOTE} from "@/constants/route";
 import { WIKI } from "@/constants/route";
 import {CARD_BUTTON_ICON_FONT_SIZE} from "@/constants/size";
 import Title from "@/components/Title";
+import { Modal } from 'antd';
+import {useState} from "react";
+import CreateMoocForm from "@/components/MoocCreatForm";
 
 // const { Title } = Typography
 
@@ -24,6 +27,7 @@ function Wiki({params}: {
 }) {
     const {id} = params;
     const router = useRouter()
+    const [isModalOpen, setIsModalOpen] = useState(false);
 
     const {data} = useKnowledgeBase(id);
 
@@ -75,7 +79,18 @@ function Wiki({params}: {
                         content="文档"
                     /> : <></>
                 }
+                {data.permissions === 1 ?
+                    <CardButton
+                        icon={<ReadOutlined style={{fontSize: 20}}/>}
+                        title="上传新慕课"
+                        clickEvent={() => setIsModalOpen(true)}
+                        content="慕课"
+                    /> : <></>
+                }
             </div>
+            <Modal width={400} title="上传新慕课" open={isModalOpen} onCancel={()=> setIsModalOpen(false)} footer={null}>
+                <CreateMoocForm id={id}/>
+            </Modal>
             <WikiTabs
                 knowledgeBaseId={id}
             />

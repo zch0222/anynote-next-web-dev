@@ -64,3 +64,7 @@ ol {
 .markdown-body ul {
   list-style-type: disc;
 }
+
+.ant-btn-primary {
+  background-color: #01B96B !important;
+}

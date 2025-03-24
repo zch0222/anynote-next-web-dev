@@ -138,48 +138,5 @@ export default function clientRequest<T>(options: {
 
 // 防抖闭包来一波
 export function getTokenDebounce () {
-    // let lock = false;
-    // let success = false;
-    // return function () {
-    //     if (!lock) {
-    //         console.log("refresh------------------------------------");
-    //         lock = true;
-    //         let oldRefreshToken = localStorage.getItem('refreshToken');
-    //         handleRefreshToken(oldRefreshToken)
-    //             .then((res: { data: any; }) => {
-    //                 console.log(res);
-    //                 const {data} = res;
-    //                 if (data.code === 1) {
-    //                     let { accessToken, refreshToken, accessExpirationTime } = data.data;
-    //                     localStorage.setItem('accessToken', accessToken);
-    //                     localStorage.setItem('refreshToken', refreshToken);
-    //                     localStorage.setItem("accessExpirationTime", accessExpirationTime);
-    //                     success = true;
-    //                     lock = false;
-    //                 } else {
-    //                     success = false;
-    //                     lock = false;
-    //                     PubSub.publish("NAVIGATE", "/login")
-    //                 }
-    //             })
-    //             .catch((err: any) => {
-    //                 console.log(err);
-    //                 success = false;
-    //                 lock = false;
-    //             });
-    //     }
-    //     return new Promise(resolve => {
-    //         // 一直看lock,直到请求失败或者成功
-    //         const timer = setInterval(() => {
-    //             if (!lock) {
-    //                 clearInterval(timer);
-    //                 if (success) {
-    //                     resolve('success');
-    //                 } else {
-    //                     resolve('fail');
-    //                 }
-    //             }
-    //         }, 500); // 轮询时间间隔
-    //     });
-    // };
+    
 }

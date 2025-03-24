@@ -119,9 +119,7 @@ export default function clientRequest<T>(options: {
     params?: any,
     onUploadProgress?: (progressEvent: AxiosProgressEvent) => void,
     onDownloadProgress?: (progressEvent: AxiosProgressEvent) => void;
-    headers?: HeadersDefaults & {
-        [key: string]: AxiosHeaderValue
-    },
+    headers?: AxiosHeaders,
     withCredentials?: boolean,
 }): Promise<AxiosResponse<T>> {
     return service(options);

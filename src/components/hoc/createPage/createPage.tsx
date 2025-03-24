@@ -4,6 +4,7 @@ import {PageBean} from "@/types/requestTypes";
 import {ComponentType} from "react";
 import Loading from "@/components/Loading";
 import { nanoid } from "nanoid";
+import {Row} from "antd";
 
 
 export default function createPage(Item: ComponentType<{data: any}>) {
@@ -36,11 +37,11 @@ export default function createPage(Item: ComponentType<{data: any}>) {
 
 
         return (
-            <>
+            <Row gutter={[16,16]} className={"w-full"}>
                 {data.rows.map(item => (
                     <Item key={nanoid()} data={item}/>
                 ))}
-            </>
+            </Row>
 
 
             // <div className="w-full">

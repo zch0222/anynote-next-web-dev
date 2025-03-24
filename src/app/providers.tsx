@@ -36,6 +36,7 @@ export function Providers({ children, themeProps }: ProvidersProps) {
                     theme={{
                         token: {
                             // Seed Token，影响范围大
+                            // colorPrimaryBg: '#01B96B',
                             colorPrimary: '#01B96B',
                         },
                     }}

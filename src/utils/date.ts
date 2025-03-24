@@ -28,8 +28,8 @@ export default class DateTimeFormatter {
     }
 }
 
-export function stringToDateString(date: string) {
-    return dayjs(date).format("YYYY/MM/DD HH:mm:ss")
+export function stringToDateString(date: string, format:string = "YYYY/MM/DD HH:mm:ss") {
+    return dayjs(date).format(format)
 }
 
 export function getDateString(date: Date | undefined) {
