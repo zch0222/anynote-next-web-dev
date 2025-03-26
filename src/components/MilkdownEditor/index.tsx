@@ -3,7 +3,7 @@
 import { defaultValueCtx, Editor, rootCtx } from '@milkdown/core';
 
 import { Milkdown, useEditor, MilkdownProvider } from '@milkdown/react'
-import { commonmark } from '@milkdown/preset-commonmark';
+import { commonmark, blockquoteKeymap } from '@milkdown/preset-commonmark';
 import { gfm } from '@milkdown/preset-gfm';
 import { nord } from '@milkdown/theme-nord'
 import {useEffect, useState} from "react";
@@ -25,6 +25,8 @@ import { listener, listenerCtx } from '@milkdown/plugin-listener';
 import { $view } from "@milkdown/utils";
 import {upload, uploadConfig, Uploader} from '@milkdown/plugin-upload';
 import { slash, SlashView } from './Slash';
+import { Node as ProseMirrorNode, Fragment } from 'prosemirror-model';
+import { Schema } from 'prosemirror-model';
 
 import {
     codeBlockSchema,
@@ -33,17 +35,18 @@ import {
 import {CodeBlock} from "@/components/MilkdownEditor/CodeBlock";
 import "./index.css"
 
-export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: {
+export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef, onKeyDown}: {
     onInput: (value: string) => void,
     onBlur?: (value: string) => void,
     onUpload?: (files: File[]) => string | Promise<string | void> | Promise<null> | null,
     content: string,
-    vditorRef?: any
+    vditorRef?: any,
+    onKeyDown?: (editor: Editor) => void
 }) => {
     const pluginViewFactory = usePluginViewFactory();
     const nodeViewFactory = useNodeViewFactory();
 
-    const uploader: Uploader = async (files, schema) => {
+    const uploader: Uploader = async (files: FileList, schema: Schema): Promise<Fragment | ProseMirrorNode | ProseMirrorNode[]> => {
         const images: File[] = [];
 
         for (let i = 0; i < files.length; i++) {
@@ -52,7 +55,6 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
                 continue;
             }
 
-            // You can handle whatever the file type you want, we handle image here.
             if (!file.type.includes('image')) {
                 continue;
             }
@@ -60,37 +62,28 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
             images.push(file);
         }
 
-        const nodes: Node[] = await Promise.all(
+        const nodes = await Promise.all(
             images.map(async (image) => {
                 if (!onUpload) {
-                    // return schema.nodes.image.createAndFill({
-                    //     '',
-                    //     '',
-                    // }) as Node;
-                    return null
+                    return null;
                 }
                 const src = await onUpload([image]);
-                console.log("src", src)
-                // alert(url)
+                if (!src) return null;
                 const alt = image.name;
-                console.log(src)
                 return schema.nodes.image.createAndFill({
                     src,
                     alt,
-                }) as Node;
+                }) as ProseMirrorNode;
             }),
         );
-        console.log("nodes", nodes)
 
-        return nodes;
+        return nodes.filter((node): node is ProseMirrorNode => node !== null);
     };
-
 
     useEditor((root) => {
         return Editor
             .make()
             .config(ctx => {
-
                 ctx.set(rootCtx, root)
                 ctx.set(defaultValueCtx, content)
                 ctx.set(tooltip.key, {
@@ -98,11 +91,6 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
                         component: TooltipView,
                     })
                 })
-                // ctx.set(block.key, {
-                //     view: pluginViewFactory({
-                //         component: BlockView,
-                //     })
-                // })
                 ctx.set(block.key, {
                     view: pluginViewFactory({
                         component: BlockView,
@@ -116,21 +104,27 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
                         onInput(markdown)
                     }
                 })
+
+                // 添加键盘事件监听
+                if (onKeyDown) {
+                    const editor = ctx.get(rootCtx);
+                    if (editor) {
+                        const view = (editor as any).view;
+                        if (view) {
+                            view.dom.addEventListener('keydown', (event: KeyboardEvent) => {
+                                if (event.key === 'Tab') {
+                                    event.preventDefault();
+                                    onKeyDown(editor as unknown as Editor);
+                                }
+                            });
+                        }
+                    }
+                }
+
                 ctx.update(uploadConfig.key, (prev) => ({
                     ...prev,
                     uploader,
                 }));
-                // ctx.set(slash.key, {
-                //     view: pluginViewFactory({
-                //         component: SlashView,
-                //     })
-                // })
-                // ctx.set(slash.key, {
-                //     view: pluginViewFactory({
-                //         component: SlashView,
-                //     })
-                // })
-                // slash.config(ctx)
             })
             .config(nord)
             .use(commonmark)
@@ -145,19 +139,15 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef}: 
             .use(tooltip)
             .use(listener)
             .use(upload)
-            // .use([...remarkDirective, directiveNode, inputRule])
-            // .use(slash.plugins)
             .use(
                 $view(codeBlockSchema.node, () =>
                     nodeViewFactory({ component: CodeBlock })
                 )
             )
-            // .use(slash)
     }, [])
 
     return (
         <Milkdown />
-
     )
 }
 
@@ -168,7 +158,6 @@ export default function MilkdownEditorWrapper({onInput, onBlur, onUpload, conten
     content: string,
     vditorRef?: any
 }) {
-
     const [isClient, setIsClient] = useState(false);
 
     // Wait until after client-side hydration to show

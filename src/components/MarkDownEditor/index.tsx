@@ -8,7 +8,7 @@ import "vditor/dist/index.css"
 export default function MarkDownEditor({onInput, onBlur, onUpload, content, vditorRef}: {
     onInput: (value: string) => void,
     onBlur: (value: string) => void,
-    onUpload: (files: File[]) => string | Promise<string> | Promise<null> | null,
+    onUpload: (files: File[]) => any,
     content: string,
     vditorRef: MutableRefObject<Vditor | undefined>
 }) {

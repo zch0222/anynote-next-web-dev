@@ -2,7 +2,7 @@
 
 import React, {useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
-import {Button, Divider, Dropdown, Form, Input, message, Modal, Radio, Space, Tree} from 'antd';
+import {Button, Divider, Dropdown, Form, Input, Modal, Radio, Space, Tree} from 'antd';
 import {
     CheckOutlined,
     EyeOutlined,
@@ -15,7 +15,7 @@ import {
 import dynamic from 'next/dynamic';
 import '@wangeditor/editor/dist/css/style.css';
 import ContentEditor from "@/components/mooc/ContentEditor";
-import {createMoocItem, getMoocItemList} from "@/requests/client/note/mooc";
+import {createMoocItem, getMoocItemInfoById, getMoocItemList} from "@/requests/client/note/mooc";
 import {useDispatch} from "react-redux";
 import {showMessage} from "@/store/message/messageSlice";
 import useMoocItemList from "@/hooks/mooc/useMoocItemList";
@@ -62,6 +62,7 @@ const CourseDirectory = () => {
     const [modalType, setModalType] = useState<'same' | 'sub'>('same');
     const [isDataProcessing, setIsDataProcessing] = useState(true);
     const [currentParentId, setCurrentParentId] = useState<number>(0);
+    const [currentContent, setCurrentContent] = useState<string>('');
     const dispatch = useDispatch();
 
     const {data, isLoading} = useMoocItemList({
@@ -104,7 +105,7 @@ const CourseDirectory = () => {
 
     // 如果数据正在加载或处理中，显示加载状态
     if (isLoading || isDataProcessing) {
-        return <Loading />;
+        return <Loading/>;
     }
 
     // 获取节点层级
@@ -156,6 +157,24 @@ const CourseDirectory = () => {
         }
         return null;
     };
+
+    // 获取节点内容
+    useEffect(() => {
+        const currentNode = findNode(selectedKeys[0], treeData);
+        if (currentNode && currentNode.moocItemType) {
+            getMoocItemInfoById({
+                moocId: 3,
+                moocItemId: Number(currentNode.key),
+            }).then(res => {
+                const data = res.data.data;
+                if (currentNode.moocItemType === 2 && data?.moocItemText?.itemText) {
+                    setCurrentContent(data.moocItemText.itemText);
+                } else if (currentNode.moocItemType === 1 && data?.objectName) {
+                    setCurrentContent(data.objectName);
+                }
+            });
+        }
+    }, [selectedKeys, treeData]);
 
     // 递归更新节点
     const updateNode = (nodes: TreeNode[], nodeKey: string, updateFn: (node: TreeNode) => TreeNode): TreeNode[] => {
@@ -612,13 +631,6 @@ const CourseDirectory = () => {
         });
     };
 
-    const getMoocItemInfo = (node: TreeNode) => {
-        switch (node.moocItemType) {
-            case 1:
-                return
-        }
-    }
-
     return (
         <div className="flex flex-col h-screen">
             {/* 主要内容区域 */}
@@ -725,7 +737,7 @@ const CourseDirectory = () => {
                                                             }))
                                                         );
                                                     }}
-                                                    content={findNode(selectedKeys[0], treeData)?.itemText}
+                                                    content={currentContent}
                                                 />
                                             </div>
                                         );
