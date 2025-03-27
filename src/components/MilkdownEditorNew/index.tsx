@@ -1,41 +1,31 @@
-'use client'
+import {defaultValueCtx, Editor, rootCtx} from '@milkdown/core';
+import {FC, useEffect, useState} from 'react';
 
-import { defaultValueCtx, Editor, rootCtx } from '@milkdown/core';
+import {commonmark} from '@milkdown/preset-commonmark';
+import {Milkdown, MilkdownProvider, useEditor} from '@milkdown/react';
+import {nord} from '@milkdown/theme-nord';
+import {ProsemirrorAdapterProvider, useNodeViewFactory, usePluginViewFactory} from '@prosemirror-adapter/react';
 
-import { Milkdown, useEditor, MilkdownProvider } from '@milkdown/react'
-import { commonmark, blockquoteKeymap } from '@milkdown/preset-commonmark';
-import { gfm } from '@milkdown/preset-gfm';
-import { nord } from '@milkdown/theme-nord'
-import {useEffect, useState} from "react";
-import { history } from '@milkdown/plugin-history';
-import { clipboard } from '@milkdown/plugin-clipboard';
-import { cursor } from '@milkdown/plugin-cursor';
-import { math } from '@milkdown/plugin-math';
-import { usePluginViewFactory } from '@prosemirror-adapter/react';
-import { block } from '@milkdown/plugin-block';
+import {slash, SlashView} from './Slash';
+
 import '@milkdown/theme-nord/style.css';
-import { tooltip, TooltipView } from './Tooltip';
-import 'katex/dist/katex.min.css';
-import { diagram } from '@milkdown/plugin-diagram';
-import { BlockView } from './Block';
-import "./prism-nord.css"
-import { prism } from '@milkdown/plugin-prism';
-import { ProsemirrorAdapterProvider, useNodeViewFactory } from '@prosemirror-adapter/react'
-import { listener, listenerCtx } from '@milkdown/plugin-listener';
-import { $view } from "@milkdown/utils";
-import {upload, uploadConfig, Uploader} from '@milkdown/plugin-upload';
-import { slash, SlashView } from './Slash';
-import { Node as ProseMirrorNode, Fragment } from 'prosemirror-model';
-import { Schema } from 'prosemirror-model';
-
-import {
-    codeBlockSchema,
-} from "@milkdown/preset-commonmark";
-
-import {CodeBlock} from "@/components/MilkdownEditor/CodeBlock";
+import {upload, uploadConfig, Uploader} from "@milkdown/plugin-upload";
+import {Fragment, Node as ProseMirrorNode, Schema} from "prosemirror-model";
+import {gfm} from "@milkdown/preset-gfm";
+import {history} from "@milkdown/plugin-history";
+import {clipboard} from "@milkdown/plugin-clipboard";
+import {cursor} from "@milkdown/plugin-cursor";
+import {math} from "@milkdown/plugin-math";
+import {block} from "@milkdown/plugin-block";
+import {diagram} from "@milkdown/plugin-diagram";
+import {prism} from "@milkdown/plugin-prism";
+import {tooltip, TooltipView} from "@/components/MilkdownEditor/Tooltip";
+import {listener, listenerCtx} from "@milkdown/plugin-listener";
 import "./index.css"
+import {BlockView} from "@/components/MilkdownEditor/Block";
 
-export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef, onKeyDown}: {
+
+export const MilkdownEditorNew = ({onInput, onBlur, onUpload, content, vditorRef, onKeyDown}: {
     onInput: (value: string) => void,
     onBlur?: (value: string) => void,
     onUpload?: (files: File[]) => string | Promise<string | void> | Promise<null> | null,
@@ -110,22 +100,6 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef, o
                     }
                 })
 
-                // // 添加键盘事件监听
-                // if (onKeyDown) {
-                //     const editor = ctx.get(rootCtx);
-                //     if (editor) {
-                //         const view = (editor as any).view;
-                //         if (view) {
-                //             view.dom.addEventListener('keydown', (event: KeyboardEvent) => {
-                //                 if (event.key === 'Tab') {
-                //                     event.preventDefault();
-                //                     onKeyDown(editor as unknown as Editor);
-                //                 }
-                //             });
-                //         }
-                //     }
-                // }
-
                 ctx.update(uploadConfig.key, (prev) => ({
                     ...prev,
                     uploader,
@@ -145,19 +119,12 @@ export const MilkdownEditor = ({onInput, onBlur, onUpload, content, vditorRef, o
             .use(listener)
             .use(upload)
             .use(slash)
-            // .use(
-            //     $view(codeBlockSchema.node, () =>
-            //         nodeViewFactory({ component: CodeBlock })
-            //     )
-            // )
     }, [])
 
-    return (
-        <Milkdown />
-    )
+    return <Milkdown/>
 }
 
-export default function MilkdownEditorWrapper({onInput, onBlur, onUpload, content, vditorRef}: {
+export default function MilkdownEditorWrapperNew({onInput, onBlur, onUpload, content, vditorRef}: {
     onInput: (value: string) => void,
     onBlur?: (value: string) => void,
     onUpload?: (files: File[]) => string | Promise<string | void> | Promise<null> | null,
@@ -174,13 +141,15 @@ export default function MilkdownEditorWrapper({onInput, onBlur, onUpload, conten
         <MilkdownProvider>
             <ProsemirrorAdapterProvider>
                 <div className="w-full h-full">
-                    {isClient &&
-                        <MilkdownEditor
+                    {
+                        isClient &&
+                        <MilkdownEditorNew
                             onInput={onInput}
                             onBlur={() => {}}
                             content={content}
                             onUpload={onUpload}
-                        />}
+                        />
+                    }
                 </div>
             </ProsemirrorAdapterProvider>
         </MilkdownProvider>

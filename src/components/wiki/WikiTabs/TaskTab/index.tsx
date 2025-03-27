@@ -12,7 +12,7 @@ function TaskTab({ knowledgeBaseId }: {
 }) {
 
     return (
-        <div className="w-full h-full overflow-hidden">
+        <div className="w-full h-full pt-2 overflow-hidden">
             <Pagination
                 Page={createPage(TaskCard)}
                 swr={useNoteTaskList}

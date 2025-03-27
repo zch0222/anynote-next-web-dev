@@ -50,7 +50,7 @@ function ChatText({data, status}: {
                 {/*    <Bot width={40} height={40}/>*/}
                 {/*</div>*/}
                 <div className="w-[50px]">
-                    <Bot width={40} height={40}/>
+                    <Bot width={32} height={32}/>
                 </div>
                 <div className="flex flex-col flex-grow ml-2 mt-2 overflow-x-hidden">
                     <div

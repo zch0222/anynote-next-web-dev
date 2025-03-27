@@ -47,7 +47,7 @@ export function getMoocItemList(params: {
     moocId: number,
     moocItemType?: number
 }) {
-    return request<ResData<PageBean<MoocInfo>>>({
+    return request<ResData<PageBean<MoocItem>>>({
         url: `/api/note/moocs/items`,
         method: Method.GET,
         needToken: true,

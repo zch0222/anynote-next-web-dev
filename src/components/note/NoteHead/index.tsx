@@ -18,17 +18,17 @@ function NoteHead({ title, updateTime, onShowDrawer, editorType, setEditorType }
 
     return (
         <div
-            className="flex flex-row justify-between items-center w-full h-[60px] select-none"
+            className="px-2 flex flex-row justify-between items-center w-full h-[60px] select-none"
         >
             <div
                 className="flex flex-row items-center"
             >
-                <div
-                    className="ml-2 mr-2 cursor-pointer"
-                    onClick={() => router.back()}
-                >
-                    <Back width={40} height={40}/>
-                </div>
+                {/*<div*/}
+                {/*    className="ml-2 mr-2 cursor-pointer"*/}
+                {/*    onClick={() => router.back()}*/}
+                {/*>*/}
+                {/*    <Back width={40} height={40}/>*/}
+                {/*</div>*/}
                 <div className="flex flex-col">
                     <div className="text-xl font-bold">
                         {title}
@@ -38,7 +38,7 @@ function NoteHead({ title, updateTime, onShowDrawer, editorType, setEditorType }
                     </div>
                 </div>
             </div>
-            <div className="mr-2">
+            <div>
                 {/*<Button*/}
                 {/*    type="primary"*/}
                 {/*    onClick={() => setEditorType(editorType == 0 ? 1 : 0)}*/}

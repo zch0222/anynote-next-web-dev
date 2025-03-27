@@ -56,7 +56,6 @@ function DocItem({ data }: {
             </CardFooter>
 
         </Card>
-
     )
 }
 

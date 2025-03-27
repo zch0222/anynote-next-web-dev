@@ -1,28 +1,27 @@
 'use client'
-import {useState, useRef, useEffect, useCallback, useMemo} from "react";
+import {useCallback, useEffect, useMemo, useRef, useState} from "react";
 import {Drawer, message} from "antd";
 
-import { getNoteById } from "@/requests/client/note/note";
-import { useSearchParams } from 'next/navigation'
+import {getNoteById, updateNote, uploadNoteImage} from "@/requests/client/note/note";
+import {useSearchParams} from 'next/navigation'
 
 
 import NoteHead from "@/components/note/NoteHead";
 import Loading from "@/components/Loading";
 import MarkDownEditor from "@/components/MarkDownEditor";
 // import MuyaMarkDownEditor from "@/components/MuyaMarkDownEditor";
-import MilkdownEditorWrapper from "@/components/MilkdownEditor";
 import MarkDownViewer from "@/components/MarkDownViewer";
 import DrawerContent from "@/components/note/DrawerContent";
 
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-import { useDispatch } from "react-redux";
-import { showMessage } from "@/store/message/messageSlice";
-import { updateNote, uploadNoteImage } from "@/requests/client/note/note";
-import { getDateString } from "@/utils/date";
+import {useDispatch} from "react-redux";
+import {showMessage} from "@/store/message/messageSlice";
+import {getDateString} from "@/utils/date";
 import Vditor from "vditor";
 import {nanoid} from "nanoid";
 import {Note} from "@/types/noteTypes";
 import debounce from "@/utils/debounce";
+import MilkdownEditorWrapperNew from "@/components/MilkdownEditorNew";
 
 const EditorType = {
     "MUYA": "muya",
@@ -144,7 +143,7 @@ function Note({params}: {
 
     const getEditor = useMemo(() => {
         if (!data) {
-            return  <></>
+            return <></>
         }
         if (EditorType.MUYA == editorType) {
             return (
@@ -155,12 +154,18 @@ function Note({params}: {
                 // />
                 <></>
             )
-        }
-        else if (EditorType.MILKDOWN === editorType) {
+        } else if (EditorType.MILKDOWN === editorType) {
             return (
-                <MilkdownEditorWrapper
+                // <MilkdownEditorWrapper
+                //     onInput={fetchUpdateNote}
+                //     onBlur={() => {}}
+                //     content={data.content}
+                //     onUpload={onUpload}
+                // />
+                <MilkdownEditorWrapperNew
                     onInput={fetchUpdateNote}
-                    onBlur={() => {}}
+                    onBlur={() => {
+                    }}
                     content={data.content}
                     onUpload={onUpload}
                 />
@@ -169,7 +174,8 @@ function Note({params}: {
         return (
             <MarkDownEditor
                 onInput={fetchUpdateNote}
-                onBlur={() => {}}
+                onBlur={() => {
+                }}
                 onUpload={onUpload}
                 content={data.content}
                 vditorRef={vditorRef}
@@ -200,7 +206,7 @@ function Note({params}: {
                 />
             </div>
             <div className="flex flex-col items-center relative flex-grow w-full overflow-x-hidden overflow-y-auto">
-                { data.notePermissions < 6 ?
+                {data.notePermissions < 6 ?
                     <MarkDownViewer
                         content={data.content}
                     /> :

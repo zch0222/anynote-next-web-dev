@@ -1,28 +1,25 @@
 'use client'
 
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-import ChatText from "@/components/AIChatBox/ChatText";
-import {Button, Textarea, Chip } from "@nextui-org/react";
-import {useCallback, useEffect, useMemo, useRef, useState} from "react";
+import {Button, Chip} from "@nextui-org/react";
+import {useEffect, useMemo, useRef, useState} from "react";
 import {ChatConversationInfoVO, ChatConversationVO, ChatMessage} from "@/types/aiTypes";
 import {getChatConversationList, getConversationById, updateChatConversation} from "@/requests/client/ai/chat";
 import Chat from "@/components/AIChatBox/Chat";
-import useChatConversation from "@/hooks/useChatConversation";
 import Loading from "@/components/Loading";
 import {scrollToBottoms} from "@/utils/nodeUtil";
 import {nanoid} from "nanoid";
-import {AxiosProgressEvent, AxiosResponse, GenericAbortSignal} from "axios";
-import {MoreOutlined} from "@ant-design/icons";
+import {GenericAbortSignal} from "axios";
+import {HistoryOutlined} from "@ant-design/icons";
 import {Drawer} from "antd";
 import InfiniteScroll from "@/components/InfiniteScroll";
 import useChatConversationList from "@/hooks/useChatConversationList";
 import {useTheme} from "next-themes";
 import {EventSourceMessage} from "@microsoft/fetch-event-source";
 import useDoc from "@/hooks/useDoc";
-import type { DrawerProps } from 'antd';
 import "./index.css"
 
-function ChatConversationListItem({ data, itemProps }: {
+function ChatConversationListItem({data, itemProps}: {
     data: ChatConversationInfoVO,
     itemProps?: {
         setConversationId: (value: number) => void,
@@ -35,9 +32,9 @@ function ChatConversationListItem({ data, itemProps }: {
     // if (itemProps?.selectedId === data.id ) {
     //     console.log(itemProps)
     // }
-    const { theme } = useTheme()
+    const {theme} = useTheme()
 
-    const hoveredBg = 'light' === theme ? 'bg-[#FAFAFA]' :  'bg-[#262626]'
+    const hoveredBg = 'light' === theme ? 'bg-[#FAFAFA]' : 'bg-[#262626]'
 
     const [isHover, setIsHover] = useState(false)
 
@@ -72,7 +69,7 @@ function ChatConversationListItem({ data, itemProps }: {
 }
 
 
-function AIChatBox({generate, docId, isShowHead, onConversationChange, initConversationId}: {
+function AIChatBox({generate, docId, isShowHead, onConversationChange, initConversationId, setModel}: {
     initConversationId?: number,
     docId?: number
     generate: (params: {
@@ -84,6 +81,7 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
     }) => Promise<void>,
     isShowHead: boolean | undefined,
     onConversationChange?: (id: number) => void
+    setModel?: (model: string) => void
 }) {
 
     const [isChatting, setIsChatting] = useState<boolean>(false)
@@ -101,7 +99,7 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
         title: "New Chat",
         messageCount: 0
     })
-    const { data: docData } = useDoc(docId)
+    const {data: docData} = useDoc(docId)
 
     const textRef = useRef<HTMLDivElement>(null);
     const resTextLength = useRef(0);
@@ -131,8 +129,7 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
             ).finally(
                 () => setIsLoading(false)
             )
-        }
-        else {
+        } else {
             setData(undefined)
         }
     }, [conversationId]);
@@ -140,8 +137,7 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
     useEffect(() => {
         if (data) {
             setMessages(data.messages)
-        }
-        else {
+        } else {
             setMessages([])
         }
     }, [data]);
@@ -169,33 +165,26 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
             signal: new AbortController().signal,
             prompt: prompt,
             conversationId: conversationId,
-            onDownloadProgress: (event) => {
-                console.log(event.event.target.responseText)
-                const responseText = event.event.target.responseText
-                const regex = /data:\s*([^]+?)(?=\n\nid:|\n$|$)/g;
-                let matches = [...responseText.matchAll(regex)];
-                console.log("LastPart", matches[matches.length-1][1])
-                const lastJsonString = matches[matches.length-1][1]; // 确保找到以"data: "开头的部分
-                if (lastJsonString) {
-                    try {
-                        console.log(JSON.parse(lastJsonString))
-                        const messageData = JSON.parse(lastJsonString); // 正确地解析JSON字符串
-                        console.log(messageData.data.message.replace(/\n/g, "\n\n"))
-                        const newMessage = {
-                            id: nanoid(), // 确保nanoid()函数已被正确引入
-                            content: messageData.data.message.replace(/\n/g, "\n\n"),
-                            role: 1
-                        };
-                        const newMessages = [...messages]
-                        newMessages[newMessages.length-1] = newMessage
-                        setMessages(newMessages); // 使用函数式更新以防止依赖旧的state
-                        resTextLength.current = responseText.length
-                    } catch (e) {
-                        console.log(e)
-                    }
+            onmessage: (event: EventSourceMessage) => {
+                try {
+                    const messageData = JSON.parse(event.data);
+                    console.log(messageData.data.message.replace(/\n/g, "\n\n"))
+                    const newMessage = {
+                        id: nanoid(),
+                        content: messageData.data.message.replace(/\n/g, "\n\n"),
+                        role: 1,
+                        updateTime: new Date().toISOString()
+                    };
+                    const newMessages = [...messages];
+                    newMessages[newMessages.length - 1] = newMessage;
+                    setMessages(newMessages);
+                } catch (e) {
+                    console.log(e)
                 }
+            },
+            onerror: (event: ErrorEvent) => {
+                console.log(event)
             }
-
         }).then(
             res => console.log(res)
         ).catch(
@@ -209,7 +198,7 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
     }, [messages])
 
     useEffect(() => {
-        onConversationChange && onConversationChange(conversationId)
+        onConversationChange && onConversationChange(conversationId as number)
     }, [conversationId, onConversationChange]);
 
     const conversationScrollItemProps = useMemo(() => ({
@@ -239,18 +228,18 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
             {
                 id: nanoid(),
                 content: prompt,
-                role: 0
+                role: 0,
+                updateTime: new Date().toISOString()
             },
             {
                 id: nanoid(),
                 content: "",
-                role: 1
+                role: 1,
+                updateTime: new Date().toISOString()
             }
         ])
         isChatBegin.current = true
     }
-
-
 
 
     return (
@@ -281,16 +270,13 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
                         className="flex flex-row"
                     >
                         <Button
+                            variant={'faded'}
                             className="mr-2"
                             isIconOnly={true}
                             onPress={() => setIsOpenHistoryDrawer(true)}
-                            size="lg"
+                            size="md"
                         >
-                            <MoreOutlined
-                                style={{
-                                    fontSize: 25
-                                }}
-                            />
+                            <HistoryOutlined/>
                         </Button>
                         <div className="flex flex-col">
                             <div className="text-base font-bold">
@@ -309,20 +295,33 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
                 getContainer={false}
                 destroyOnClose={true}
                 mask={false}
+                extra={
+                    <Button
+                        className="text-base text-white w-full"
+                        color="primary"
+                        size={'sm'}
+                        onPress={() => {
+                            setConversationId(null)
+                            setIsOpenHistoryDrawer(false)
+                        }}
+                    >
+                        新建对话
+                    </Button>
+                }
             >
                 <div className="flex flex-col w-full h-full overflow-hidden">
-                    <div className="h-[40px] w-full">
-                        <Button
-                            className="text-base font-bold text-white w-full"
-                            color="primary"
-                            onPress={() => {
-                                setConversationId(null)
-                                setIsOpenHistoryDrawer(false)
-                            }}
-                        >
-                            新建对话
-                        </Button>
-                    </div>
+                    {/*<div className="h-[40px] w-full">*/}
+                    {/*    <Button*/}
+                    {/*        className="text-base font-bold text-white w-full"*/}
+                    {/*        color="primary"*/}
+                    {/*        onPress={() => {*/}
+                    {/*            setConversationId(null)*/}
+                    {/*            setIsOpenHistoryDrawer(false)*/}
+                    {/*        }}*/}
+                    {/*    >*/}
+                    {/*        新建对话*/}
+                    {/*    </Button>*/}
+                    {/*</div>*/}
                     <div className="flex-grow overflow-hidden w-full mt-2">
                         <InfiniteScroll
                             swr={useChatConversationList}
@@ -345,51 +344,11 @@ function AIChatBox({generate, docId, isShowHead, onConversationChange, initConve
                     generate={generate}
                     conversationId={conversationId}
                     setConversationId={setConversationId}
+                    setModel={setModel}
                 />
             </div>
-
-
-            {/*<div*/}
-            {/*    className="flex-grow flex flex-col overflow-y-auto"*/}
-            {/*    ref={textRef}*/}
-            {/*>*/}
-            {/*    {messages.length > 0 ? messages.map(item => (*/}
-            {/*        <ChatText*/}
-            {/*            key={item.id}*/}
-            {/*            text={item.content}*/}
-            {/*            role={item.role}*/}
-            {/*        />*/}
-            {/*    )) : <div>Empty</div>}*/}
-            {/*</div>*/}
-            {/*<form*/}
-            {/*    className="flex flex-row items-center"*/}
-            {/*    onSubmit={() => console.log(111)}*/}
-            {/*>*/}
-            {/*    <Textarea*/}
-            {/*        className="mr-2"*/}
-            {/*        placeholder={"请输入问题"}*/}
-            {/*        onValueChange={setPrompt}*/}
-            {/*        value={prompt}*/}
-            {/*        onKeyDown={(e) => {*/}
-            {/*            console.log(e.keyCode)*/}
-            {/*            if (e.keyCode === 13) {*/}
-            {/*                e.preventDefault()*/}
-            {/*                send()*/}
-            {/*            }*/}
-            {/*        }}*/}
-            {/*    />*/}
-            {/*    <Button*/}
-            {/*        className="h-[55px] font-bold"*/}
-            {/*        color="primary"*/}
-            {/*        onClick={send}*/}
-            {/*        isLoading={isChatting}*/}
-            {/*        type="submit"*/}
-            {/*    >*/}
-            {/*        Send*/}
-            {/*    </Button>*/}
-            {/*</form>*/}
         </div>
     )
 }
 
-export default  withThemeConfigProvider(AIChatBox)
+export default withThemeConfigProvider(AIChatBox)

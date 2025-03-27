@@ -1,8 +1,9 @@
 import {ComponentType, ReactElement, useState} from "react";
 import Loading from "../Loading";
 import {SWRResponse} from "swr";
-import { PageBean } from "@/types/requestTypes";
-import { Pagination as NextUIPagination } from "@nextui-org/react";
+import {PageBean} from "@/types/requestTypes";
+import {Pagination as NextUIPagination} from "@nextui-org/react";
+import {Empty} from "antd";
 
 
 function Pagination(props: {
@@ -40,7 +41,7 @@ function Pagination(props: {
         pageSize: 10,
     })
 
-    const { data, error } = swr({
+    const {data, error} = swr({
         params: params,
         page: 1,
         pageSize: 10
@@ -88,16 +89,18 @@ function Pagination(props: {
                     swr={swr}
                 />
             </div>
-            <div className="flex flex-row items-center h-[60px] box-border p-1">
-                <NextUIPagination
-                    className="text-white"
-                    showControls
-                    total={data.pages}
-                    initialPage={1}
-                    onChange={onPageChange}
-                />
-                {isShowTotal ? <div className="ml-2 text-base font-bold">{`Total: ${data.total}`}</div> : <></>}
-            </div>
+            {data.rows.length > 0 ?
+                <div className="flex flex-row items-center h-[60px] box-border p-1">
+                    <NextUIPagination
+                        className="text-white"
+                        showControls
+                        total={data.pages}
+                        initialPage={1}
+                        onChange={onPageChange}
+                    />
+                    {isShowTotal ? <div className="ml-2 text-base font-bold">{`Total: ${data.total}`}</div> : <></>}
+                </div>
+                : <Empty description={"暂无数据"} image={Empty.PRESENTED_IMAGE_SIMPLE} />}
         </div>
     )
 }

@@ -16,7 +16,6 @@ import {stringToDateString} from "@/utils/date";
 
 
 const {Title, Paragraph} = Typography;
-const {Meta} = Card;
 
 const KnowledgeBaseCard = withThemeConfigProvider(function ({data}: {
     data: NoteKnowledgeBaseDTO
@@ -64,6 +63,7 @@ const KnowledgeBaseCard = withThemeConfigProvider(function ({data}: {
                 onClick={() => router.push(`${WIKI}/${data.id}`)}
             >
                 <List
+                    locale={{emptyText: "暂无数据"}}
                     dataSource={noteListData?.rows}
                     renderItem={(item) => (
                         <List.Item style={{padding: '10px 0'}}>

@@ -37,11 +37,11 @@ function ManageSiderMenu() {
         if (pathname.startsWith("/dashboard/wikis")) {
             setSelectKeys(['2'])
         }
-        else if (pathname.startsWith("/dashboard/mooc")) {
-            setSelectKeys(['3'])
-        }
+        // else if (pathname.startsWith("/dashboard/mooc")) {
+        //     setSelectKeys(['3'])
+        // }
         else if (pathname.startsWith('/dashboard/chat')) {
-            setSelectKeys(['4'])
+            setSelectKeys(['3'])
         }
         else if (pathname.startsWith('/dashboard')) {
             setSelectKeys(['1'])
@@ -68,16 +68,16 @@ function ManageSiderMenu() {
                 router.push(WIKIS)
             }
         },
+        // {
+        //     key: '3',
+        //     icon: <Icon component={getMoocSVG(18, 18)}/> ,
+        //     label: 'AI视频慕课',
+        //     onClick: () => {
+        //         router.push(MOOC)
+        //     }
+        // },
         {
             key: '3',
-            icon: <Icon component={getMoocSVG(18, 18)}/> ,
-            label: 'AI视频慕课',
-            onClick: () => {
-                router.push(MOOC)
-            }
-        },
-        {
-            key: '4',
             icon: <Icon component={getBotSVG(18, 18)}/> ,
             label: 'AI助手',
             onClick: () => {

@@ -7,15 +7,40 @@ import remarkGfm from 'remark-gfm';
 import remarkMath from "remark-math";
 import 'github-markdown-css/github-markdown-light.css'
 
-
-
 import withThemeConfigProvider from "@/components/hoc/withThemeConfigProvider";
-
 
 function MarkDownViewer({ content, maxWidth }: {
     content: string
     maxWidth: number
 }) {
+    const processThinkTags = (text: string) => {
+        let result = '';
+        let isInThinkBlock = false;
+        
+        text.split('\n').forEach((line: string) => {
+            if (line.includes('<think>')) {
+                isInThinkBlock = true;
+                // 处理think标签后的内容
+                const content = line.replace('<think>', '');
+                if (content.trim()) {
+                    result += `> ${content}\n`;
+                }
+            } else if (line.includes('</think>')) {
+                isInThinkBlock = false;
+                // 处理think标签前的内容
+                const content = line.replace('</think>', '');
+                if (content.trim()) {
+                    result += `> ${content}\n`;
+                }
+            } else if (isInThinkBlock) {
+                result += `> ${line}\n`;
+            } else {
+                result += line + '\n';
+            }
+        });
+        
+        return result;
+    };
 
     return (
         <div className={`w-full h-full ${maxWidth ? 'max-w-[' + maxWidth + 'px]' : ''}`}>
@@ -44,7 +69,7 @@ function MarkDownViewer({ content, maxWidth }: {
                 }}
                 remarkPlugins={[remarkGfm, remarkMath]}
             >
-                {content ? content : ""}
+                {content ? processThinkTags(content) : ""}
             </ReactMarkdown>
         </div>
     )
