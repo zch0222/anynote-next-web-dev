@@ -9,6 +9,7 @@ import Title from "@/components/Title";
 import {SWRResponse} from "swr";
 import {PageBean} from "@/types/requestTypes";
 import Loading from "@/components/Loading";
+import useMoocItem from "@/hooks/mooc/useMoocItem";
 
 const text = `
   A dog is a type of domesticated animal.
@@ -58,7 +59,7 @@ const createItems = ({ page, pageSize, swr, params }: {
     return data.rows.map((item, index) => {
         return {
             key: index,
-            label: <div><Button type="primary" shape="circle">1</Button>介绍</div>,
+            label: <div><Button type="primary" shape="circle">{index}</Button>介绍</div>,
             children: <p>映射是高等数学中一个基础且重要的概念，它在函数、线性代数等多个领域都有广泛的应用，是理解和研究各种数学结构和变换的重要工具。</p>,
         }
     })
@@ -78,9 +79,15 @@ export default function MoocCatalogue({params}: {
         border: 'none',
     };
 
+    const {data, isLoading} = useMoocItem({
+        moocId: params.id
+    })
+    if (isLoading) return <Loading/>
+
+
     return (
         <div className="flex flex-col h-full box-border overflow-hidden p-8">
-            <Title text={"高等数学"}/>
+            <Title text={data?.title as string} />
             <Card title="目录">
                 <Collapse
                     bordered={false}

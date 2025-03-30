@@ -1,28 +1,173 @@
-"use client"
+'use client'
 
-import {sendChatMessage} from "@/components/ChatCompletions";
-import {useState} from "react";
-import {Editor} from '@milkdown/core';
-import MilkdownEditorWrapperNew from "@/components/MilkdownEditorNew";
+import type { CSSProperties } from 'react';
+import React, { useEffect, useState } from 'react';
+import { CaretRightOutlined } from '@ant-design/icons';
+import { Button, Card, CollapseProps } from 'antd';
+import { Collapse, theme } from 'antd';
+import Title from "@/components/Title";
+import { SWRResponse } from "swr";
+import { PageBean } from "@/types/requestTypes";
+import Loading from "@/components/Loading";
+import useMoocItem from "@/hooks/mooc/useMoocItem";
+import useMoocItemList from "@/hooks/mooc/useMoocItemList";
+import { getMoocItemList } from "@/requests/client/note/mooc";
 
-export default function Test() {
-    const [data, setData] = useState({
-        content: "测试补全",
-    })
+interface TreeNode {
+    title: string;
+    key: string;
+    children?: TreeNode[];
+    moocItemType?: number;
+    objectName?: string;
+    parentId?: number;
+    isLeaf?: boolean;
+}
 
-    const onInput = (value: string) => {
-        console.log(value)
-        setData(prev => ({...prev, content: value}));
+const getItems = (panelStyle: React.CSSProperties, treeData: TreeNode[], onExpand: (key: string | string[]) => void): CollapseProps['items'] => {
+    const processNode = (node: TreeNode, index: number): NonNullable<CollapseProps['items']>[number] => {
+        const item: NonNullable<CollapseProps['items']>[number] = {
+            key: node.key,
+            label: <div className="flex items-center gap-2">
+                <Button type="primary" shape="circle">{index + 1}</Button>
+                <span>{node.title}</span>
+            </div>,
+            children: node.children ? (
+                <Collapse
+                    bordered={false}
+                    style={panelStyle}
+                    items={node.children.map((child, childIndex) => processNode(child, childIndex))}
+                    onChange={onExpand}
+                />
+            ) : node.moocItemType === 0 ? (
+                <p>目录节点</p>
+            ) : (
+                <Card size="small" className="bg-white">
+                    <p>{node.moocItemType === 2 ? '文档内容' : '视频内容'}</p>
+                </Card>
+            ),
+            collapsible: node.moocItemType === 0 ? 'header' : 'disabled'
+        };
+        return item;
+    };
+
+    return treeData.map((node, index) => processNode(node, index));
+};
+
+export default function MoocCatalogue() {
+    const params = {
+        id: 3
     }
+    const { token } = theme.useToken();
+    const [treeData, setTreeData] = useState<TreeNode[]>([]);
+    const [expandedKeys, setExpandedKeys] = useState<string[]>([]);
+
+    const panelStyle: React.CSSProperties = {
+        marginBottom: 24,
+        background: token.colorFillAlter,
+        borderRadius: token.borderRadiusLG,
+        border: 'none',
+    };
+
+    const { data: moocData, isLoading: isMoocLoading } = useMoocItem({
+        moocId: params.id,
+    });
+
+    const { data: itemListData, isLoading: isItemListLoading } = useMoocItemList({
+        params: {
+            parentId: 0,
+            moocId: params.id,
+        },
+        page: 1,
+        pageSize: 10,
+    });
+
+    useEffect(() => {
+        if (itemListData && !isItemListLoading) {
+            const processedData = itemListData.rows?.map((item: any) => ({
+                title: item.title,
+                key: item.id.toString(),
+                moocItemType: item.moocItemType,
+                objectName: item.objectName,
+                parentId: item.parentId,
+                isLeaf: item.moocItemType !== 0,
+                children: []
+            })) || [];
+            setTreeData(processedData);
+        }
+    }, [itemListData, isItemListLoading]);
+
+    const loadData = async (nodeKey: string) => {
+        try {
+            const response = await getMoocItemList({
+                parentId: Number(nodeKey),
+                moocId: params.id,
+                page: 1,
+                pageSize: 10,
+            });
+
+            const childNodes = response.data.data?.rows?.map((item: any) => ({
+                title: item.title,
+                key: item.id.toString(),
+                moocItemType: item.moocItemType,
+                objectName: item.objectName,
+                parentId: item.parentId,
+                isLeaf: item.moocItemType !== 0,
+                children: []
+            })) || [];
+
+            setTreeData(prevData => {
+                const updateNode = (nodes: TreeNode[]): TreeNode[] => {
+                    return nodes.map(item => {
+                        if (item.key === nodeKey) {
+                            return {
+                                ...item,
+                                children: childNodes
+                            };
+                        }
+                        if (item.children) {
+                            return {
+                                ...item,
+                                children: updateNode(item.children)
+                            };
+                        }
+                        return item;
+                    });
+                };
+                return updateNode(prevData);
+            });
+        } catch (error) {
+            console.error('加载子节点失败:', error);
+        }
+    };
+
+    const handleExpand = (keys: string | string[]) => {
+        console.log(keys)
+        if (Array.isArray(keys)) {
+            // 找出新展开的key（在keys中但不在expandedKeys中的key）
+            const newKey = keys.find(key => !expandedKeys.includes(key));
+            if (newKey) {
+                loadData(newKey);
+            }
+            setExpandedKeys(keys);
+        }
+    };
+
+    if (isMoocLoading || isItemListLoading) return <Loading />;
 
     return (
-        <div>
-            <MilkdownEditorWrapperNew
-                onInput={onInput}
-                onBlur={() => {
-                }}
-                content={data.content}
-            />
+        <div className="flex flex-col h-full box-border overflow-hidden p-8">
+            <Title text={moocData?.title as string} />
+            <Card title="目录">
+                <Collapse
+                    bordered={false}
+                    defaultActiveKey={['1']}
+                    expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
+                    style={{ background: token.colorBgContainer }}
+                    items={getItems(panelStyle, treeData, handleExpand)}
+                    expandIconPosition={"end"}
+                    onChange={handleExpand}
+                />
+            </Card>
         </div>
     );
 }

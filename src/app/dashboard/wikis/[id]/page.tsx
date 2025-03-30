@@ -89,7 +89,7 @@ function Wiki({params}: {
                 }
             </div>
             <Modal width={400} title="上传新慕课" open={isModalOpen} onCancel={()=> setIsModalOpen(false)} footer={null}>
-                <CreateMoocForm id={id}/>
+                <CreateMoocForm setModalOpen={setIsModalOpen} id={id}/>
             </Modal>
             <WikiTabs
                 knowledgeBaseId={id}

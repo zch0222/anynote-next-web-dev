@@ -3,6 +3,16 @@ import request, {Method} from "@/utils/client-request"
 import {PageBean, ResData} from "@/types/requestTypes";
 import {MoocInfo, MoocItem} from "@/types/moocTypes";
 
+export function getMoocInfoById(params: {
+    id: number
+}){
+    return request<ResData<MoocInfo>>({
+        url: `/api/note/moocs/${params.id}`,
+        method: Method.GET,
+        needToken: true
+    })
+}
+
 export function getMoocList(params: {
     knowledgeId: number,
     page: number,

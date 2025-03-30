@@ -11,9 +11,11 @@ import {useState} from "react";
 import {MoocInfo} from "@/types/moocTypes";
 import ImageByName from "@/components/ImageByName";
 
-export default function CreateMoocForm({id}: {id: number}) {
+function CreateMoocForm({id, setModalOpen}: {id: number; setModalOpen: (value: boolean) => void}) {
     const dispatch = useDispatch()
     const [coverName, setCoverName] = useState<string>()
+    const [form] = Form.useForm();
+
     const beforeUpload = (file: RcFile) => {
         console.log(file.type)
         const isJpgOrPng = file.type === 'image/jpeg';
@@ -63,11 +65,15 @@ export default function CreateMoocForm({id}: {id: number}) {
         }
         createMooc(data).then((res) => {
             console.log(res)
+            form.resetFields();
+            setCoverName(undefined);
+            setModalOpen(false)
         })
     }
     return (
         <div className={"mt-[30px]"}>
             <Form
+                form={form}
                 onFinish={onFinish}
             >
                 <Form.Item
@@ -114,3 +120,5 @@ export default function CreateMoocForm({id}: {id: number}) {
         </div>
     )
 }
+
+export default CreateMoocForm

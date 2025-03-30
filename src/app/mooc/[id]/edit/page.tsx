@@ -103,6 +103,24 @@ const CourseDirectory = () => {
         }
     }, [data, dispatch, isLoading]);
 
+    // 获取节点内容
+    useEffect(() => {
+        const currentNode = findNode(selectedKeys[0], treeData);
+        if (currentNode && currentNode.moocItemType && !currentNode.isNew) {
+            getMoocItemInfoById({
+                moocId: 3,
+                moocItemId: Number(currentNode.key),
+            }).then(res => {
+                const data = res.data.data;
+                if (currentNode.moocItemType === 2 && data?.moocItemText?.itemText) {
+                    setCurrentContent(data.moocItemText.itemText);
+                } else if (currentNode.moocItemType === 1 && data?.objectName) {
+                    setCurrentContent(data.objectName);
+                }
+            });
+        }
+    }, [selectedKeys, treeData]);
+
     // 如果数据正在加载或处理中，显示加载状态
     if (isLoading || isDataProcessing) {
         return <Loading/>;
@@ -143,7 +161,7 @@ const CourseDirectory = () => {
     };
 
     // 递归查找节点
-    const findNode = (nodeKey: string, nodes: TreeNode[]): TreeNode | null => {
+    function findNode  (nodeKey: string, nodes: TreeNode[]): TreeNode | null  {
         for (const node of nodes) {
             if (node.key === nodeKey) {
                 return node;
@@ -157,24 +175,6 @@ const CourseDirectory = () => {
         }
         return null;
     };
-
-    // 获取节点内容
-    useEffect(() => {
-        const currentNode = findNode(selectedKeys[0], treeData);
-        if (currentNode && currentNode.moocItemType) {
-            getMoocItemInfoById({
-                moocId: 3,
-                moocItemId: Number(currentNode.key),
-            }).then(res => {
-                const data = res.data.data;
-                if (currentNode.moocItemType === 2 && data?.moocItemText?.itemText) {
-                    setCurrentContent(data.moocItemText.itemText);
-                } else if (currentNode.moocItemType === 1 && data?.objectName) {
-                    setCurrentContent(data.objectName);
-                }
-            });
-        }
-    }, [selectedKeys, treeData]);
 
     // 递归更新节点
     const updateNode = (nodes: TreeNode[], nodeKey: string, updateFn: (node: TreeNode) => TreeNode): TreeNode[] => {
@@ -255,6 +255,7 @@ const CourseDirectory = () => {
             if (modalType === 'same') {
                 // 如果没有选中节点，则添加到根级目录
                 if (!selectedKeys.length) {
+                    newNode.moocItemType = 0
                     newNode.parentId = 0; // 根节点
                     setTreeData([...treeData, newNode]);
                 } else {

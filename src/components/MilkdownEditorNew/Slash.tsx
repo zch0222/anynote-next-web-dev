@@ -47,16 +47,16 @@ export const SlashView = () => {
             const { state } = view;
             const { selection } = state;
             const { from } = selection;
-            
+
             // 获取当前光标位置之前的内容作为提示词
             const textBeforeCursor = state.doc.textBetween(0, from);
-            const prompt = `请根据以下文本内容，在光标位置补充合适的内容。当前行内容：${textBeforeCursor}。请只返回需要补充的内容，不要包含任何解释。`;
-            
+            const prompt = `请根据以下文本内容，在光标位置补充合适的内容。当前行内容：${textBeforeCursor}。请只返回需要补充的内容，不要包含任何解释以及原文本。`;
+
             // 先删除斜杠字符
             const tr = state.tr.deleteRange(from - 1, from);
             view.dispatch(tr);
             view.focus();
-            
+
             // 调用自动补全
             handleSendMessage(prompt).then(completion => {
                 if (completion) {
@@ -65,7 +65,7 @@ export const SlashView = () => {
                     view.dispatch(newTr);
                 }
             });
-            
+
             return true;
         })
     }
