@@ -20,6 +20,7 @@ import {useDispatch} from "react-redux";
 import {showMessage} from "@/store/message/messageSlice";
 import useMoocItemList from "@/hooks/mooc/useMoocItemList";
 import Loading from "@/components/Loading";
+import useMoocItem from "@/hooks/mooc/useMoocItem";
 
 interface TreeNode {
     title: string;
@@ -51,7 +52,11 @@ interface TreeNode {
 // 动态导入富文本编辑器，避免SSR问题
 const Editor = dynamic(() => import('@wangeditor/editor-for-react').then(mod => mod.Editor), {ssr: false});
 
-const CourseDirectory = () => {
+const CourseDirectory = ({params}: {
+    params: {
+        id: number
+    }
+}) => {
     const [form] = Form.useForm();
     const [treeData, setTreeData] = useState<TreeNode[]>([]);
     const [editingKey, setEditingKey] = useState<string>('');
@@ -65,10 +70,14 @@ const CourseDirectory = () => {
     const [currentContent, setCurrentContent] = useState<string>('');
     const dispatch = useDispatch();
 
+    const { data: moocData, isLoading: isMoocLoading } = useMoocItem({
+        moocId: params.id,
+    });
+
     const {data, isLoading} = useMoocItemList({
         params: {
             parentId: 0,
-            moocId: 3,
+            moocId: params.id,
         },
         page: 1,
         pageSize: 10,
@@ -108,7 +117,7 @@ const CourseDirectory = () => {
         const currentNode = findNode(selectedKeys[0], treeData);
         if (currentNode && currentNode.moocItemType && !currentNode.isNew) {
             getMoocItemInfoById({
-                moocId: 3,
+                moocId: params.id,
                 moocItemId: Number(currentNode.key),
             }).then(res => {
                 const data = res.data.data;
@@ -122,7 +131,7 @@ const CourseDirectory = () => {
     }, [selectedKeys, treeData]);
 
     // 如果数据正在加载或处理中，显示加载状态
-    if (isLoading || isDataProcessing) {
+    if (isLoading || isDataProcessing || isMoocLoading) {
         return <Loading/>;
     }
 
@@ -252,6 +261,7 @@ const CourseDirectory = () => {
 
             let parentKey: string | null = null;
 
+            console.log(selectedKeys.length)
             if (modalType === 'same') {
                 // 如果没有选中节点，则添加到根级目录
                 if (!selectedKeys.length) {
@@ -261,11 +271,13 @@ const CourseDirectory = () => {
                 } else {
                     // 查找选中节点的父节点
                     const parentNode = getParentNode(selectedKeys[0], treeData);
+                    console.log("parentNode", parentNode);
                     const newTreeData = [...treeData];
 
                     if (parentNode) {
                         // 如果有父节点，在父节点的children中添加
                         parentKey = parentNode.key;
+                        newNode.parentId = Number(parentKey);
                         // 设置父节点的isLeaf为false
                         const updateParentNode = (nodes: TreeNode[]) => {
                             for (let node of nodes) {
@@ -327,10 +339,6 @@ const CourseDirectory = () => {
 
             form.resetFields();
             setIsModalVisible(false);
-            dispatch(showMessage({
-                type: "success",
-                content: "添加成功"
-            }))
         });
     };
 
@@ -340,8 +348,8 @@ const CourseDirectory = () => {
         if (currentNode !== null) {
             // 基础数据结构
             const baseData = {
-                moocId: 3,
-                knowledgeBaseId: 38,
+                moocId: params.id,
+                knowledgeBaseId: moocData?.knowledgeBaseId as number,
                 items: [
                     {
                         title: currentNode.title,
@@ -397,6 +405,38 @@ const CourseDirectory = () => {
                             isNew: false
                         }))
                     );
+
+                    // 获取父节点并重新加载数据
+                    const parentNode = getParentNode(currentNode.key, treeData);
+                    if (parentNode) {
+                        loadData(parentNode, true);
+                    } else {
+                        // 如果没有父节点，重新加载根目录数据
+                        getMoocItemList({
+                            parentId: 0,
+                            moocId: params.id,
+                            page: 1,
+                            pageSize: 10,
+                        }).then(response => {
+                            const processedData = response.data.data?.rows?.map((item: any) => ({
+                                title: item.title,
+                                key: item.id.toString(),
+                                moocItemType: item.moocItemType,
+                                objectName: item.objectName,
+                                parentId: item.parentId,
+                                children: []
+                            })) || [];
+
+                            setTreeData(processedData);
+                        }).catch(error => {
+                            console.error('加载根目录数据失败:', error);
+                            dispatch(showMessage({
+                                type: "error",
+                                content: "加载根目录数据失败"
+                            }));
+                        });
+                    }
+
                     dispatch(showMessage({
                         type: "success",
                         content: "保存成功"
@@ -587,10 +627,11 @@ const CourseDirectory = () => {
     );
 
     // 加载子节点数据
-    const loadData = (node: TreeNode): Promise<void> => {
+    const loadData = (node: TreeNode, isActive: boolean = false): Promise<void> => {
+        console.log(node)
         return new Promise(async (resolve) => {
             // 如果节点已经有子节点，直接返回
-            if (node.children && node.children.length > 0) {
+            if (node.children && node.children.length > 0 && !isActive) {
                 resolve();
                 return;
             }
@@ -598,7 +639,7 @@ const CourseDirectory = () => {
             try {
                 const response = await getMoocItemList({
                     parentId: Number(node.key),
-                    moocId: 3,
+                    moocId: params.id,
                     page: 1,
                     pageSize: 10,
                 });
@@ -698,12 +739,12 @@ const CourseDirectory = () => {
                                 )}
                             </div>
                             <Space>
-                                <Button icon={<UndoOutlined/>}>撤销</Button>
-                                <Button icon={<RedoOutlined/>}>恢复</Button>
+                                {/*<Button icon={<UndoOutlined/>}>撤销</Button>*/}
+                                {/*<Button icon={<RedoOutlined/>}>恢复</Button>*/}
                                 <Button icon={<SaveOutlined/>} onClick={handleSave}>保存</Button>
-                                <Button icon={<EyeOutlined/>} onClick={handlePreview}>预览</Button>
-                                <Button type="primary" icon={<CheckOutlined/>}
-                                        onClick={handleComplete}>完成</Button>
+                                {/*<Button icon={<EyeOutlined/>} onClick={handlePreview}>预览</Button>*/}
+                                {/*<Button type="primary" icon={<CheckOutlined/>}*/}
+                                {/*        onClick={handleComplete}>完成</Button>*/}
                             </Space>
                         </div>
                         <Divider className="my-4"/>

@@ -16,6 +16,7 @@ import { getMoocItemList } from "@/requests/client/note/mooc";
 interface TreeNode {
     title: string;
     key: string;
+    nodeId: number;
     children?: TreeNode[];
     moocItemType?: number;
     objectName?: string;
@@ -28,24 +29,26 @@ const getItems = (panelStyle: React.CSSProperties, treeData: TreeNode[], onExpan
         const item: NonNullable<CollapseProps['items']>[number] = {
             key: node.key,
             label: <div className="flex items-center gap-2">
-                <Button type="primary" shape="circle">{index + 1}</Button>
+                <span>{node.key}</span>
                 <span>{node.title}</span>
             </div>,
-            children: node.children ? (
+            children: node.children?.some(child => child.moocItemType === 0) ? (
                 <Collapse
                     bordered={false}
                     style={panelStyle}
-                    items={node.children.map((child, childIndex) => processNode(child, childIndex))}
+                    items={node.children?.map((child, childIndex) => processNode(child, childIndex)) || []}
                     onChange={onExpand}
                 />
-            ) : node.moocItemType === 0 ? (
-                <p>目录节点</p>
             ) : (
-                <Card size="small" className="bg-white">
-                    <p>{node.moocItemType === 2 ? '文档内容' : '视频内容'}</p>
-                </Card>
+                <div className="space-y-2">
+                    {node.children?.map((child, childIndex) => (
+                        <Card key={child.key} size="small" className="bg-white flex gap-2">
+                            <span>{child.key}</span>
+                            <span>{child.title}</span>
+                        </Card>
+                    ))}
+                </div>
             ),
-            collapsible: node.moocItemType === 0 ? 'header' : 'disabled'
         };
         return item;
     };
@@ -83,9 +86,10 @@ export default function MoocCatalogue() {
 
     useEffect(() => {
         if (itemListData && !isItemListLoading) {
-            const processedData = itemListData.rows?.map((item: any) => ({
+            const processedData = itemListData.rows?.map((item: any, index: number) => ({
                 title: item.title,
-                key: item.id.toString(),
+                key: `${index + 1}`,
+                nodeId: item.id,
                 moocItemType: item.moocItemType,
                 objectName: item.objectName,
                 parentId: item.parentId,
@@ -98,22 +102,45 @@ export default function MoocCatalogue() {
 
     const loadData = async (nodeKey: string) => {
         try {
+            // 查找父节点的 nodeId
+            const findParentNodeId = (nodes: TreeNode[]): number | null => {
+                for (const node of nodes) {
+                    if (node.key === nodeKey) {
+                        return node.nodeId;
+                    }
+                    if (node.children) {
+                        const found = findParentNodeId(node.children);
+                        if (found) return found;
+                    }
+                }
+                return null;
+            };
+
+            const parentNodeId = findParentNodeId(treeData);
+            if (!parentNodeId) {
+                console.error('未找到父节点');
+                return;
+            }
+
             const response = await getMoocItemList({
-                parentId: Number(nodeKey),
+                parentId: parentNodeId,
                 moocId: params.id,
                 page: 1,
                 pageSize: 10,
             });
 
-            const childNodes = response.data.data?.rows?.map((item: any) => ({
+            const childNodes = response.data.data?.rows?.map((item: any, index: number) => ({
                 title: item.title,
-                key: item.id.toString(),
+                key: `${nodeKey}.${index + 1}`,
+                nodeId: item.id,
                 moocItemType: item.moocItemType,
                 objectName: item.objectName,
                 parentId: item.parentId,
                 isLeaf: item.moocItemType !== 0,
                 children: []
             })) || [];
+
+            console.log(childNodes);
 
             setTreeData(prevData => {
                 const updateNode = (nodes: TreeNode[]): TreeNode[] => {
@@ -160,7 +187,6 @@ export default function MoocCatalogue() {
             <Card title="目录">
                 <Collapse
                     bordered={false}
-                    defaultActiveKey={['1']}
                     expandIcon={({ isActive }) => <CaretRightOutlined rotate={isActive ? 90 : 0} />}
                     style={{ background: token.colorBgContainer }}
                     items={getItems(panelStyle, treeData, handleExpand)}
