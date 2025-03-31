@@ -44,6 +44,7 @@
     "antd": "^5.11.5",
     "axios": "^1.6.2",
     "canvas": "^2.11.2",
+    "dplayer": "^1.27.1",
     "echarts": "^5.4.3",
     "echarts-for-react": "^3.0.2",
     "esdk-obs-nodejs": "^3.23.11",
@@ -73,6 +74,7 @@
   },
   "devDependencies": {
     "@tauri-apps/cli": "^2.2.2",
+    "@types/dplayer": "^1.25.5",
     "@types/draft-js": "^0.11.18",
     "@types/node": "^20",
     "@types/react": "^18",

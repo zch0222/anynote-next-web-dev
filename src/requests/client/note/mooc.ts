@@ -35,6 +35,15 @@ export function createMoocCoverUploadTask(createDTO: OssSliceUploadTaskCreateDTO
     })
 }
 
+export function createMoocVidoUploadTask(createDTO: OssSliceUploadTaskCreateDTO) {
+    return request<ResData<OssSliceUploadTaskVO>>({
+        url: "/api/note/moocs/video/create",
+        method: Method.POST,
+        data: createDTO,
+        needToken: true
+    })
+}
+
 export function createMooc(Data: {
     title: string,
     cover: string,
@@ -73,6 +82,22 @@ export function createMoocItem(Data: {
     return request<ResData<string>>({
         url: `/api/note/moocs/items`,
         method: Method.POST,
+        needToken: true,
+        data: Data
+    })
+}
+
+export function updateMoocItem(itemId:number, Data: {
+    moocId: number,
+    knowledgeBaseId: number,
+    title?: string,
+    objectName?: string,
+    parentId?: number,
+    itemText?: string,
+}) {
+    return request<ResData<string>>({
+        url: `/api/note/moocs/items/${itemId}`,
+        method: Method.PATCH,
         needToken: true,
         data: Data
     })

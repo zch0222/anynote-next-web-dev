@@ -41,6 +41,8 @@ export interface OssSliceUploadTaskCreateDTO {
      * contentType
      */
     contentType: string;
+
+    moocId?: number;
 }
 
 export interface OssSliceUploadTaskVO {

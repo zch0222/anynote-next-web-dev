@@ -3,24 +3,18 @@
 import React, {useEffect, useState} from 'react';
 import type {MenuProps} from 'antd';
 import {Button, Divider, Dropdown, Form, Input, Modal, Radio, Space, Tree} from 'antd';
-import {
-    CheckOutlined,
-    EyeOutlined,
-    MoreOutlined,
-    PlusOutlined,
-    RedoOutlined,
-    SaveOutlined,
-    UndoOutlined
-} from '@ant-design/icons';
+import {MoreOutlined, PlusOutlined, SaveOutlined} from '@ant-design/icons';
 import dynamic from 'next/dynamic';
 import '@wangeditor/editor/dist/css/style.css';
 import ContentEditor from "@/components/mooc/ContentEditor";
-import {createMoocItem, getMoocItemInfoById, getMoocItemList} from "@/requests/client/note/mooc";
+import {createMoocItem, getMoocItemInfoById, getMoocItemList, updateMoocItem} from "@/requests/client/note/mooc";
 import {useDispatch} from "react-redux";
 import {showMessage} from "@/store/message/messageSlice";
 import useMoocItemList from "@/hooks/mooc/useMoocItemList";
 import Loading from "@/components/Loading";
 import useMoocItem from "@/hooks/mooc/useMoocItem";
+import VideoUpload from "@/components/mooc/VideoUpload";
+import VideoPlayer from "@/components/VideoPlayer";
 
 interface TreeNode {
     title: string;
@@ -67,10 +61,9 @@ const CourseDirectory = ({params}: {
     const [modalType, setModalType] = useState<'same' | 'sub'>('same');
     const [isDataProcessing, setIsDataProcessing] = useState(true);
     const [currentParentId, setCurrentParentId] = useState<number>(0);
-    const [currentContent, setCurrentContent] = useState<string>('');
     const dispatch = useDispatch();
 
-    const { data: moocData, isLoading: isMoocLoading } = useMoocItem({
+    const {data: moocData, isLoading: isMoocLoading} = useMoocItem({
         moocId: params.id,
     });
 
@@ -115,20 +108,31 @@ const CourseDirectory = ({params}: {
     // 获取节点内容
     useEffect(() => {
         const currentNode = findNode(selectedKeys[0], treeData);
-        if (currentNode && currentNode.moocItemType && !currentNode.isNew) {
+        console.log(currentNode)
+        if (currentNode && !currentNode.isNew) {
             getMoocItemInfoById({
                 moocId: params.id,
                 moocItemId: Number(currentNode.key),
             }).then(res => {
                 const data = res.data.data;
                 if (currentNode.moocItemType === 2 && data?.moocItemText?.itemText) {
-                    setCurrentContent(data.moocItemText.itemText);
+                    setTreeData(prevData =>
+                        updateNode(prevData, selectedKeys[0], node => ({
+                            ...node,
+                            itemText: data.moocItemText.itemText
+                        }))
+                    );
                 } else if (currentNode.moocItemType === 1 && data?.objectName) {
-                    setCurrentContent(data.objectName);
+                    setTreeData(prevData =>
+                        updateNode(prevData, selectedKeys[0], node => ({
+                            ...node,
+                            objectName: data.objectName
+                        }))
+                    );
                 }
             });
         }
-    }, [selectedKeys, treeData]);
+    }, [selectedKeys]);
 
     // 如果数据正在加载或处理中，显示加载状态
     if (isLoading || isDataProcessing || isMoocLoading) {
@@ -170,7 +174,7 @@ const CourseDirectory = ({params}: {
     };
 
     // 递归查找节点
-    function findNode  (nodeKey: string, nodes: TreeNode[]): TreeNode | null  {
+    function findNode(nodeKey: string, nodes: TreeNode[]): TreeNode | null {
         for (const node of nodes) {
             if (node.key === nodeKey) {
                 return node;
@@ -348,7 +352,7 @@ const CourseDirectory = ({params}: {
         if (currentNode !== null) {
             // 基础数据结构
             const baseData = {
-                moocId: params.id,
+                moocId: Number(params.id),
                 knowledgeBaseId: moocData?.knowledgeBaseId as number,
                 items: [
                     {
@@ -449,11 +453,23 @@ const CourseDirectory = ({params}: {
                     }));
                 });
             } else {
-                // TODO: 如果不是新节点，需要调用更新接口
-                dispatch(showMessage({
-                    type: "success",
-                    content: "更新成功"
-                }));
+                const data = {
+                    moocId: Number(params.id),
+                    knowledgeBaseId: moocData?.knowledgeBaseId as number,
+                    title: currentNode.title,
+                    parentId: currentNode.parentId,
+                    itemText: currentNode.itemText,
+                    objectName: currentNode.objectName,
+                }
+                updateMoocItem(Number(currentNode.key), data).then((res: any) => {
+                    console.log(res);
+                    dispatch(showMessage({
+                        type: "success",
+                        content: "更新成功"
+                    }));
+                }).catch(error => {
+                    console.log(error);
+                })
             }
         } else {
             dispatch(showMessage({
@@ -651,8 +667,9 @@ const CourseDirectory = ({params}: {
                     objectName: item.objectName,
                     parentId: item.parentId,
                     isLeaf: item.moocItemType !== 0,
+                    isNew: false,
                     children: []
-                })).reverse() || []; // 对数据进行倒置排序
+                })) || []; // 对数据进行倒置排序
 
                 setTreeData(prevData =>
                     updateNode(prevData, node.key, currentNode => ({
@@ -741,7 +758,7 @@ const CourseDirectory = ({params}: {
                             <Space>
                                 {/*<Button icon={<UndoOutlined/>}>撤销</Button>*/}
                                 {/*<Button icon={<RedoOutlined/>}>恢复</Button>*/}
-                                <Button icon={<SaveOutlined/>} onClick={handleSave}>保存</Button>
+                                <Button type={"primary"} icon={<SaveOutlined/>} onClick={handleSave}>保存</Button>
                                 {/*<Button icon={<EyeOutlined/>} onClick={handlePreview}>预览</Button>*/}
                                 {/*<Button type="primary" icon={<CheckOutlined/>}*/}
                                 {/*        onClick={handleComplete}>完成</Button>*/}
@@ -762,16 +779,26 @@ const CourseDirectory = ({params}: {
                                         );
                                     case 1: // 视频节点
                                         return (
-                                            <div
-                                                className="h-full flex items-center justify-center text-gray-500">
-                                                视频节点编辑区域
-                                            </div>
+                                            <>
+                                                {currentNode.objectName !== "" ?
+                                                    <VideoPlayer name={currentNode.objectName as string}/> :
+                                                    <VideoUpload moocId={params.id} setVideoName={(value) => {
+                                                        console.log(value)
+                                                        setTreeData(prevData =>
+                                                            updateNode(prevData, selectedKeys[0], node => ({
+                                                                ...node,
+                                                                objectName: value
+                                                            }))
+                                                        );
+                                                    }}/>}
+                                            </>
                                         );
                                     case 2: // 文档节点
                                         return (
                                             <div className="h-full">
                                                 <ContentEditor
                                                     onInput={(value) => {
+                                                        console.log(value)
                                                         setTreeData(prevData =>
                                                             updateNode(prevData, selectedKeys[0], node => ({
                                                                 ...node,
@@ -779,7 +806,7 @@ const CourseDirectory = ({params}: {
                                                             }))
                                                         );
                                                     }}
-                                                    content={currentContent}
+                                                    content={currentNode.itemText}
                                                 />
                                             </div>
                                         );
