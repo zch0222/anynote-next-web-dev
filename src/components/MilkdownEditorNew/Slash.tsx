@@ -6,7 +6,7 @@ import { useInstance } from '@milkdown/react'
 import { callCommand } from "@milkdown/utils"
 import { usePluginViewContext } from "@prosemirror-adapter/react"
 import React, { useCallback, useEffect, useRef } from "react"
-import {handleSendMessage, sendChatMessage} from "@/components/ChatCompletions";
+// import {handleSendMessage, sendChatMessage} from "@/components/ChatCompletions";
 import {modelOptions} from "@/constants/model";
 
 export const slash = slashFactory('Commands');
@@ -57,14 +57,14 @@ export const SlashView = () => {
             view.dispatch(tr);
             view.focus();
 
-            // 调用自动补全
-            handleSendMessage(prompt).then(completion => {
-                if (completion) {
-                    // 使用新的状态创建插入事务
-                    const newTr = view.state.tr.insertText(completion);
-                    view.dispatch(newTr);
-                }
-            });
+            // // 调用自动补全
+            // handleSendMessage(prompt).then(completion => {
+            //     if (completion) {
+            //         // 使用新的状态创建插入事务
+            //         const newTr = view.state.tr.insertText(completion);
+            //         view.dispatch(newTr);
+            //     }
+            // });
 
             return true;
         })
@@ -103,13 +103,13 @@ export const SlashView = () => {
         // 构建提示词
         const prompt = `请根据以下文本内容，在最后一个/位置补充合适的内容。当前内容：${currentLine}。请只返回需要补充的内容，不要包含任何解释。`;
 
-        // 获取补全内容
-        const completion = await handleSendMessage(prompt);
+        // // 获取补全内容
+        // const completion = await handleSendMessage(prompt);
 
-        if (completion) {
-            // 插入补全内容
-            view.dispatch(view.state.tr.insertText(completion, from));
-        }
+        // if (completion) {
+        //     // 插入补全内容
+        //     view.dispatch(view.state.tr.insertText(completion, from));
+        // }
     };
 
     return (
