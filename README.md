@@ -29,8 +29,36 @@ To learn more about Next.js, take a look at the following resources:
 
 You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
 
-## Deploy on Vercel
+## Docker 部署
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+### 配置环境变量
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
+复制 `.env.example` 为 `.env`，并根据实际情况修改配置：
+
+```bash
+cp .env.example .env
+```
+
+### 构建并启动
+
+```bash
+docker compose up -d --build
+```
+
+服务将在 `http://localhost:3000` 启动。
+
+### 常用命令
+
+```bash
+# 查看服务状态
+docker compose ps
+
+# 查看日志
+docker compose logs -f
+
+# 停止服务
+docker compose down
+
+# 重启服务
+docker compose restart
+```
